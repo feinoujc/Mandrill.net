@@ -10,18 +10,37 @@ namespace Mandrill
 {
     public class MandrillApi
     {
-        public static Uri BaseUrl = new Uri("https://mandrillapp.com/api/1.0/");
+        private static readonly Uri BaseUrl = new Uri("https://mandrillapp.com/api/1.0/");
+
+        private static readonly Func<HttpClient> DefaultHttpClientFactory = () =>
+        {
+#if DEBUG
+// ReSharper disable once UseObjectOrCollectionInitializer
+            var client = new HttpClient(new LoggingHandler(new HttpClientHandler()));
+#else
+            var client = new HttpClient();
+#endif
+            client.BaseAddress = BaseUrl;
+            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Mandrill.Net",
+                typeof (MandrillApi).Assembly.GetName().Version.ToString(2)));
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            return client;
+        };
+
         private MandrillMessagesApi _messages;
+        private MandrillRejectsApi _rejects;
         private MandrillTemplatesApi _templates;
 
-        public MandrillApi(string apiKey)
+        public MandrillApi(string apiKey) : this(apiKey, DefaultHttpClientFactory())
+        {
+        }
+
+
+        public MandrillApi(string apiKey, HttpClient httpClient)
         {
             if (apiKey == null) throw new ArgumentNullException("apiKey");
             ApiKey = apiKey;
-            HttpClient = new HttpClient {BaseAddress = BaseUrl};
-            HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Mandrill.Net", 
-                typeof (MandrillApi).Assembly.GetName().Version.ToString(2)));
-            HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            HttpClient = httpClient;
         }
 
         public string ApiKey { get; private set; }
@@ -36,6 +55,11 @@ namespace Mandrill
         public IMandrillTemplatesApi Templates
         {
             get { return _templates ?? (_templates = new MandrillTemplatesApi(this)); }
+        }
+
+        public IMandrillRejectsApi Rejects
+        {
+            get { return _rejects ?? (_rejects = new MandrillRejectsApi(this)); }
         }
 
         internal async Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value)

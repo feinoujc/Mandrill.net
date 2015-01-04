@@ -83,7 +83,7 @@ namespace Tests
                     await Api.Templates.AddAsync(template, TemplateContent.Code, TemplateContent.Text, false, labels: new[] {testLabel});
                 }
 
-                var results = await Api.Templates.List(testLabel);
+                var results = await Api.Templates.ListAsync(testLabel);
 
                 results.Count.Should().BeGreaterOrEqualTo(10);
                 results.Where(info => templates.Contains(info.Name)).Should().HaveCount(10);
@@ -99,7 +99,7 @@ namespace Tests
                     await Api.Templates.AddAsync(template, TemplateContent.Code, TemplateContent.Text, false, labels: new[] {testLabel});
                 }
 
-                var results = await Api.Templates.List(testLabel);
+                var results = await Api.Templates.ListAsync(testLabel);
 
                 results.Should().HaveCount(10);
                 results.All(x =>

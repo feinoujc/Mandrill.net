@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Mandrill.Model;
 
 namespace Mandrill.Model
 {

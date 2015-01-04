@@ -1,5 +1,6 @@
 using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Mandrill.Serialization
 {
@@ -14,11 +15,10 @@ namespace Mandrill.Serialization
 
         private static JsonSerializer CreateSerializer()
         {
-            var settings = new JsonSerializerSettings();
+            var settings = new JsonSerializerSettings {ContractResolver = new MandrillJsonContractResolver()};
 
-            var unixTsConverter = new UnixDateTimeConverter();
-            settings.ContractResolver = new MandrillJsonContractResolver(unixTsConverter);
-            settings.Converters.Add(unixTsConverter);
+            settings.Converters.Add(new UnixDateTimeConverter());
+            settings.Converters.Add(new StringEnumConverter {CamelCaseText = true, AllowIntegerValues = false});
             settings.NullValueHandling = NullValueHandling.Ignore;
             settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
             return JsonSerializer.Create(settings);

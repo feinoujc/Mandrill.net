@@ -108,7 +108,7 @@ namespace Mandrill
                 });
         }
 
-        public async Task<MandrillMessageInfo> Info(string id)
+        public async Task<MandrillMessageInfo> InfoAync(string id)
         {
             return await MandrillApi.PostAsync<MandrillMessageInfoRequest, MandrillMessageInfo>("messages/info.json",
                 new MandrillMessageInfoRequest
@@ -117,7 +117,7 @@ namespace Mandrill
                 });
         }
 
-        public async Task<MandrillMessageContent> Content(string id)
+        public async Task<MandrillMessageContent> ContentAsync(string id)
         {
             return await MandrillApi.PostAsync<MandrillMessageInfoRequest, MandrillMessageContent>("messages/content.json",
                 new MandrillMessageInfoRequest

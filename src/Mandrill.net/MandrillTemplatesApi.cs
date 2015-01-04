@@ -55,7 +55,7 @@ namespace Mandrill
             });
         }
 
-        public async Task<IList<MandrillTemplateInfo>> List(string label = null)
+        public async Task<IList<MandrillTemplateInfo>> ListAsync(string label = null)
         {
             return await MandrillApi.PostAsync<MandrillTemplateListRequest, IList<MandrillTemplateInfo>>("templates/list.json", new MandrillTemplateListRequest
             {

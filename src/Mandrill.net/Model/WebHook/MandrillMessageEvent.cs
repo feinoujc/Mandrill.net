@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using Mandrill.Serialization;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
 namespace Mandrill.Model
 {
     public class MandrillMessageEvent
     {
-        [JsonConverter(typeof (StringEnumConverter))]
         public MandrillMessageEventType Event { get; set; }
 
         public string Url { get; set; }
