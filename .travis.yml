@@ -1,0 +1,18 @@
+language: objective-c
+ 
+env:
+ global:
+  - EnableNuGetPackageRestore=true 
+ matrix:
+  - MONO_VERSION="3.10.0"
+ 
+install:
+ - wget "http://download.mono-project.com/archive/${MONO_VERSION}/macos-10-x86/MonoFramework-MDK-${MONO_VERSION}.macos10.xamarin.x86.pkg"
+ - sudo installer -pkg "MonoFramework-MDK-${MONO_VERSION}.macos10.xamarin.x86.pkg" -target /
+ 
+script:
+  - wget http://nuget.org/nuget.exe
+  - mono --runtime=v4.0 ./nuget.exe restore
+  - xbuild
+  - mono --runtime=v4.0 ./nuget.exe install NUnit.Runners -Version 2.6.4 -o packages
+  - mono --runtime=v4.0 packages/NUnit.Runners.2.6.4/tools/nunit-console.exe ./tests/Tests/bin/Debug/Tests.dll
