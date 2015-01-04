@@ -1,6 +1,4 @@
-﻿using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using Newtonsoft.Json;
 
 namespace Mandrill.Model
 {
@@ -8,7 +6,6 @@ namespace Mandrill.Model
     {
         public string Email { get; set; }
 
-        [JsonConverter(typeof(StringEnumConverter))]
         public MandrillSendMessageResponseStatus Status { get; set; }
 
         public string RejectReason { get; set; }

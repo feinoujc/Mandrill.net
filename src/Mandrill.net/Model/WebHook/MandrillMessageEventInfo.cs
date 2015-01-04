@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Mandrill.Model
 {
@@ -46,7 +45,6 @@ namespace Mandrill.Model
             set { _clicks = value; }
         }
 
-        [JsonConverter(typeof (StringEnumConverter))]
         public MandrillMessageState State { get; set; }
 
         public IDictionary<string, string> Metadata

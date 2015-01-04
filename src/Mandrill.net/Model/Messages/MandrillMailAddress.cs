@@ -1,6 +1,4 @@
 ﻿using System.Net.Mail;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Mandrill.Model
 {
@@ -32,7 +30,6 @@ namespace Mandrill.Model
 
         public string Name { get; set; }
 
-        [JsonConverter(typeof (StringEnumConverter))]
         public MandrillMailAddressType? Type { get; set; }
     }
 }

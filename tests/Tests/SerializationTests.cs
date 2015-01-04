@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Runtime.Serialization;
 using FluentAssertions;
 using Mandrill.Model;
 using Mandrill.Serialization;
@@ -105,6 +106,19 @@ namespace Tests
 
             json["value1"].Should().BeNull();
         }
+
+        [Test]
+        public void Enums_camel_case()
+        {
+            var model = new [] {new TestModel{Enum = TestEnum.Reject}, new TestModel{Enum = TestEnum.SoftBounce}};
+
+            var json = JArray.FromObject(model, MandrillSerializer.Instance);
+
+            json[0]["enum"].Value<string>().Should().Be("reject");
+            json[1]["enum"].Value<string>().Should().Be("soft_bounce");
+
+        }
+
 
         [Test]
         public void Skips_empty_dictionary()
@@ -233,7 +247,7 @@ namespace Tests
             message.To[0].Name.Should().Be("Recipient Name");
             message.To[0].Type.Should().Be(MandrillMailAddressType.To);
             message.Headers.Should().HaveCount(1);
-            message.Headers["Reply-to"].Should().Be("message.reply@example.com");
+            message.Headers["Reply-To"].Should().Be("message.reply@example.com");
             message.Important.Should().BeFalse();
             message.BccAddress.Should().Be("message.bcc_address@example.com");
             message.Merge.Should().BeTrue();
@@ -296,6 +310,15 @@ namespace Tests
 
             [Required]
             public IList<string> RequiredList { get; set; }
+
+            public TestEnum Enum { get; set; }
+        }
+
+        enum TestEnum
+        {
+            Reject,
+            [EnumMember(Value="soft_bounce")]
+            SoftBounce
         }
 
         private class TestSubModel

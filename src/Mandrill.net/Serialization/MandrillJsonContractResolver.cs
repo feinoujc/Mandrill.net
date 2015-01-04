@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
@@ -12,12 +11,10 @@ namespace Mandrill.Serialization
     internal class MandrillJsonContractResolver : DefaultContractResolver
     {
         private static readonly Regex CamelCaseRegex = new Regex("^[A-Z][a-z]+(?:[A-Z][a-z]+)*$", RegexOptions.Compiled);
-        private readonly UnixDateTimeConverter _unixDateTimeConverter;
 
 
-        public MandrillJsonContractResolver(UnixDateTimeConverter unixDateTimeConverter) : base(true)
+        public MandrillJsonContractResolver() : base(true)
         {
-            _unixDateTimeConverter = unixDateTimeConverter;
         }
 
         protected static string ConvertCamelCasePropertyNamesToLowerCaseUnderscoreStyle(string propertyName)
@@ -48,9 +45,10 @@ namespace Mandrill.Serialization
                     var t = propertyType.GenericTypeArguments[0];
                     if (typeof (IList<>).MakeGenericType(t).IsAssignableFrom(propertyType))
                     {
+                        var prop = jsonProperty.DeclaringType.GetProperty(member.Name);
                         jsonProperty.ShouldSerialize = instance =>
                         {
-                            var collection = jsonProperty.DeclaringType.GetProperty(member.Name).GetValue(instance) as ICollection;
+                            var collection = prop.GetValue(instance) as ICollection;
                             if (collection != null)
                             {
                                 return collection.Count > 0;
@@ -67,9 +65,11 @@ namespace Mandrill.Serialization
             {
                 if (member.GetCustomAttribute<RequiredAttribute>() == null)
                 {
+                    var prop = jsonProperty.DeclaringType.GetProperty(member.Name);
+
                     jsonProperty.ShouldSerialize = instance =>
                     {
-                        var dictionary = jsonProperty.DeclaringType.GetProperty(member.Name).GetValue(instance) as IDictionary<string, string>;
+                        var dictionary = prop.GetValue(instance) as IDictionary<string, string>;
                         if (dictionary != null)
                         {
                             return dictionary.Count > 0;
@@ -77,12 +77,6 @@ namespace Mandrill.Serialization
                         return false;
                     };
                 }
-            }
-
-            if (propertyType == typeof (DateTime) || propertyType == typeof (DateTime?)
-                || propertyType == typeof (DateTimeOffset) || propertyType == typeof (DateTimeOffset?))
-            {
-                jsonProperty.Converter = _unixDateTimeConverter;
             }
 
             //leave the keys of a dictionary alone, otherwise convert to lowercase underscore

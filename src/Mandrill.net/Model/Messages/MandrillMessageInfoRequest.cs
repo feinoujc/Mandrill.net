@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Mandrill.Model
+﻿namespace Mandrill.Model
 {
     class MandrillMessageInfoRequest : MandrillRequestBase
     {

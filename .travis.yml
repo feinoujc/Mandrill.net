@@ -13,6 +13,6 @@ install:
 script:
   - wget http://nuget.org/nuget.exe
   - mono --runtime=v4.0 ./nuget.exe restore
-  - xbuild
+  - xbuild /p:Configuration=Release
   - mono --runtime=v4.0 ./nuget.exe install NUnit.Runners -Version 2.6.4 -o packages
-  - mono --runtime=v4.0 packages/NUnit.Runners.2.6.4/tools/nunit-console.exe ./tests/Tests/bin/Debug/Tests.dll
+  - mono --runtime=v4.0 packages/NUnit.Runners.2.6.4/tools/nunit-console.exe -noxml -nodots -labels -stoponerror ./tests/Tests/bin/Release/Tests.dll

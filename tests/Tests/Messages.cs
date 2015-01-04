@@ -43,7 +43,7 @@ namespace Tests
                 var found = results.Where(x => x.Ts > DateTime.UtcNow.AddHours(-24)).OrderBy(x => x.Ts).FirstOrDefault();
                 if (found != null)
                 {
-                    var result = await Api.Messages.Content(found.Id);
+                    var result = await Api.Messages.ContentAsync(found.Id);
 
                     result.Should().NotBeNull();
                     var content = result.Html ?? result.Text;
@@ -58,8 +58,8 @@ namespace Tests
             [Test]
             public void Throws_when_not_found()
             {
-                var mandrillException = Assert.Throws<MandrillException>(async () => await Api.Messages.Content(Guid.NewGuid().ToString("N")));
-                mandrillException.Message.Should().Contain("Unknown_Message");
+                var mandrillException = Assert.Throws<MandrillException>(async () => await Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
+                mandrillException.Name.Should().Be("Unknown_Message");
             }
         }
 
@@ -75,7 +75,7 @@ namespace Tests
                 var found = results.OrderBy(x => x.Ts).FirstOrDefault();
                 if (found != null)
                 {
-                    var result = await Api.Messages.Info(found.Id);
+                    var result = await Api.Messages.InfoAync(found.Id);
 
                     result.Should().NotBeNull();
                     result.Id.Should().Be(found.Id);
@@ -89,8 +89,8 @@ namespace Tests
             [Test]
             public void Throws_when_not_found()
             {
-                var mandrillException = Assert.Throws<MandrillException>(async () => await Api.Messages.Info(Guid.NewGuid().ToString("N")));
-                mandrillException.Message.Should().Contain("Unknown_Message");
+                var mandrillException = Assert.Throws<MandrillException>(async () => await Api.Messages.InfoAync(Guid.NewGuid().ToString("N")));
+                mandrillException.Name.Should().Be("Unknown_Message");
             }
         }
 
@@ -286,7 +286,7 @@ namespace Tests
 
                 var result = Assert.Throws<MandrillException>(async () => await Api.Messages.SendAsync(message));
                 result.Should().NotBeNull();
-                result.Message.Should().Contain("Unknown_Subaccount");
+                result.Name.Should().Be("Unknown_Subaccount");
                 result.Message.Should().Contain(invalidSubaccount);
             }
 
