@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization;
 using Mandrill.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -9,19 +8,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Mandrill.Model
 {
-    public enum MandrillMessageEventType
-    {
-        Send,
-        Deferral,
-        [EnumMember(Value = "hard_bounce")] HardBounce,
-        [EnumMember(Value = "soft_bounce")] SoftBounce,
-        Open,
-        Click,
-        Spam,
-        Unsub,
-        Reject
-    }
-
     public class MandrillMessageEvent
     {
         [JsonConverter(typeof (StringEnumConverter))]
