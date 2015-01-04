@@ -1,18 +1,8 @@
-language: objective-c
- 
-env:
- global:
-  - EnableNuGetPackageRestore=true 
- matrix:
-  - MONO_VERSION="3.10.0"
- 
+language: csharp
+solution: Mandrill.net.sln
 install:
- - wget "http://download.mono-project.com/archive/${MONO_VERSION}/macos-10-x86/MonoFramework-MDK-${MONO_VERSION}.macos10.xamarin.x86.pkg"
- - sudo installer -pkg "MonoFramework-MDK-${MONO_VERSION}.macos10.xamarin.x86.pkg" -target /
- 
+  - nuget restore Mandrill.net.sln
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory packages
 script:
-  - wget http://nuget.org/nuget.exe
-  - mono --runtime=v4.0 ./nuget.exe restore
-  - xbuild /p:Configuration=Release
-  - mono --runtime=v4.0 ./nuget.exe install NUnit.Runners -Version 2.6.4 -o packages
-  - mono --runtime=v4.0 packages/NUnit.Runners.2.6.4/tools/nunit-console.exe -noxml -nodots -labels -stoponerror ./tests/Tests/bin/Release/Tests.dll
+  - xbuild /p:Configuration=Release Mandrill.net.sln
+  - mono ./packages/NUnit.Runners.2.6.4/tools/nunit-console.exe -noxml -nodots -labels ./tests/Tests/bin/Release/Tests.dll
