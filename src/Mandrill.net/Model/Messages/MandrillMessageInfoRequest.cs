@@ -4,6 +4,6 @@ namespace Mandrill.Model
 {
     class MandrillMessageInfoRequest : MandrillRequestBase
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
     }
 }

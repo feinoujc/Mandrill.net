@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Mandrill.Model
 {
@@ -37,10 +40,13 @@ namespace Mandrill.Model
 
         public string PublishText { get; set; }
 
-        public string PublishedAt { get; set; }
+        [JsonConverter(typeof (IsoDateTimeConverter))]
+        public DateTime? PublishedAt { get; set; }
 
-        public string CreatedAt { get; set; }
+        [JsonConverter(typeof (IsoDateTimeConverter))]
+        public DateTime? CreatedAt { get; set; }
 
-        public string UpdatedAt { get; set; }
+        [JsonConverter(typeof (IsoDateTimeConverter))]
+        public DateTime? UpdatedAt { get; set; }
     }
 }

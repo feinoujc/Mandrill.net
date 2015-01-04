@@ -10,8 +10,9 @@ namespace Mandrill.Model
         Unsub,
         Bounced,
         [EnumMember(Value = "soft-bounced")] 
-        Soft_bounced,
+        SoftBounced,
         Deferred,
         Inbound
     }
+
 }

@@ -22,19 +22,20 @@ namespace Tests
         {
             get { return ApiKeyLazy.Value; }
         }
+        private Lazy<MandrillApi> LazyApi;
 
-        protected MandrillApi Api = null;
+        protected MandrillApi Api { get { return LazyApi.Value; } }
 
         [TestFixtureSetUp]
         public virtual void SetUp()
         {
-            Api = new MandrillApi(ApiKey);
+            LazyApi = new Lazy<MandrillApi>(() => new MandrillApi(ApiKey));
         }
 
         [TestFixtureTearDown]
         public virtual void TearDown()
         {
-            Api = null;
+            LazyApi = null;
         }
     }
 }

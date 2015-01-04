@@ -17,11 +17,10 @@ namespace Mandrill.Serialization
             var settings = new JsonSerializerSettings();
 
             var unixTsConverter = new UnixDateTimeConverter();
-            var guidConverter = new GuidConverter();
-            settings.ContractResolver = new MandrillJsonContractResolver(unixTsConverter, guidConverter);
+            settings.ContractResolver = new MandrillJsonContractResolver(unixTsConverter);
             settings.Converters.Add(unixTsConverter);
-            settings.Converters.Add(guidConverter);
             settings.NullValueHandling = NullValueHandling.Ignore;
+            settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
             return JsonSerializer.Create(settings);
         }
     }

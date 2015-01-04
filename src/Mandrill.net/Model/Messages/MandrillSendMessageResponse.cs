@@ -14,6 +14,6 @@ namespace Mandrill.Model
         public string RejectReason { get; set; }
 
         [JsonProperty("_id")]
-        public Guid Id { get; set; }
+        public string Id { get; set; }
     }
 }

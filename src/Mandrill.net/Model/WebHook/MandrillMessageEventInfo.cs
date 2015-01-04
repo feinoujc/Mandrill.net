@@ -5,17 +5,20 @@ using Newtonsoft.Json.Converters;
 
 namespace Mandrill.Model
 {
-    public class MandrillMessageInfo
+    public class MandrillMessageEventInfo
     {
-        private IList<MandrillClicksDetail> _clicksDetail;
+        private IList<MandrillClicksDetail> _clicks;
         private IDictionary<string, string> _metadata;
-        private IList<MandrillOpensDetail> _opensDetail;
+        private IList<MandrillOpensDetail> _opens;
         private IList<MandrillSmtpEvent> _smtpEvents;
         private IList<string> _tags;
         public DateTime Ts { get; set; }
 
         [JsonProperty("_id")]
         public string Id { get; set; }
+
+        [JsonProperty("_version")]
+        public string Version { get; set; }
 
         public string Sender { get; set; }
 
@@ -31,20 +34,16 @@ namespace Mandrill.Model
             set { _tags = value; }
         }
 
-        public int? Opens { get; set; }
-
-        public IList<MandrillOpensDetail> OpensDetail
+        public IList<MandrillOpensDetail> Opens
         {
-            get { return _opensDetail ?? (_opensDetail = new List<MandrillOpensDetail>()); }
-            set { _opensDetail = value; }
+            get { return _opens ?? (_opens = new List<MandrillOpensDetail>()); }
+            set { _opens = value; }
         }
 
-        public int? Clicks { get; set; }
-
-        public IList<MandrillClicksDetail> ClicksDetail
+        public IList<MandrillClicksDetail> Clicks
         {
-            get { return _clicksDetail ?? (_clicksDetail = new List<MandrillClicksDetail>()); }
-            set { _clicksDetail = value; }
+            get { return _clicks ?? (_clicks = new List<MandrillClicksDetail>()); }
+            set { _clicks = value; }
         }
 
         [JsonConverter(typeof (StringEnumConverter))]
@@ -62,5 +61,10 @@ namespace Mandrill.Model
             set { _smtpEvents = value; }
         }
 
+        public string Subaccount { get; set; }
+
+        public string Diag { get; set; }
+
+        public string BounceDescription { get; set; }
     }
 }

@@ -37,10 +37,12 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.Extensions">
+    <Reference Include="System.Net.Http.Extensions, Version=2.2.28.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.Net.Http.2.2.28\lib\net45\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Primitives">
+    <Reference Include="System.Net.Http.Primitives, Version=4.2.28.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\Microsoft.Net.Http.2.2.28\lib\net45\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
@@ -53,15 +55,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Http\HttpClientExtensions.cs" />
+    <Compile Include="IMandrillMessagesApi.cs" />
+    <Compile Include="IMandrillTemplatesApi.cs" />
     <Compile Include="MandrillApi.cs" />
     <Compile Include="MandrillMessagesApi.cs" />
     <Compile Include="MandrillTemplatesApi.cs" />
     <Compile Include="Model\Messages\MandrillClicksDetail.cs" />
+    <Compile Include="Model\Messages\MandrillMailAddressType.cs" />
     <Compile Include="Model\Messages\MandrillMessageContent.cs" />
+    <Compile Include="Model\Messages\MandrillMessageScheduleInfo.cs" />
+    <Compile Include="Model\Messages\MandrillScheduleRequest.cs" />
+    <Compile Include="Model\Messages\MandrillSendRawMessageRequest.cs" />
+    <Compile Include="Model\WebHook\MandrillMessageEventInfo.cs" />
     <Compile Include="Model\Messages\MandrillMessageInfo.cs" />
     <Compile Include="Model\Messages\MandrillMessageInfoRequest.cs" />
     <Compile Include="Model\Messages\MandrillMessageSearchRequest.cs" />
     <Compile Include="Model\Messages\MandrillMessageState.cs" />
+    <Compile Include="Model\Messages\MandrillMessageTimeSeries.cs" />
     <Compile Include="Model\Messages\MandrillOpensDetail.cs" />
     <Compile Include="Model\Messages\MandrillSmtpEvent.cs" />
     <Compile Include="Model\Templates\MandrillTemplateInfo.cs" />
@@ -77,15 +87,17 @@
     <Compile Include="Model\Templates\MandrillTemplateRenderRequest.cs" />
     <Compile Include="Model\Templates\MandrillTemplateRenderResponse.cs" />
     <Compile Include="Model\Templates\MandrillTemplateRequest.cs" />
-    <Compile Include="Serialization\MandrillIdGuidConverter.cs" />
+    <Compile Include="Model\WebHook\MandrillEventUserAgentParsed.cs" />
+    <Compile Include="Model\WebHook\MandrillEventLocation.cs" />
+    <Compile Include="Model\WebHook\MandrillMessageEvent.cs" />
     <Compile Include="Serialization\MandrillJsonContractResolver.cs" />
-    <Compile Include="Model\Messages\MandrillToAddress.cs" />
+    <Compile Include="Model\Messages\MandrillMailAddress.cs" />
     <Compile Include="Model\Messages\MandrillAttachment.cs" />
     <Compile Include="Model\Messages\MandrillImage.cs" />
     <Compile Include="Model\Messages\MandrillMergeVar.cs" />
     <Compile Include="Model\Messages\MandrillMessage.cs" />
     <Compile Include="Model\Messages\MandrillRcptMergeVar.cs" />
-    <Compile Include="Model\Messages\MandrillRecipientMetadata.cs" />
+    <Compile Include="Model\Messages\MandrillRcptMetadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\MandrillSerializer.cs" />
     <Compile Include="Serialization\UnixDateTimeConverter.cs" />

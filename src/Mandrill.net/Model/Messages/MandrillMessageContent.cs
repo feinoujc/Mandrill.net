@@ -21,7 +21,7 @@ namespace Mandrill.Model
 
         public string Subject { get; set; }
 
-        public MandrillToAddress To { get; set; }
+        public MandrillMailAddress To { get; set; }
 
         public IList<string> Tags
         {
@@ -31,7 +31,7 @@ namespace Mandrill.Model
 
         public IDictionary<string, string> Headers
         {
-            get { return _headers ?? (_headers = new Dictionary<string, string>()); }
+            get { return _headers ?? (_headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
             set { _headers = value; }
         }
 

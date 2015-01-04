@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 
 namespace Mandrill.Model
 {
-    public class MandrillRecipientMetadata
+    public class MandrillRcptMetadata
     {
         private IDictionary<string, string> _values;
 
@@ -10,7 +11,7 @@ namespace Mandrill.Model
 
         public IDictionary<string, string> Values
         {
-            get { return _values ?? (_values = new Dictionary<string, string>()); }
+            get { return _values ?? (_values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
             set { _values = value; }
         }
     }

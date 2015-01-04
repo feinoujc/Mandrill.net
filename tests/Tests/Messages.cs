@@ -9,6 +9,26 @@ namespace Tests
     [Category("messages")]
     internal class Messages : IntegrationTest
     {
+        [Category("messages/cancel_scheduled.json")]
+        internal class CancelScheduled : Messages
+        {
+            [Test]
+            public async void Can_cancel_scheduled()
+            {
+                var list = await Api.Messages.ListScheduledAsync();
+
+                var schedule = list.LastOrDefault();
+                if (schedule != null)
+                {
+                    var result = await Api.Messages.CancelScheduledAsync(schedule.Id);
+                    result.Id.Should().Be(schedule.Id);
+                }
+                else
+                {
+                    Assert.Inconclusive("no scheduled results");
+                }
+            }
+        }
 
         [Category("messages/content.json")]
         internal class Content : Messages
@@ -16,10 +36,11 @@ namespace Tests
             [Test]
             public async void Can_retrieve_content()
             {
-                var results = await Api.Messages.SearchAsync("email:example.com");
+                var results = await Api.Messages.SearchAsync(null, DateTime.Today.AddDays(-1));
 
-                //the api doesn't return results immediately, it may return no results
-                var found = results.OrderBy(x => x.Ts).FirstOrDefault();
+                //the api doesn't return results immediately, it may return no results. 
+                //Also, the content may not be around > 24 hrs
+                var found = results.Where(x => x.Ts > DateTime.UtcNow.AddHours(-24)).OrderBy(x => x.Ts).FirstOrDefault();
                 if (found != null)
                 {
                     var result = await Api.Messages.Content(found.Id);
@@ -37,10 +58,11 @@ namespace Tests
             [Test]
             public void Throws_when_not_found()
             {
-                var mandrillException = Assert.Throws<MandrillException>(async () => await Api.Messages.Content(Guid.NewGuid()));
+                var mandrillException = Assert.Throws<MandrillException>(async () => await Api.Messages.Content(Guid.NewGuid().ToString("N")));
                 mandrillException.Message.Should().Contain("Unknown_Message");
             }
         }
+
         [Category("messages/info.json")]
         internal class Info : Messages
         {
@@ -67,124 +89,59 @@ namespace Tests
             [Test]
             public void Throws_when_not_found()
             {
-                var mandrillException = Assert.Throws<MandrillException>(async () => await Api.Messages.Info(Guid.NewGuid()));
+                var mandrillException = Assert.Throws<MandrillException>(async () => await Api.Messages.Info(Guid.NewGuid().ToString("N")));
                 mandrillException.Message.Should().Contain("Unknown_Message");
             }
         }
 
-        [Category("messages/send.json")]
-        internal class Send : Messages
+        [Category("messages/list_scheduled.json")]
+        internal class ListScheduled : Messages
         {
             [Test]
-            public async void Can_send_message()
+            public async void Can_list_scheduled()
             {
-                var message = new MandrillMessage
-                {
-                    FromEmail = "mandrill.net@example.com",
-                    Subject = "test",
-                    Tags = new[] {"test-send", "mandrill-net"},
-                    To = new[]
-                    {
-                        new MandrillToAddress("test1@example.com"),
-                        new MandrillToAddress("test2@example.com", "A test")
-                    },
-                    Text = "This is a test",
-                    Html = @"<html>
-<head>
-	<title>a test</title>
-</head>
-<body>
-<p>this is a test</p>
-</body>
-</html>"
-                };
-                var result = await Api.Messages.SendAsync(message);
-
-                result.Should().HaveCount(2);
-                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
-                result[0].Id.Should().NotBeEmpty();
-                result[1].Id.Should().NotBeEmpty();
-                result[1].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
-            }
-
-            [Test]
-            public void Can_throw_errors_when_error_response()
-            {
-                var invalidSubaccount = Guid.NewGuid().ToString("N");
-                var message = new MandrillMessage
-                {
-                    FromEmail = "mandrill.net@example.com",
-                    Subject = "test",
-                    Tags = new[] {"test-send-invalid"},
-                    To = new[]
-                    {
-                        new MandrillToAddress("test1@example.com")
-                    },
-                    Text = "This is a test",
-                    Subaccount = invalidSubaccount
-                };
-
-                var result = Assert.Throws<MandrillException>(async () => await Api.Messages.SendAsync(message));
+                var result = await Api.Messages.ListScheduledAsync();
                 result.Should().NotBeNull();
-                result.Message.Should().Contain("Unknown_Subaccount");
-                result.Message.Should().Contain(invalidSubaccount);
+                result.Count.Should().BeGreaterOrEqualTo(0);
             }
+        }
 
+        [Category("messages/parse.json")]
+        internal class Parse : Messages
+        {
             [Test]
-            public async void Can_send_async()
+            public async void Can_parse_raw_message()
             {
-                var message = new MandrillMessage
+                var rawMessage = "From: sender@example.com\nTo: recipient.email@example.com\nSubject: Some Subject\n\nSome content.";
+                var result = await Api.Messages.ParseAsync(rawMessage);
+                result.Should().NotBeNull();
+                result.FromEmail.Should().Be("sender@example.com");
+                result.To[0].Email.Should().Be("recipient.email@example.com");
+                result.Subject.Should().Be("Some Subject");
+                result.Text.Should().Be("Some content.");
+            }
+        }
+
+        [Category("messages/reschedule.json")]
+        internal class Reschedule : Messages
+        {
+            [Test]
+            public async void Can_reschedule()
+            {
+                var list = await Api.Messages.ListScheduledAsync();
+
+                var schedule = list.LastOrDefault();
+                if (schedule != null)
                 {
-                    FromEmail = "mandrill.net@example.com",
-                    Subject = "test",
-                    Tags = new[] {"test-send", "mandrill-net"},
-                    To = new[]
-                    {
-                        new MandrillToAddress("test1@example.com")
-                    },
-                    Text = "This is a test",
-                };
-                var result = await Api.Messages.SendAsync(message, true);
-
-                result.Should().HaveCount(1);
-                result[0].Email.Should().Be("test1@example.com");
-                result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Rejected);
-                result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Invalid);
-            }
-
-            [Test]
-            [Ignore("Requires account with $")]
-            public async void Can_send_scheduled()
-            {
-                var message = new MandrillMessage
+                    var sendAtUtc = DateTime.UtcNow.AddHours(1);
+                    sendAtUtc = new DateTime(sendAtUtc.Year, sendAtUtc.Month, sendAtUtc.Day, sendAtUtc.Hour, sendAtUtc.Minute, sendAtUtc.Second, 0, DateTimeKind.Utc);
+                    var result = await Api.Messages.RescheduleAsync(schedule.Id, sendAtUtc);
+                    result.SendAt.Should().Be(sendAtUtc);
+                }
+                else
                 {
-                    FromEmail = "mandrill.net@example.com",
-                    Subject = "test",
-                    Tags = new[] {"test-send", "mandrill-net"},
-                    To = new[]
-                    {
-                        new MandrillToAddress("test1@example.com")
-                    },
-                    Text = "This is a test",
-                };
-
-                var sendAtUtc = DateTime.UtcNow.AddHours(1);
-                var result = await Api.Messages.SendAsync(message, sendAtUtc: sendAtUtc);
-
-                result.Should().HaveCount(1);
-                result[0].Email.Should().Be("test1@example.com");
-                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Scheduled);
-            }
-
-            [Test]
-            public void Throws_if_scheduled_is_not_utc()
-            {
-                var message = new MandrillMessage();
-
-                var sendAtLocal = DateTime.SpecifyKind(DateTime.Now.AddHours(1), DateTimeKind.Local);
-                var result = Assert.Throws<ArgumentException>(async () => await Api.Messages.SendAsync(message, sendAtUtc: sendAtLocal));
-
-                result.ParamName.Should().Be("sendAtUtc");
+                    Assert.Inconclusive("no scheduled messages found.");
+                }
             }
         }
 
@@ -235,6 +192,187 @@ namespace Tests
             }
         }
 
+        [Category("messages/search_time_series.json")]
+        internal class SearchTimeSeries : Messages
+        {
+            [Test]
+            public async void Can_search_all_params()
+            {
+                var results = await Api.Messages.SearchTimeSeriesAsync("email:example.com",
+                    DateTime.Today.AddDays(-1),
+                    DateTime.Today.AddDays(1),
+                    new[] {"mandrill-net"},
+                    new[] {"mandrill.net@example.com"});
+
+                foreach (var result in results)
+                {
+                    result.Clicks.Should().BeGreaterOrEqualTo(0);
+                }
+
+                if (results.Count == 0)
+                {
+                    Assert.Inconclusive("no results were found yet, try again in a few minutes");
+                }
+            }
+
+            [Test]
+            public async void Can_search_open_query()
+            {
+                var results = await Api.Messages.SearchTimeSeriesAsync(null);
+
+                foreach (var result in results)
+                {
+                    result.Clicks.Should().BeGreaterOrEqualTo(0);
+                }
+
+                if (results.Count == 0)
+                {
+                    Assert.Inconclusive("no results were found yet, try again in a few minutes");
+                }
+            }
+        }
+
+        [Category("messages/send.json")]
+        internal class Send : Messages
+        {
+            [Test]
+            public async void Can_send_message()
+            {
+                var message = new MandrillMessage
+                {
+                    FromEmail = "mandrill.net@example.com",
+                    Subject = "test",
+                    Tags = new[] {"test-send", "mandrill-net"},
+                    To = new[]
+                    {
+                        new MandrillMailAddress("test1@example.com"),
+                        new MandrillMailAddress("test2@example.com", "A test")
+                    },
+                    Text = "This is a test",
+                    Html = @"<html>
+<head>
+	<title>a test</title>
+</head>
+<body>
+<p>this is a test</p>
+</body>
+</html>"
+                };
+                var result = await Api.Messages.SendAsync(message);
+
+                result.Should().HaveCount(2);
+                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+                result[0].Id.Should().NotBeEmpty();
+                result[1].Id.Should().NotBeEmpty();
+                result[1].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+            }
+
+            [Test]
+            public void Can_throw_errors_when_error_response()
+            {
+                var invalidSubaccount = Guid.NewGuid().ToString("N");
+                var message = new MandrillMessage
+                {
+                    FromEmail = "mandrill.net@example.com",
+                    Subject = "test",
+                    Tags = new[] {"test-send-invalid"},
+                    To = new[]
+                    {
+                        new MandrillMailAddress("test1@example.com")
+                    },
+                    Text = "This is a test",
+                    Subaccount = invalidSubaccount
+                };
+
+                var result = Assert.Throws<MandrillException>(async () => await Api.Messages.SendAsync(message));
+                result.Should().NotBeNull();
+                result.Message.Should().Contain("Unknown_Subaccount");
+                result.Message.Should().Contain(invalidSubaccount);
+            }
+
+            [Test]
+            public async void Can_send_async()
+            {
+                var message = new MandrillMessage
+                {
+                    FromEmail = "mandrill.net@example.com",
+                    Subject = "test",
+                    Tags = new[] {"test-send", "mandrill-net"},
+                    To = new[]
+                    {
+                        new MandrillMailAddress("test1@example.com")
+                    },
+                    Text = "This is a test",
+                };
+                var result = await Api.Messages.SendAsync(message, true);
+
+                result.Should().HaveCount(1);
+                result[0].Email.Should().Be("test1@example.com");
+                result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Rejected);
+                result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Invalid);
+            }
+
+            [Test]
+            [Ignore("Requires account with $")]
+            public async void Can_send_scheduled()
+            {
+                var message = new MandrillMessage
+                {
+                    FromEmail = "mandrill.net@example.com",
+                    Subject = "test",
+                    Tags = new[] {"test-send", "mandrill-net"},
+                    To = new[]
+                    {
+                        new MandrillMailAddress("test1@example.com")
+                    },
+                    Text = "This is a test",
+                };
+
+                var sendAtUtc = DateTime.UtcNow.AddHours(1);
+                var result = await Api.Messages.SendAsync(message, sendAtUtc: sendAtUtc);
+
+                result.Should().HaveCount(1);
+                result[0].Email.Should().Be("test1@example.com");
+                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Scheduled);
+            }
+
+            [Test]
+            public void Throws_if_scheduled_is_not_utc()
+            {
+                var message = new MandrillMessage();
+
+                var sendAtLocal = DateTime.SpecifyKind(DateTime.Now.AddHours(1), DateTimeKind.Local);
+                var result = Assert.Throws<ArgumentException>(async () => await Api.Messages.SendAsync(message, sendAtUtc: sendAtLocal));
+
+                result.ParamName.Should().Be("sendAtUtc");
+            }
+        }
+
+        [Category("messages/send_raw.json")]
+        internal class SendRaw : Messages
+        {
+            [Test]
+            public async void Can_send_raw_message()
+            {
+                var rawMessage = "From: sender@example.com\nTo: recipient.email@example.com\nSubject: Some Subject\n\nSome content.";
+                var fromEmail = "sender@example.com";
+                var fromName = "From Name";
+                var to = new[] {"recipient.email@example.com"};
+                bool async = false;
+                string ipPool = "Main Pool";
+                DateTime? sendAt = null;
+                string returnPathDomain = null;
+
+
+                var result = await Api.Messages.SendRawAsync(rawMessage, fromEmail, fromName, to, async, ipPool, sendAt, returnPathDomain);
+
+                result.Should().HaveCount(1);
+                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+                result[0].Email.Should().Be("recipient.email@example.com");
+                result[0].Id.Should().NotBeEmpty();
+            }
+        }
+
         [Category("messages/send_template.json")]
         internal class SendTemplate : Messages
         {
@@ -267,8 +405,8 @@ namespace Tests
                     Tags = new[] {"test-send-template", "mandrill-net"},
                     To = new[]
                     {
-                        new MandrillToAddress("test1@example.com", "Test1 User"),
-                        new MandrillToAddress("test2@example.com", "Test2 User")
+                        new MandrillMailAddress("test1@example.com", "Test1 User"),
+                        new MandrillMailAddress("test2@example.com", "Test2 User")
                     },
                 };
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);

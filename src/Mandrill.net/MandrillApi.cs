@@ -28,15 +28,14 @@ namespace Mandrill
 
         public HttpClient HttpClient { get; private set; }
 
-        public MandrillMessagesApi Messages
+        public IMandrillMessagesApi Messages
         {
             get { return _messages ?? (_messages = new MandrillMessagesApi(this)); }
         }
 
-        public MandrillTemplatesApi Templates
+        public IMandrillTemplatesApi Templates
         {
             get { return _templates ?? (_templates = new MandrillTemplatesApi(this)); }
-            set { _templates = value; }
         }
 
         internal async Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value)

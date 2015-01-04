@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Mandrill.Model;
-using Mandrill.Model;
 using NUnit.Framework;
 
 namespace Tests
@@ -54,6 +53,23 @@ namespace Tests
             }
         }
 
+        [Category("templates/add.json")]
+        internal class Info : Templates
+        {
+            [Test]
+            public async void Can_get_template_info()
+            {
+                var name = AddToBeDeleted(Guid.NewGuid().ToString());
+                var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
+                var result = await Api.Templates.InfoAsync(added.Name);
+
+                result.Name.Should().Be(name);
+                result.Code.Should().Be(TemplateContent.Code);
+                result.Slug.Should().Be(name);
+                result.Text.Should().Be(TemplateContent.Text);
+            }
+        }
+
         [Category("templates/list.json")]
         internal class List : Templates
         {
@@ -95,6 +111,21 @@ namespace Tests
             }
         }
 
+        [Category("templates/add.json")]
+        internal class Publish : Templates
+        {
+            [Test]
+            public async void Can_publish_template()
+            {
+                var name = AddToBeDeleted(Guid.NewGuid().ToString());
+                var skew = DateTime.UtcNow.AddSeconds(-1);
+                var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
+                var result = await Api.Templates.PublishAsync(added.Name);
+
+                result.PublishedAt.Should().BeAfter(skew);
+            }
+        }
+
         [Category("templates/render.json")]
         internal class Render : Templates
         {
@@ -120,6 +151,40 @@ namespace Tests
                 result.Html.Should().Contain("Joe");
                 result.Html.Should().Contain("11/28/2014");
                 result.Html.Should().Contain("Lorem ipsum dolor sit amet");
+            }
+        }
+
+        [Category("templates/time_series.json")]
+        internal class TimeSeries : Templates
+        {
+            [Test]
+            public async void Can_get_time_series()
+            {
+                var name = AddToBeDeleted(Guid.NewGuid().ToString());
+                var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
+                var result = await Api.Templates.TimeSeriesAsync(added.Name);
+
+                if (result.Count == 0)
+                {
+                    Assert.Inconclusive("time-series couldn't run for a new template");
+                }
+            }
+        }
+
+        [Category("templates/update.json")]
+        internal class Update : Templates
+        {
+            [Test]
+            public async void Can_update()
+            {
+                var name = AddToBeDeleted(Guid.NewGuid().ToString());
+                await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
+                var result = await Api.Templates.UpdateAsync(name, TemplateContent.Code.Replace("footer", "booger"), null, false,
+                    "update@example.com");
+                result.Name.Should().Be(name);
+                result.Code.Should().Contain("booger");
+                result.Slug.Should().Be(name);
+                result.FromEmail.Should().Be("update@example.com");
             }
         }
     }

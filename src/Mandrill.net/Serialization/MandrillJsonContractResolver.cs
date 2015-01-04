@@ -11,27 +11,28 @@ namespace Mandrill.Serialization
 {
     internal class MandrillJsonContractResolver : DefaultContractResolver
     {
-        private static readonly Regex UnderscoreCamelCaseRegex = new Regex("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])", RegexOptions.Compiled);
-        private readonly GuidConverter _guidConverter;
+        private static readonly Regex CamelCaseRegex = new Regex("^[A-Z][a-z]+(?:[A-Z][a-z]+)*$", RegexOptions.Compiled);
         private readonly UnixDateTimeConverter _unixDateTimeConverter;
 
 
-        public MandrillJsonContractResolver(UnixDateTimeConverter unixDateTimeConverter, GuidConverter guidConverter)
+        public MandrillJsonContractResolver(UnixDateTimeConverter unixDateTimeConverter) : base(true)
         {
             _unixDateTimeConverter = unixDateTimeConverter;
-            _guidConverter = guidConverter;
         }
 
-        protected override string ResolvePropertyName(string propertyName)
+        protected static string ConvertCamelCasePropertyNamesToLowerCaseUnderscoreStyle(string propertyName)
         {
-            if (UnderscoreCamelCaseRegex.IsMatch(propertyName))
+            if (CamelCaseRegex.IsMatch(propertyName))
             {
-                return UnderscoreCamelCaseRegex.Replace(propertyName, "_$1")
-                    .TrimStart('_')
-                    .ToLowerInvariant();
+                return Regex.Replace(
+                    Regex.Replace(
+                        Regex.Replace(propertyName, @"([A-Z]+)([A-Z][a-z])", "$1_$2"), @"([a-z\d])([A-Z])",
+                        "$1_$2"), @"[-\s]", "_").ToLower();
+
             }
-            return propertyName.ToLowerInvariant();
+            return (propertyName).ToLower();
         }
+
 
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
@@ -84,10 +85,12 @@ namespace Mandrill.Serialization
                 jsonProperty.Converter = _unixDateTimeConverter;
             }
 
-            if (propertyType == typeof (Guid) || propertyType == typeof (Guid?))
+            //leave the keys of a dictionary alone, otherwise convert to lowercase underscore
+            if (!(typeof (IDictionary<string, string>).IsAssignableFrom(jsonProperty.DeclaringType)))
             {
-                jsonProperty.Converter = _guidConverter;
+                jsonProperty.PropertyName = ConvertCamelCasePropertyNamesToLowerCaseUnderscoreStyle(jsonProperty.PropertyName);
             }
+
             return jsonProperty;
         }
     }
