@@ -65,6 +65,7 @@
     <Compile Include="SerializationTests.cs" />
     <Compile Include="TemplateContent.cs" />
     <Compile Include="Templates.cs" />
+    <Compile Include="Users.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

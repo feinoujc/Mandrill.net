@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using FluentAssertions;
@@ -286,7 +287,7 @@ namespace Tests
             events.Should().NotBeNullOrEmpty();
             events.Should().HaveCount(14);
 
-            Console.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
+            Debug.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
         
         }
 

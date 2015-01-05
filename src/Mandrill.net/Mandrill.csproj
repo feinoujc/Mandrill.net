@@ -52,8 +52,10 @@
     <Compile Include="IMandrillMessagesApi.cs" />
     <Compile Include="IMandrillRejectsApi.cs" />
     <Compile Include="IMandrillTemplatesApi.cs" />
+    <Compile Include="IMandrillUsersApi.cs" />
     <Compile Include="MandrillApi.cs" />
     <Compile Include="MandrillMessagesApi.cs" />
+    <Compile Include="MandrillUsersApi.cs" />
     <Compile Include="Model\Messages\MandrillMessageAggregateStatisticsBase.cs" />
     <Compile Include="Model\Rejects\MandrillRejectAddResponse.cs" />
     <Compile Include="Model\Rejects\MandrillRejectDeleteResponse.cs" />
@@ -68,6 +70,9 @@
     <Compile Include="Model\Messages\MandrillMessageScheduleInfo.cs" />
     <Compile Include="Model\Messages\MandrillScheduleRequest.cs" />
     <Compile Include="Model\Messages\MandrillSendRawMessageRequest.cs" />
+    <Compile Include="Model\Users\MandrillStats.cs" />
+    <Compile Include="Model\Users\MandrillUserInfo.cs" />
+    <Compile Include="Model\Users\MandrillUserStats.cs" />
     <Compile Include="Model\WebHook\MandrillMessageEventInfo.cs" />
     <Compile Include="Model\Messages\MandrillMessageInfo.cs" />
     <Compile Include="Model\Messages\MandrillMessageInfoRequest.cs" />
@@ -105,6 +110,7 @@
     <Compile Include="Serialization\MandrillSerializer.cs" />
     <Compile Include="Serialization\UnixDateTimeConverter.cs" />
     <Compile Include="Serialization\UnixDateTimeHelper.cs" />
+    <Compile Include="Model\Users\MandrillUsersRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
