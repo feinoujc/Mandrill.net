@@ -1,4 +1,6 @@
 using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Mandrill.Model
 {
@@ -6,6 +8,7 @@ namespace Mandrill.Model
     {
         public string Address { get; set; }
 
+        [JsonConverter(typeof (IsoDateTimeConverter))]
         public DateTime CreatedAt { get; set; }
     }
 }

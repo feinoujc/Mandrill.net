@@ -30,6 +30,7 @@ namespace Mandrill
         private MandrillMessagesApi _messages;
         private MandrillRejectsApi _rejects;
         private MandrillTemplatesApi _templates;
+        private MandrillUsersApi _users;
 
         public MandrillApi(string apiKey) : this(apiKey, DefaultHttpClientFactory())
         {
@@ -60,6 +61,11 @@ namespace Mandrill
         public IMandrillRejectsApi Rejects
         {
             get { return _rejects ?? (_rejects = new MandrillRejectsApi(this)); }
+        }
+
+        public IMandrillUsersApi Users
+        {
+            get { return _users ?? (_users = new MandrillUsersApi(this)); }
         }
 
         internal async Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value)

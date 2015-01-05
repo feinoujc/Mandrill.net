@@ -1,4 +1,4 @@
-using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,23 +14,23 @@ namespace Mandrill.Http
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            Console.WriteLine("Request:");
-            Console.WriteLine(request.ToString());
+            Debug.WriteLine("Request:");
+            Debug.WriteLine(request.ToString());
             if (request.Content != null)
             {
-                Console.WriteLine(await request.Content.ReadAsStringAsync());
+                Debug.WriteLine(await request.Content.ReadAsStringAsync());
             }
-            Console.WriteLine();
+            Debug.WriteLine("");
 
             var response = await base.SendAsync(request, cancellationToken);
 
-            Console.WriteLine("Response:");
-            Console.WriteLine(response.ToString());
+            Debug.WriteLine("Response:");
+            Debug.WriteLine(response.ToString());
             if (response.Content != null)
             {
-                Console.WriteLine(await response.Content.ReadAsStringAsync());
+                Debug.WriteLine(await response.Content.ReadAsStringAsync());
             }
-            Console.WriteLine();
+            Debug.WriteLine("");
 
             return response;
         }
