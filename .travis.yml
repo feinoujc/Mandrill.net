@@ -5,4 +5,4 @@ install:
   - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory packages
 script:
   - xbuild /p:Configuration=Release Mandrill.net.sln
-  - mono ./packages/NUnit.Runners.2.6.4/tools/nunit-console.exe -noxml -nodots -labels ./tests/Tests/bin/Release/Tests.dll
+  - mono --runtime=v4.0 ./packages/NUnit.Runners.2.6.4/tools/nunit-console.exe -noxml -nodots -labels ./tests/Tests/bin/Release/Tests.dll

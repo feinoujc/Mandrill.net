@@ -409,6 +409,11 @@ namespace Tests
                         new MandrillMailAddress("test2@example.com", "Test2 User")
                     },
                 };
+
+                message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToShortDateString());
+                message.AddRcptMergeVars("test1@example.com", "INVOICEDETAILS", "invoice for test1@example.com");
+                message.AddRcptMergeVars("test2@example.com", "INVOICEDETAILS", "invoice for test2@example.com");
+
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
                 result.Should().HaveCount(2);
