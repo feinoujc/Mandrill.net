@@ -3,6 +3,8 @@ Mandrill.net
 
 Mandrill api wrapper for .net
 
+[![Build Status](https://travis-ci.org/feinoujc/Mandrill.net.svg?branch=master)](https://travis-ci.org/feinoujc/Mandrill.net)
+
 ## API Docs
 
 https://mandrillapp.com/api/docs/
