@@ -8,16 +8,16 @@ namespace Mandrill.Model
 {
     public class MandrillMessage
     {
-        private IList<MandrillAttachment> _attachments;
-        private IList<MandrillMergeVar> _globalMergeVars;
-        private IList<string> _googleAnalyticsDomains;
-        private IDictionary<string, string> _headers;
-        private IList<MandrillImage> _images;
-        private IList<MandrillRcptMergeVar> _mergeVars;
-        private IDictionary<string, string> _metadata;
-        private IList<MandrillRcptMetadata> _recipientMetadata;
-        private IList<string> _tags;
-        private IList<MandrillMailAddress> _to;
+        private List<MandrillAttachment> _attachments;
+        private List<MandrillMergeVar> _globalMergeVars;
+        private List<string> _googleAnalyticsDomains;
+        private Dictionary<string, string> _headers;
+        private List<MandrillImage> _images;
+        private List<MandrillRcptMergeVar> _mergeVars;
+        private Dictionary<string, string> _metadata;
+        private List<MandrillRcptMetadata> _recipientMetadata;
+        private List<string> _tags;
+        private List<MandrillMailAddress> _to;
 
         public MandrillMessage()
         {
@@ -60,13 +60,13 @@ namespace Mandrill.Model
 
         public string FromName { get; set; }
 
-        public IList<MandrillMailAddress> To
+        public List<MandrillMailAddress> To
         {
             get { return _to ?? (_to = new List<MandrillMailAddress>()); }
             set { _to = value; }
         }
 
-        public IDictionary<string, string> Headers
+        public Dictionary<string, string> Headers
         {
             get { return _headers ?? (_headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
             set { _headers = value; }
@@ -102,19 +102,19 @@ namespace Mandrill.Model
 
         public string MergeLanguage { get; set; }
 
-        public IList<MandrillMergeVar> GlobalMergeVars
+        public List<MandrillMergeVar> GlobalMergeVars
         {
             get { return _globalMergeVars ?? (_globalMergeVars = new List<MandrillMergeVar>()); }
             set { _globalMergeVars = value; }
         }
 
-        public IList<MandrillRcptMergeVar> MergeVars
+        public List<MandrillRcptMergeVar> MergeVars
         {
             get { return _mergeVars ?? (_mergeVars = new List<MandrillRcptMergeVar>()); }
             set { _mergeVars = value; }
         }
 
-        public IList<string> Tags
+        public List<string> Tags
         {
             get { return _tags ?? (_tags = new List<string>()); }
             set { _tags = value; }
@@ -122,7 +122,7 @@ namespace Mandrill.Model
 
         public string Subaccount { get; set; }
 
-        public IList<string> GoogleAnalyticsDomains
+        public List<string> GoogleAnalyticsDomains
         {
             get { return _googleAnalyticsDomains ?? (_googleAnalyticsDomains = new List<string>()); }
             set { _googleAnalyticsDomains = value; }
@@ -130,25 +130,25 @@ namespace Mandrill.Model
 
         public string GoogleAnalyticsCampaign { get; set; }
 
-        public IDictionary<string, string> Metadata
+        public Dictionary<string, string> Metadata
         {
             get { return _metadata ?? (_metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
             set { _metadata = value; }
         }
 
-        public IList<MandrillRcptMetadata> RecipientMetadata
+        public List<MandrillRcptMetadata> RecipientMetadata
         {
             get { return _recipientMetadata ?? (_recipientMetadata = new List<MandrillRcptMetadata>()); }
             set { _recipientMetadata = value; }
         }
 
-        public IList<MandrillAttachment> Attachments
+        public List<MandrillAttachment> Attachments
         {
             get { return _attachments ?? (_attachments = new List<MandrillAttachment>()); }
             set { _attachments = value; }
         }
 
-        public IList<MandrillImage> Images
+        public List<MandrillImage> Images
         {
             get { return _images ?? (_images = new List<MandrillImage>()); }
             set { _images = value; }

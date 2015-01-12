@@ -18,6 +18,6 @@ namespace Mandrill.Model
 
         public bool Publish { get; set; }
 
-        public IList<string> Labels { get; set; }
+        public List<string> Labels { get; set; }
     }
 }

@@ -92,6 +92,7 @@
     <Compile Include="Model\WebHook\MandrillEventLocation.cs" />
     <Compile Include="Model\WebHook\MandrillMessageEvent.cs" />
     <Compile Include="Model\WebHook\MandrillMessageEventType.cs" />
+    <Compile Include="Serialization\ListHelper.cs" />
     <Compile Include="Serialization\MandrillJsonContractResolver.cs" />
     <Compile Include="Model\Messages\MandrillMailAddress.cs" />
     <Compile Include="Model\Messages\MandrillAttachment.cs" />

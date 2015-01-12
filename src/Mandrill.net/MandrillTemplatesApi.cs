@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Mandrill.Model;
+using Mandrill.Serialization;
 
 namespace Mandrill
 {
@@ -26,7 +27,7 @@ namespace Mandrill
                 FromEmail = fromEmail,
                 FromName = fromName,
                 Subject = subject,
-                Labels = labels
+                Labels = labels.SafeToList()
             });
         }
 
@@ -42,7 +43,7 @@ namespace Mandrill
                 FromEmail = fromEmail,
                 FromName = fromName,
                 Subject = subject,
-                Labels = labels
+                Labels = labels.SafeToList()
             });
         }
 

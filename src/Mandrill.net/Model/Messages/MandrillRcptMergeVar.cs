@@ -4,11 +4,11 @@ namespace Mandrill.Model
 {
     public class MandrillRcptMergeVar
     {
-        private IList<MandrillMergeVar> _vars;
+        private List<MandrillMergeVar> _vars;
 
         public string Rcpt { get; set; }
 
-        public IList<MandrillMergeVar> Vars
+        public List<MandrillMergeVar> Vars
         {
             get { return _vars ?? (_vars = new List<MandrillMergeVar>()); }
             set { _vars = value; }

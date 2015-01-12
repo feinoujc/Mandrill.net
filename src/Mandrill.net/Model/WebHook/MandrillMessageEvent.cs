@@ -28,7 +28,7 @@ namespace Mandrill.Model
 
         public MandrillMessageEventInfo Msg { get; set; }
 
-        public static IList<MandrillMessageEvent> ParseMandrillEvents(string json)
+        public static List<MandrillMessageEvent> ParseMandrillEvents(string json)
         {
             using (var reader = new JsonTextReader(new StringReader(json)))
             {

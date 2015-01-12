@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
 using Mandrill.Model;
@@ -242,8 +243,8 @@ namespace Tests
                 {
                     FromEmail = "mandrill.net@example.com",
                     Subject = "test",
-                    Tags = new[] {"test-send", "mandrill-net"},
-                    To = new[]
+                    Tags = new List<string>() {"test-send", "mandrill-net"},
+                    To = new List<MandrillMailAddress>()
                     {
                         new MandrillMailAddress("test1@example.com"),
                         new MandrillMailAddress("test2@example.com", "A test")
@@ -275,8 +276,8 @@ namespace Tests
                 {
                     FromEmail = "mandrill.net@example.com",
                     Subject = "test",
-                    Tags = new[] {"test-send-invalid"},
-                    To = new[]
+                    Tags = new List<string>() {"test-send-invalid"},
+                    To = new List<MandrillMailAddress>()
                     {
                         new MandrillMailAddress("test1@example.com")
                     },
@@ -297,8 +298,8 @@ namespace Tests
                 {
                     FromEmail = "mandrill.net@example.com",
                     Subject = "test",
-                    Tags = new[] {"test-send", "mandrill-net"},
-                    To = new[]
+                    Tags = new List<string> {"test-send", "mandrill-net"},
+                    To = new List<MandrillMailAddress>()
                     {
                         new MandrillMailAddress("test1@example.com")
                     },
@@ -320,8 +321,8 @@ namespace Tests
                 {
                     FromEmail = "mandrill.net@example.com",
                     Subject = "test",
-                    Tags = new[] {"test-send", "mandrill-net"},
-                    To = new[]
+                    Tags = new List<string>() {"test-send", "mandrill-net"},
+                    To = new List<MandrillMailAddress>()
                     {
                         new MandrillMailAddress("test1@example.com")
                     },
@@ -402,8 +403,8 @@ namespace Tests
                 {
                     FromEmail = "mandrill.net@example.com",
                     Subject = "test",
-                    Tags = new[] {"test-send-template", "mandrill-net"},
-                    To = new[]
+                    Tags = new List<string>() {"test-send-template", "mandrill-net"},
+                    To = new List<MandrillMailAddress>()
                     {
                         new MandrillMailAddress("test1@example.com", "Test1 User"),
                         new MandrillMailAddress("test2@example.com", "Test2 User")

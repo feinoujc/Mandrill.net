@@ -10,11 +10,11 @@ namespace Mandrill.Model
 
         public string DateTo { get; set; }
 
-        public IList<string> Tags { get; set; }
+        public List<string> Tags { get; set; }
 
-        public IList<string> Senders { get; set; }
+        public List<string> Senders { get; set; }
 
-        public IList<string> ApiKeys { get; set; }
+        public List<string> ApiKeys { get; set; }
 
         public int? Limit { get; set; }
     }

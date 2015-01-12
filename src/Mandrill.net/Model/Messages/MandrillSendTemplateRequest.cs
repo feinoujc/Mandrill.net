@@ -5,13 +5,13 @@ namespace Mandrill.Model
 {
     class MandrillSendTemplateRequest:MandrillSendMessageRequest
     {
-        private IList<MandrillTemplateContent> _templateContent;
+        private List<MandrillTemplateContent> _templateContent;
 
         [Required]
         public string TemplateName { get; set; }
 
         [Required]
-        public IList<MandrillTemplateContent> TemplateContent
+        public List<MandrillTemplateContent> TemplateContent
         {
             get { return _templateContent ?? (_templateContent = new List<MandrillTemplateContent>()); }
             set { _templateContent = value; }

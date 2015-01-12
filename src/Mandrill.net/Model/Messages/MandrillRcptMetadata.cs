@@ -5,11 +5,11 @@ namespace Mandrill.Model
 {
     public class MandrillRcptMetadata
     {
-        private IDictionary<string, string> _values;
+        private Dictionary<string, string> _values;
 
         public string Rcpt { get; set; }
 
-        public IDictionary<string, string> Values
+        public Dictionary<string, string> Values
         {
             get { return _values ?? (_values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
             set { _values = value; }

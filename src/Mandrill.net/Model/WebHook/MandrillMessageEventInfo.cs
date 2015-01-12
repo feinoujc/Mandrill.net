@@ -6,11 +6,11 @@ namespace Mandrill.Model
 {
     public class MandrillMessageEventInfo
     {
-        private IList<MandrillClicksDetail> _clicks;
-        private IDictionary<string, string> _metadata;
-        private IList<MandrillOpensDetail> _opens;
-        private IList<MandrillSmtpEvent> _smtpEvents;
-        private IList<string> _tags;
+        private List<MandrillClicksDetail> _clicks;
+        private Dictionary<string, string> _metadata;
+        private List<MandrillOpensDetail> _opens;
+        private List<MandrillSmtpEvent> _smtpEvents;
+        private List<string> _tags;
         public DateTime Ts { get; set; }
 
         [JsonProperty("_id")]
@@ -27,19 +27,19 @@ namespace Mandrill.Model
 
         public string Email { get; set; }
 
-        public IList<string> Tags
+        public List<string> Tags
         {
             get { return _tags ?? (_tags = new List<string>()); }
             set { _tags = value; }
         }
 
-        public IList<MandrillOpensDetail> Opens
+        public List<MandrillOpensDetail> Opens
         {
             get { return _opens ?? (_opens = new List<MandrillOpensDetail>()); }
             set { _opens = value; }
         }
 
-        public IList<MandrillClicksDetail> Clicks
+        public List<MandrillClicksDetail> Clicks
         {
             get { return _clicks ?? (_clicks = new List<MandrillClicksDetail>()); }
             set { _clicks = value; }
@@ -47,13 +47,13 @@ namespace Mandrill.Model
 
         public MandrillMessageState State { get; set; }
 
-        public IDictionary<string, string> Metadata
+        public Dictionary<string, string> Metadata
         {
             get { return _metadata ?? (_metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
             set { _metadata = value; }
         }
 
-        public IList<MandrillSmtpEvent> SmtpEvents
+        public List<MandrillSmtpEvent> SmtpEvents
         {
             get { return _smtpEvents ?? (_smtpEvents = new List<MandrillSmtpEvent>()); }
             set { _smtpEvents = value; }

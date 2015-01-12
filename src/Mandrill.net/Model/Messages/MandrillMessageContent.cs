@@ -6,9 +6,9 @@ namespace Mandrill.Model
 {
     public class MandrillMessageContent
     {
-        private IList<string> _tags;
-        private IDictionary<string, string> _headers;
-        private IList<MandrillAttachment> _attachments;
+        private List<string> _tags;
+        private Dictionary<string, string> _headers;
+        private List<MandrillAttachment> _attachments;
 
         public DateTime Ts { get; set; }
 
@@ -23,13 +23,13 @@ namespace Mandrill.Model
 
         public MandrillMailAddress To { get; set; }
 
-        public IList<string> Tags
+        public List<string> Tags
         {
             get { return _tags ?? (_tags = new List<string>()); }
             set { _tags = value; }
         }
 
-        public IDictionary<string, string> Headers
+        public Dictionary<string, string> Headers
         {
             get { return _headers ?? (_headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
             set { _headers = value; }
@@ -39,7 +39,7 @@ namespace Mandrill.Model
 
         public string Html { get; set; }
 
-        public IList<MandrillAttachment> Attachments
+        public List<MandrillAttachment> Attachments
         {
             get { return _attachments ?? (_attachments = new List<MandrillAttachment>()); }
             set { _attachments = value; }

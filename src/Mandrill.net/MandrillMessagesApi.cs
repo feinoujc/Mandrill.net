@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Mandrill.Model;
+using Mandrill.Serialization;
 
 namespace Mandrill
 {
@@ -51,7 +52,7 @@ namespace Mandrill
                 {
                     Message = message,
                     TemplateName = templateName,
-                    TemplateContent = templateContent,
+                    TemplateContent = templateContent.SafeToList(),
                     Async = async,
                     IpPool = ipPool,
                     SendAt = sendAtUtc != null ? sendAtUtc.Value.ToString(SendAtDateFormat) : null
@@ -68,7 +69,7 @@ namespace Mandrill
                     RawMessage = rawMessage,
                     FromEmail = fromEmail,
                     FromName = fromName,
-                    To = to,
+                    To = to.SafeToList(),
                     Async = async,
                     IpPool = ipPool,
                     SendAt = sendAtUtc != null ? sendAtUtc.Value.ToString(SendAtDateFormat) : null,
@@ -86,9 +87,9 @@ namespace Mandrill
                     DateFrom = dateFrom != null ? dateFrom.Value.ToString(SearchDateFormat) : null,
                     DateTo = dateTo != null ? dateTo.Value.ToString(SearchDateFormat) : null,
                     Query = query,
-                    Tags = tags,
-                    Senders = senders,
-                    ApiKeys = apiKeys,
+                    Tags = tags.SafeToList(),
+                    Senders = senders.SafeToList(),
+                    ApiKeys = apiKeys.SafeToList(),
                     Limit = limit
                 });
         }
@@ -103,8 +104,8 @@ namespace Mandrill
                     DateFrom = dateFrom != null ? dateFrom.Value.ToString(SearchDateFormat) : null,
                     DateTo = dateTo != null ? dateTo.Value.ToString(SearchDateFormat) : null,
                     Query = query,
-                    Tags = tags,
-                    Senders = senders
+                    Tags = tags.SafeToList(),
+                    Senders = senders.SafeToList()
                 });
         }
 
