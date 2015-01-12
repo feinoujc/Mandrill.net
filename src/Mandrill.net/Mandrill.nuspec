@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>Mandrill.net</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>feinoujc</authors>
+    <owners>feinoujc</owners>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>https://github.com/feinoujc/Mandrill.net</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>.NET wrapper for the Mandrill API</description>
+    <tags>Mandrill, MailChimp, Email</tags>
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="[6,)"/>
+    </dependencies>
+  </metadata>
+</package>
