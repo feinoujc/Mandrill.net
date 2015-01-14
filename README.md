@@ -11,6 +11,10 @@ https://mandrillapp.com/api/docs/
 
 ## Getting Started
 
+```ps
+Install-Package Mandrill.net
+```
+
 ### Send a new transactional message through Mandrill
 
 ```cs
