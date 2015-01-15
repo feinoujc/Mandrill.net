@@ -424,5 +424,106 @@ namespace Tests
                 result[1].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
             }
         }
+
+        [Category("messages/send_template.json"), Category("handlebars")]
+        internal class SendTemplate_Handlebars : Messages
+        {
+            protected string TestTemplateName;
+
+            [TestFixtureSetUp]
+            public override void SetUp()
+            {
+                base.SetUp();
+                TestTemplateName = Guid.NewGuid().ToString();
+                var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.HandleBarCode, null, true).Result;
+                result.Should().NotBeNull();
+            }
+
+            [TestFixtureTearDown]
+            public override void TearDown()
+            {
+                var result = Api.Templates.DeleteAsync(TestTemplateName).Result;
+                result.Should().NotBeNull();
+                base.TearDown();
+            }
+
+            [Test]
+            public async void Can_send_template()
+            {
+                var message = new MandrillMessage
+                {
+                    FromEmail = "mandrill.net@example.com",
+                    Subject = "test",
+                    Tags = new List<string>() { "test-send-template", "mandrill-net" },
+                    MergeLanguage = MandrillMessageMergeLanguage.Handlebars,
+                    To = new List<MandrillMailAddress>()
+                    {
+                        new MandrillMailAddress("test1@example.com", "Test1 User"),
+                        new MandrillMailAddress("test2@example.com", "Test2 User")
+                    },
+                };
+
+
+                var data1 = new[]
+                {
+                    new Dictionary<string, string>
+                    {
+                        {"sku", "APL43"},
+                        {"name", "apples"},
+                        {"description", "Granny Smith Apples"},
+                        {"price", "$0.20"},
+                        {"qty", "8"},
+                        {"ordPrice", "$1.60"},
+
+                    },
+                    new Dictionary<string, string>
+                    {
+                        {"sku", "ORA44"},
+                        {"name", "Oranges"},
+                        {"description", "Blood Oranges"},
+                        {"price", "$0.30"},
+                        {"qty", "3"},
+                        {"ordPrice", "$0.93"},
+
+                    }
+                };
+
+                var data2 = new[]
+                {
+                    new Dictionary<string, string>
+                    {
+                        {"sku", "APL54"},
+                        {"name", "apples"},
+                        {"description", "Red Delicious Apples"},
+                        {"price", "$0.22"},
+                        {"qty", "9"},
+                        {"ordPrice", "$1.98"},
+
+                    },
+                    new Dictionary<string, string>
+                    {
+                        {"sku", "ORA53"},
+                        {"name", "Oranges"},
+                        {"description", "Sunkist Oranges"},
+                        {"price", "$0.20"},
+                        {"qty", "1"},
+                        {"ordPrice", "$0.20"},
+
+                    }
+                };
+
+                message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToShortDateString());
+                message.AddRcptMergeVars("test1@example.com", "PRODUCTS", data1);
+                message.AddRcptMergeVars("test2@example.com", "PRODUCTS",  data2);
+
+                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
+
+                result.Should().HaveCount(2);
+                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+                result[0].Id.Should().NotBeEmpty();
+                result[1].Id.Should().NotBeEmpty();
+                result[1].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+            }
+        }
     }
 }

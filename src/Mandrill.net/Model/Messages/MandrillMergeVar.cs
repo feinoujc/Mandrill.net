@@ -4,6 +4,6 @@ namespace Mandrill.Model
     {
         public string Name { get; set; }
 
-        public string Content { get; set; }
+        public MandrillMergeVarContent Content { get; set; }
     }
 }

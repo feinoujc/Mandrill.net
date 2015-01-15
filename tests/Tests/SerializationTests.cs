@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using FluentAssertions;
 using Mandrill.Model;
@@ -20,12 +21,66 @@ namespace Tests
         public void Can_serialize_dates_as_unix_ts_by_default()
         {
             var date = DateTime.UtcNow;
-            var expected = date.ToUnixTime();
+            var expected = ToUnixTime(date);
             var model = new TestModel {Ts = date};
 
             var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
             json["ts"].Value<long>().Should().Be(expected);
+        }
+
+        [Test]
+        public void Can_serialize_content_as_string()
+        {
+            var message = new MandrillMessage();
+
+            message.GlobalMergeVars.Add(new MandrillMergeVar()
+            {
+                Name = "test",
+                Content = "some content"
+            });
+
+            var json = JObject.FromObject(message, MandrillSerializer.Instance);
+            Console.WriteLine(json.ToString());
+            json["global_merge_vars"].Should().NotBeEmpty();
+            json["global_merge_vars"].First["content"].Value<string>().Should().Be("some content");
+        }
+
+        [Test]
+        public void Can_serialize_content_as_complex_associative_array()
+        {
+            var message = new MandrillMessage();
+
+            var data = new[]
+            {
+                new Dictionary<string, string>
+                {
+                    {"sku", "apples"},
+                    {"unit_price", "$0.20"},
+                },
+                new Dictionary<string, string>
+                {
+                    {"sku", "oranges"},
+                    {"unit_price", "$0.40"},
+                }
+            };
+
+            message.GlobalMergeVars.Add(new MandrillMergeVar()
+            {
+                Name = "test",
+                Content = data.ToList()
+            });
+
+            var json = JObject.FromObject(message, MandrillSerializer.Instance);
+            Console.WriteLine(json.ToString());
+            json["global_merge_vars"].Should().NotBeEmpty();
+            var result = json["global_merge_vars"].First["content"]
+                .ToObject<List<Dictionary<string, string>>>(MandrillSerializer.Instance);
+
+            result[0]["sku"].Should().Be("apples");
+            result[0]["unit_price"].Should().Be("$0.20");
+            result[1]["sku"].Should().Be("oranges");
+            result[1]["unit_price"].Should().Be("$0.40");
         }
 
         [Test]
@@ -111,13 +166,12 @@ namespace Tests
         [Test]
         public void Enums_camel_case()
         {
-            var model = new [] {new TestModel{Enum = TestEnum.Reject}, new TestModel{Enum = TestEnum.SoftBounce}};
+            var model = new[] {new TestModel {Enum = TestEnum.Reject}, new TestModel {Enum = TestEnum.SoftBounce}};
 
             var json = JArray.FromObject(model, MandrillSerializer.Instance);
 
             json[0]["enum"].Value<string>().Should().Be("reject");
             json[1]["enum"].Value<string>().Should().Be("soft_bounce");
-
         }
 
 
@@ -252,10 +306,10 @@ namespace Tests
             message.Important.Should().BeFalse();
             message.BccAddress.Should().Be("message.bcc_address@example.com");
             message.Merge.Should().BeTrue();
-            message.MergeLanguage.Should().Be("mailchimp");
+            message.MergeLanguage.Should().Be(MandrillMessageMergeLanguage.Mailchimp);
             message.GlobalMergeVars.Should().HaveCount(1);
             message.GlobalMergeVars[0].Name.Should().Be("merge1");
-            message.GlobalMergeVars[0].Content.Should().Be("merge1 content");
+            message.GlobalMergeVars[0].Content.Should().Be((MandrillMergeVarContent) "merge1 content");
             message.RecipientMetadata.Should().HaveCount(1);
             message.RecipientMetadata[0].Rcpt.Should().Be("recipient.email@example.com");
             message.RecipientMetadata[0].Values.Should().HaveCount(1);
@@ -288,7 +342,6 @@ namespace Tests
             events.Should().HaveCount(14);
 
             Debug.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
-        
         }
 
 
@@ -315,17 +368,41 @@ namespace Tests
             public TestEnum Enum { get; set; }
         }
 
-        enum TestEnum
+        private enum TestEnum
         {
             Reject,
-            [EnumMember(Value="soft_bounce")]
-            SoftBounce
+            [EnumMember(Value = "soft_bounce")] SoftBounce
         }
 
         private class TestSubModel
         {
             public string Name { get; set; }
             public string Value { get; set; }
+        }
+
+        /// <summary>
+        ///     Convert a long into a DateTime
+        /// </summary>
+        static DateTime FromUnixTime(Int64 self)
+        {
+            var ret = new DateTime(1970, 1, 1);
+            return ret.AddSeconds(self);
+        }
+
+
+        /// <summary>
+        ///     Convert a DateTime into a long
+        /// </summary>
+        static Int64 ToUnixTime(DateTime self)
+        {
+            if (self == DateTime.MinValue)
+            {
+                return 0;
+            }
+
+            var epoc = new DateTime(1970, 1, 1);
+            var delta = self - epoc;
+            return (long)delta.TotalSeconds;
         }
     }
 }

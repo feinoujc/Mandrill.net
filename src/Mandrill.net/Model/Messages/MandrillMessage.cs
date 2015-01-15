@@ -100,7 +100,7 @@ namespace Mandrill.Model
 
         public bool? Merge { get; set; }
 
-        public string MergeLanguage { get; set; }
+        public MandrillMessageMergeLanguage? MergeLanguage { get; set; }
 
         public List<MandrillMergeVar> GlobalMergeVars
         {
@@ -186,7 +186,12 @@ namespace Mandrill.Model
 
         public void AddGlobalMergeVars(string name, string content)
         {
-            GlobalMergeVars.Add(new MandrillMergeVar {Name = name, Content = content});
+            GlobalMergeVars.Add(new MandrillMergeVar {Name = name, Content = new MandrillMergeVarContent(content)});
+        }
+
+        public void AddGlobalMergeVars(string name, IEnumerable<Dictionary<string, string>> content)
+        {
+            GlobalMergeVars.Add(new MandrillMergeVar { Name = name, Content = new MandrillMergeVarContent(content.ToList()) });
         }
 
         public void AddRcptMergeVars(string rcptEmail, string name, string content)
@@ -196,8 +201,19 @@ namespace Mandrill.Model
             {
                 MergeVars.Add(mergeVar = new MandrillRcptMergeVar {Rcpt = rcptEmail});
             }
-            mergeVar.Vars.Add(new MandrillMergeVar {Name = name, Content = content});
+            mergeVar.Vars.Add(new MandrillMergeVar {Name = name, Content = new MandrillMergeVarContent(content)});
         }
+
+        public void AddRcptMergeVars(string rcptEmail, string name, IEnumerable<Dictionary<string, string>> content)
+        {
+            var mergeVar = MergeVars.FirstOrDefault(x => x.Rcpt == rcptEmail);
+            if (mergeVar == null)
+            {
+                MergeVars.Add(mergeVar = new MandrillRcptMergeVar { Rcpt = rcptEmail });
+            }
+            mergeVar.Vars.Add(new MandrillMergeVar { Name = name, Content = new MandrillMergeVarContent(content.ToList()) });
+        }
+
 
         public void AddMetadata(string key, string value)
         {

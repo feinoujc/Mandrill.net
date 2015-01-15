@@ -50,7 +50,9 @@
     <Compile Include="MandrillApi.cs" />
     <Compile Include="MandrillMessagesApi.cs" />
     <Compile Include="MandrillUsersApi.cs" />
+    <Compile Include="Model\Messages\MandrillMergeVarContent.cs" />
     <Compile Include="Model\Messages\MandrillMessageAggregateStatisticsBase.cs" />
+    <Compile Include="Model\Messages\MandrillMessageMergeLanguage.cs" />
     <Compile Include="Model\Rejects\MandrillRejectAddResponse.cs" />
     <Compile Include="Model\Rejects\MandrillRejectDeleteResponse.cs" />
     <Compile Include="Model\Rejects\MandrillRejectInfo.cs" />
@@ -102,6 +104,7 @@
     <Compile Include="Model\Messages\MandrillRcptMergeVar.cs" />
     <Compile Include="Model\Messages\MandrillRcptMetadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serialization\MandrillMergeVarContentConverter.cs" />
     <Compile Include="Serialization\MandrillSerializer.cs" />
     <Compile Include="Serialization\UnixDateTimeConverter.cs" />
     <Compile Include="Serialization\UnixDateTimeHelper.cs" />

@@ -38,18 +38,6 @@ namespace Mandrill.Http
             return client.PostAsync(requestUri, GetJsonHttpContent(value), c);
         }
 
-        public static Task<HttpResponseMessage> PutAsJsonAsync<T>(this HttpClient client, string requestUri, T value,
-            CancellationToken c = default(CancellationToken))
-        {
-            return client.PutAsync(requestUri, GetJsonHttpContent(value), c);
-        }
-
-        public static Task<HttpResponseMessage> PutAsJsonAsync<T>(this HttpClient client, Uri requestUri, T value,
-            CancellationToken c = default(CancellationToken))
-        {
-            return client.PutAsync(requestUri, GetJsonHttpContent(value), c);
-        }
-
         private static HttpContent GetJsonHttpContent(object value)
         {
             var token = JToken.FromObject(value, MandrillSerializer.Instance);
