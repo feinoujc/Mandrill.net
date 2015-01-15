@@ -51,6 +51,9 @@ message.AddRcptMergeVars("recipient@example.com", "invoice_details", new[]
 
     }
 });
+
+var result = await api.Messages.SendTemplateAsync(message, "customer-invoice");
+
 ```
 
 ### Processing a web hook batch
