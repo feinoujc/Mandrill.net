@@ -29,11 +29,28 @@ var result = await api.Messages.SendAsync(message);
 ### Send a new transactional message through Mandrill using a template
 ```cs
 var api = new MandrillApi("YOUR_API_KEY_GOES_HERE");
-var message = new MandrillMessage("from@example.com", "to@example.com");
-message.AddGlobalMergeVars("INVOICE_DETAILS", "This is an invoice...");
-var templateContent = new List<MandrillTemplateContent>();
-templateContent.Add(new MandrillTemplateContent() {Name = "footer", Content = "<footer>Invoice footer</footer>"});
-var result = await api.Messages.SendTemplateAsync(message, "account-invoice", templateContent);
+var message = new MandrillMessage();
+message.AddTo("recipient@example.com");
+message.ReplyTo = "customerservice@acme.com";
+//supports merge var content as string
+message.AddGlobalMergeVars("invoice_date", DateTime.Now.ToShortDateString());
+//or as objects (handlebar templates only)
+message.AddRcptMergeVars("recipient@example.com", "invoice_details", new[]
+{
+    new Dictionary<string, string>
+    {
+        {"sku", "apples"},
+        {"qty", "4"},
+        {"price", "0.40"}
+    },
+    new Dictionary<string, string>
+    {
+        {"sku", "oranges"},
+        {"qty", "6"},
+        {"price", "0.30"}
+
+    }
+});
 ```
 
 ### Processing a web hook batch
