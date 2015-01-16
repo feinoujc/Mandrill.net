@@ -30,6 +30,7 @@ var result = await api.Messages.SendAsync(message);
 ```cs
 var api = new MandrillApi("YOUR_API_KEY_GOES_HERE");
 var message = new MandrillMessage();
+message.FromEmail = "no-reply@acme.com";
 message.AddTo("recipient@example.com");
 message.ReplyTo = "customerservice@acme.com";
 //supports merge var content as string
