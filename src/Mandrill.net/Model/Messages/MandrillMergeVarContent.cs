@@ -14,14 +14,14 @@ namespace Mandrill.Model
             ValueAsString = value;
         }
 
-        public MandrillMergeVarContent(List<Dictionary<string, string>> value)
+        public MandrillMergeVarContent(List<Dictionary<string, object>> value)
         {
             ValueAsArray = value;
         }
 
         public string ValueAsString { get; set; }
 
-        public List<Dictionary<string, string>> ValueAsArray { get; set; }
+        public List<Dictionary<string, object>> ValueAsArray { get; set; }
 
         public bool Equals(MandrillMergeVarContent other)
         {
@@ -43,7 +43,7 @@ namespace Mandrill.Model
             return new MandrillMergeVarContent(value);
         }
 
-        public static implicit operator MandrillMergeVarContent(List<Dictionary<string, string>> value)
+        public static implicit operator MandrillMergeVarContent(List<Dictionary<string, object>> value)
         {
             return new MandrillMergeVarContent(value);
         }

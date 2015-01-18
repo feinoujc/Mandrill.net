@@ -79,13 +79,37 @@ namespace Mandrill.Serialization
                 }
             }
 
+            if (typeof(IDictionary<string, object>).IsAssignableFrom(propertyType))
+            {
+                if (member.GetCustomAttribute<RequiredAttribute>() == null)
+                {
+                    var prop = jsonProperty.DeclaringType.GetProperty(member.Name);
+
+                    jsonProperty.ShouldSerialize = instance =>
+                    {
+                        var dictionary = prop.GetValue(instance) as IDictionary<string, object>;
+                        if (dictionary != null)
+                        {
+                            return dictionary.Count > 0;
+                        }
+                        return false;
+                    };
+                }
+            }
+
             //leave the keys of a dictionary alone, otherwise convert to lowercase underscore
-            if (!(typeof (IDictionary<string, string>).IsAssignableFrom(jsonProperty.DeclaringType)))
+            if (!PropertyIsInDictionary(jsonProperty))
             {
                 jsonProperty.PropertyName = ConvertCamelCasePropertyNamesToLowerCaseUnderscoreStyle(jsonProperty.PropertyName);
             }
 
             return jsonProperty;
+        }
+
+        private static bool PropertyIsInDictionary(JsonProperty jsonProperty)
+        {
+            return typeof (IDictionary<string, string>).IsAssignableFrom(jsonProperty.DeclaringType) 
+                || typeof (IDictionary<string, object>).IsAssignableFrom(jsonProperty.DeclaringType);
         }
     }
 }

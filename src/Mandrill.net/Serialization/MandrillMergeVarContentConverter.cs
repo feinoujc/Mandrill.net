@@ -47,7 +47,7 @@ namespace Mandrill.Serialization
             if (reader.TokenType == JsonToken.StartArray)
             {
                 var jArray = JArray.Load(reader);
-                return new MandrillMergeVarContent(jArray.ToObject<List<Dictionary<string, string>>>(serializer));
+                return new MandrillMergeVarContent(jArray.ToObject<List<Dictionary<string, object>>>(serializer));
             }
 
             throw new JsonSerializationException("Unexpected tokenType " + reader.TokenType);

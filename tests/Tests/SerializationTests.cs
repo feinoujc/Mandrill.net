@@ -53,15 +53,15 @@ namespace Tests
 
             var data = new[]
             {
-                new Dictionary<string, string>
+                new Dictionary<string, object>
                 {
                     {"sku", "apples"},
-                    {"unit_price", "$0.20"},
+                    {"unit_price", 0.20},
                 },
-                new Dictionary<string, string>
+                new Dictionary<string, object>
                 {
                     {"sku", "oranges"},
-                    {"unit_price", "$0.40"},
+                    {"unit_price", 0.40},
                 }
             };
 
@@ -75,12 +75,12 @@ namespace Tests
             Console.WriteLine(json.ToString());
             json["global_merge_vars"].Should().NotBeEmpty();
             var result = json["global_merge_vars"].First["content"]
-                .ToObject<List<Dictionary<string, string>>>(MandrillSerializer.Instance);
+                .ToObject<List<Dictionary<string, object>>>(MandrillSerializer.Instance);
 
             result[0]["sku"].Should().Be("apples");
-            result[0]["unit_price"].Should().Be("$0.20");
+            result[0]["unit_price"].Should().Be(0.20);
             result[1]["sku"].Should().Be("oranges");
-            result[1]["unit_price"].Should().Be("$0.40");
+            result[1]["unit_price"].Should().Be(0.40);
         }
 
         [Test]

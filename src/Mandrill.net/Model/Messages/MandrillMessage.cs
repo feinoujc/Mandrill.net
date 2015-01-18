@@ -189,10 +189,17 @@ namespace Mandrill.Model
             GlobalMergeVars.Add(new MandrillMergeVar {Name = name, Content = new MandrillMergeVarContent(content)});
         }
 
+        [Obsolete("Use overload with IEnumerable<Dictionary<string, object>> type")]
         public void AddGlobalMergeVars(string name, IEnumerable<Dictionary<string, string>> content)
         {
-            GlobalMergeVars.Add(new MandrillMergeVar { Name = name, Content = new MandrillMergeVarContent(content.ToList()) });
+            AddGlobalMergeVars(name, content.Select(v => v.ToDictionary(x => x.Key, x => (object) x.Value)));
         }
+
+        public void AddGlobalMergeVars(string name, IEnumerable<Dictionary<string, object>> content)
+        {
+            GlobalMergeVars.Add(new MandrillMergeVar {Name = name, Content = new MandrillMergeVarContent(content.ToList())});
+        }
+
 
         public void AddRcptMergeVars(string rcptEmail, string name, string content)
         {
@@ -204,14 +211,20 @@ namespace Mandrill.Model
             mergeVar.Vars.Add(new MandrillMergeVar {Name = name, Content = new MandrillMergeVarContent(content)});
         }
 
+        [Obsolete("Use overload with IEnumerable<Dictionary<string, object>> type")]
         public void AddRcptMergeVars(string rcptEmail, string name, IEnumerable<Dictionary<string, string>> content)
+        {
+            AddRcptMergeVars(rcptEmail, name, content.Select(v => v.ToDictionary(x => x.Key, x => (object) x.Value)));
+        }
+
+        public void AddRcptMergeVars(string rcptEmail, string name, IEnumerable<Dictionary<string, object>> content)
         {
             var mergeVar = MergeVars.FirstOrDefault(x => x.Rcpt == rcptEmail);
             if (mergeVar == null)
             {
-                MergeVars.Add(mergeVar = new MandrillRcptMergeVar { Rcpt = rcptEmail });
+                MergeVars.Add(mergeVar = new MandrillRcptMergeVar {Rcpt = rcptEmail});
             }
-            mergeVar.Vars.Add(new MandrillMergeVar { Name = name, Content = new MandrillMergeVarContent(content.ToList()) });
+            mergeVar.Vars.Add(new MandrillMergeVar {Name = name, Content = new MandrillMergeVarContent(content.ToList())});
         }
 
 

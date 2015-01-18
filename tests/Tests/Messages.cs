@@ -454,7 +454,7 @@ namespace Tests
                 {
                     FromEmail = "mandrill.net@example.com",
                     Subject = "test",
-                    Tags = new List<string>() { "test-send-template", "mandrill-net" },
+                    Tags = new List<string>() { "test-send-template", "mandrill-net", "handlebars" },
                     MergeLanguage = MandrillMessageMergeLanguage.Handlebars,
                     To = new List<MandrillMailAddress>()
                     {
@@ -466,48 +466,48 @@ namespace Tests
 
                 var data1 = new[]
                 {
-                    new Dictionary<string, string>
+                    new Dictionary<string, object>
                     {
                         {"sku", "APL43"},
                         {"name", "apples"},
                         {"description", "Granny Smith Apples"},
-                        {"price", "$0.20"},
-                        {"qty", "8"},
-                        {"ordPrice", "$1.60"},
+                        {"price", 0.20},
+                        {"qty", 8},
+                        {"ordPrice", 1.60},
 
                     },
-                    new Dictionary<string, string>
+                    new Dictionary<string, object>
                     {
                         {"sku", "ORA44"},
                         {"name", "Oranges"},
                         {"description", "Blood Oranges"},
-                        {"price", "$0.30"},
-                        {"qty", "3"},
-                        {"ordPrice", "$0.93"},
+                        {"price", 0.30},
+                        {"qty", 3},
+                        {"ordPrice", 0.93},
 
                     }
                 };
 
                 var data2 = new[]
                 {
-                    new Dictionary<string, string>
+                    new Dictionary<string, object>
                     {
                         {"sku", "APL54"},
                         {"name", "apples"},
                         {"description", "Red Delicious Apples"},
-                        {"price", "$0.22"},
-                        {"qty", "9"},
-                        {"ordPrice", "$1.98"},
+                        {"price", 0.22},
+                        {"qty", 9},
+                        {"ordPrice", 1.98},
 
                     },
-                    new Dictionary<string, string>
+                    new Dictionary<string, object>
                     {
                         {"sku", "ORA53"},
                         {"name", "Oranges"},
                         {"description", "Sunkist Oranges"},
-                        {"price", "$0.20"},
-                        {"qty", "1"},
-                        {"ordPrice", "$0.20"},
+                        {"price", 0.20},
+                        {"qty", 1},
+                        {"ordPrice", 0.20},
 
                     }
                 };
