@@ -332,7 +332,7 @@ namespace Tests
         }
 
         [Test]
-        public void Can_serialize_web_hook()
+        public void Can_serialize_message_web_hook()
         {
             string json = Properties.Resources.mandrill_webhook_example_json;
 
@@ -342,6 +342,26 @@ namespace Tests
             events.Should().HaveCount(14);
 
             Debug.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
+        }
+
+        [Test]
+        public void Can_serialize_inbound_web_hook()
+        {
+            string json = Properties.Resources.mandrill_inbound;
+
+            var events = MandrillInboundEvent.ParseMandrillEvents(json);
+
+            events.Should().NotBeNullOrEmpty();
+            events.Should().HaveCount(2);
+
+            events[0].Msg.Headers.Should().NotBeEmpty();
+            events[0].Msg.Headers["Content-Type"].Should()
+                .Be("multipart/alternative; boundary=\"_av-7r7zDhHxVEAo2yMWasfuFw\"");
+
+            events[0].Msg.To[0][0].Should().Be("test@inbound.example.com");
+
+            Debug.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
+
         }
 
 

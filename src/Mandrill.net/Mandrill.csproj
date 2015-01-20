@@ -69,6 +69,13 @@
     <Compile Include="Model\Users\MandrillStats.cs" />
     <Compile Include="Model\Users\MandrillUserInfo.cs" />
     <Compile Include="Model\Users\MandrillUserStats.cs" />
+    <Compile Include="Model\WebHook\MandrillDkimInfo.cs" />
+    <Compile Include="Model\WebHook\MandrillInboundEvent.cs" />
+    <Compile Include="Model\WebHook\MandrillInboundEventType.cs" />
+    <Compile Include="Model\WebHook\MandrillInboundMatchedRule.cs" />
+    <Compile Include="Model\WebHook\MandrillInboundMessageInfo.cs" />
+    <Compile Include="Model\WebHook\MandrillInboundSpamReport.cs" />
+    <Compile Include="Model\WebHook\MandrillInboundSpfInfo.cs" />
     <Compile Include="Model\WebHook\MandrillMessageEventInfo.cs" />
     <Compile Include="Model\Messages\MandrillMessageInfo.cs" />
     <Compile Include="Model\Messages\MandrillMessageInfoRequest.cs" />
