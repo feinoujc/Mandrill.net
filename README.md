@@ -38,16 +38,16 @@ message.AddGlobalMergeVars("invoice_date", DateTime.Now.ToShortDateString());
 //or as objects (handlebar templates only)
 message.AddRcptMergeVars("recipient@example.com", "invoice_details", new[]
 {
-    new Dictionary<string, string>
+    new Dictionary<string, object>
     {
         {"sku", "apples"},
-        {"qty", "4"},
+        {"qty", 4},
         {"price", "0.40"}
     },
-    new Dictionary<string, string>
+    new Dictionary<string, object>
     {
         {"sku", "oranges"},
-        {"qty", "6"},
+        {"qty", 6},
         {"price", "0.30"}
 
     }
