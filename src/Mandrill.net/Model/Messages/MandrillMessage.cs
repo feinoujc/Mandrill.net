@@ -192,12 +192,26 @@ namespace Mandrill.Model
         [Obsolete("Use overload with IEnumerable<Dictionary<string, object>> type")]
         public void AddGlobalMergeVars(string name, IEnumerable<Dictionary<string, string>> content)
         {
-            AddGlobalMergeVars(name, content.Select(v => v.ToDictionary(x => x.Key, x => (object) x.Value)));
+            AddGlobalMergeVars(name, content.Select(dictionary => 
+                dictionary.ToDictionary(pair => pair.Key, pair => (object) pair.Value)));
         }
 
-        public void AddGlobalMergeVars(string name, IEnumerable<Dictionary<string, object>> content)
+        public void AddGlobalMergeVars(string name, IEnumerable<IDictionary<string, object>> content)
         {
-            GlobalMergeVars.Add(new MandrillMergeVar {Name = name, Content = new MandrillMergeVarContent(content.ToList())});
+            GlobalMergeVars.Add(new MandrillMergeVar
+            {
+                Name = name,
+                Content = new MandrillMergeVarContent(content)
+            });
+        }
+
+        public void AddGlobalMergeVars(string name, params IDictionary<string, object>[] content)
+        {
+            GlobalMergeVars.Add(new MandrillMergeVar
+            {
+                Name = name,
+                Content = new MandrillMergeVarContent(content)
+            });
         }
 
 
@@ -208,25 +222,37 @@ namespace Mandrill.Model
             {
                 MergeVars.Add(mergeVar = new MandrillRcptMergeVar {Rcpt = rcptEmail});
             }
-            mergeVar.Vars.Add(new MandrillMergeVar {Name = name, Content = new MandrillMergeVarContent(content)});
+            mergeVar.Vars.Add(new MandrillMergeVar
+            {
+                Name = name,
+                Content = new MandrillMergeVarContent(content)
+            });
         }
 
-        [Obsolete("Use overload with IEnumerable<Dictionary<string, object>> type")]
+        [Obsolete("Use overload with IEnumerable<IDictionary<string, object>> type")]
         public void AddRcptMergeVars(string rcptEmail, string name, IEnumerable<Dictionary<string, string>> content)
         {
             AddRcptMergeVars(rcptEmail, name, content.Select(v => v.ToDictionary(x => x.Key, x => (object) x.Value)));
         }
 
-        public void AddRcptMergeVars(string rcptEmail, string name, IEnumerable<Dictionary<string, object>> content)
+        public void AddRcptMergeVars(string rcptEmail, string name, IEnumerable<IDictionary<string, object>> content)
         {
             var mergeVar = MergeVars.FirstOrDefault(x => x.Rcpt == rcptEmail);
             if (mergeVar == null)
             {
                 MergeVars.Add(mergeVar = new MandrillRcptMergeVar {Rcpt = rcptEmail});
             }
-            mergeVar.Vars.Add(new MandrillMergeVar {Name = name, Content = new MandrillMergeVarContent(content.ToList())});
+            mergeVar.Vars.Add(new MandrillMergeVar
+            {
+                Name = name,
+                Content = new MandrillMergeVarContent(content)
+            });
         }
 
+        public void AddRcptMergeVars(string rcptEmail, string name, params IDictionary<string, object>[] content)
+        {
+            AddRcptMergeVars(rcptEmail, name, content.ToList());
+        }
 
         public void AddMetadata(string key, string value)
         {

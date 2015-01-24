@@ -51,7 +51,7 @@ namespace Tests
         {
             var message = new MandrillMessage();
 
-            var data = new[]
+            var data = new IDictionary<string, object>[]
             {
                 new Dictionary<string, object>
                 {

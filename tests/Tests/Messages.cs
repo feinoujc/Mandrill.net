@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using FluentAssertions;
 using Mandrill.Model;
@@ -448,7 +449,85 @@ namespace Tests
             }
 
             [Test]
-            public async void Can_send_template()
+            public async void Can_send_template_string_dictionary()
+            {
+                var message = new MandrillMessage
+                {
+                    FromEmail = "mandrill.net@example.com",
+                    Subject = "test",
+                    Tags = new List<string>() { "test-send-template", "mandrill-net", "handlebars" },
+                    MergeLanguage = MandrillMessageMergeLanguage.Handlebars,
+                    To = new List<MandrillMailAddress>()
+                    {
+                        new MandrillMailAddress("test1@example.com", "Test1 User"),
+                        new MandrillMailAddress("test2@example.com", "Test2 User")
+                    },
+                };
+
+
+                var data1 = new[]
+                {
+                    new Dictionary<string, string>
+                    {
+                        {"sku", "APL43"},
+                        {"name", "apples"},
+                        {"description", "Granny Smith Apples"},
+                        {"price", "0.20"},
+                        {"qty", "8"},
+                        {"ordPrice", "1.60"},
+
+                    },
+                    new Dictionary<string, string>
+                    {
+                        {"sku", "ORA44"},
+                        {"name", "Oranges"},
+                        {"description", "Blood Oranges"},
+                        {"price", "0.30"},
+                        {"qty", "3"},
+                        {"ordPrice", "0.93"},
+
+                    }
+                };
+
+                var data2 = new[]
+                {
+                    new Dictionary<string, string>
+                    {
+                        {"sku", "APL54"},
+                        {"name", "apples"},
+                        {"description", "Red Delicious Apples"},
+                        {"price", "0.22"},
+                        {"qty", "9"},
+                        {"ordPrice", "1.98"},
+
+                    },
+                    new Dictionary<string, string>
+                    {
+                        {"sku", "ORA53"},
+                        {"name", "Oranges"},
+                        {"description", "Sunkist Oranges"},
+                        {"price", "0.20"},
+                        {"qty", "1"},
+                        {"ordPrice", "0.20"},
+
+                    }
+                };
+
+                message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToShortDateString());
+                message.AddRcptMergeVars("test1@example.com", "PRODUCTS", data1);
+                message.AddRcptMergeVars("test2@example.com", "PRODUCTS", data2);
+
+                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
+
+                result.Should().HaveCount(2);
+                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+                result[0].Id.Should().NotBeEmpty();
+                result[1].Id.Should().NotBeEmpty();
+                result[1].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+            }
+
+            [Test]
+            public async void Can_send_template_object_list()
             {
                 var message = new MandrillMessage
                 {
@@ -515,6 +594,55 @@ namespace Tests
                 message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToShortDateString());
                 message.AddRcptMergeVars("test1@example.com", "PRODUCTS", data1);
                 message.AddRcptMergeVars("test2@example.com", "PRODUCTS",  data2);
+
+                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
+
+                result.Should().HaveCount(2);
+                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+                result[0].Id.Should().NotBeEmpty();
+                result[1].Id.Should().NotBeEmpty();
+                result[1].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+            }
+
+
+            [Test]
+            public async void Can_send_template_dynamic()
+            {
+                var message = new MandrillMessage
+                {
+                    FromEmail = "mandrill.net@example.com",
+                    Subject = "test",
+                    Tags = new List<string>() { "test-send-template", "mandrill-net", "handlebars" },
+                    MergeLanguage = MandrillMessageMergeLanguage.Handlebars,
+                    To = new List<MandrillMailAddress>()
+                    {
+                        new MandrillMailAddress("test1@example.com", "Test1 User"),
+                        new MandrillMailAddress("test2@example.com", "Test2 User")
+                    },
+                };
+
+                dynamic item1 = new ExpandoObject();
+                item1.sku = "APL54";
+                item1.name = "apples";
+                item1.description = "Red Dynamic Apples";
+                item1.price = 0.22;
+                item1.qty = 9;
+                item1.ordPrice = 1.98;
+                item1.tags = new {id = "tag1", enabled = true};
+
+
+                dynamic item2 = new ExpandoObject();
+                item2.sku = "ORA54";
+                item2.name = "oranges";
+                item2.description = "Dynamic Oranges";
+                item2.price = 0.33;
+                item2.qty = 8;
+                item2.ordPrice = 2.00;
+                item2.tags = new { id = "tag2", enabled = false };
+
+
+                message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToShortDateString());
+                message.AddGlobalMergeVars("PRODUCTS", item1, item2);
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Mandrill.Model
 {
@@ -14,9 +15,9 @@ namespace Mandrill.Model
             ValueAsString = value;
         }
 
-        public MandrillMergeVarContent(List<Dictionary<string, object>> value)
+        public MandrillMergeVarContent(IEnumerable<IDictionary<string, object>> value)
         {
-            ValueAsArray = value;
+            ValueAsArray = value.Select(x => new Dictionary<string, object>(x)).ToList();
         }
 
         public string ValueAsString { get; set; }
@@ -43,9 +44,19 @@ namespace Mandrill.Model
             return new MandrillMergeVarContent(value);
         }
 
+        public static implicit operator MandrillMergeVarContent(List<IDictionary<string, object>> value)
+        {
+            return new MandrillMergeVarContent(value);
+        }
+
         public static implicit operator MandrillMergeVarContent(List<Dictionary<string, object>> value)
         {
             return new MandrillMergeVarContent(value);
+        }
+
+        public static implicit operator MandrillMergeVarContent(List<Dictionary<string, string>> value)
+        {
+            return new MandrillMergeVarContent(value.Select(x => x.ToDictionary(y => y.Key, y => (object) y.Value)));
         }
 
         public override bool Equals(object obj)
