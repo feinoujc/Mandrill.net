@@ -4,7 +4,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Mandrill.Model
 {
-    public class MandrillMessageTimeSeries : MandrillMessageAggregateStatisticsBase
+    public class MandrillMessageTimeSeries : MandrillAggregateStatisticsBase
     {
         [JsonConverter(typeof (IsoDateTimeConverter))]
         public DateTime Time { get; set; }
