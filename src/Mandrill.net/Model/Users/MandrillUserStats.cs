@@ -1,6 +1,6 @@
 ﻿namespace Mandrill.Model
 {
-    public class MandrillUserStats : MandrillMessageAggregateStatisticsBase
+    public class MandrillUserStats : MandrillAggregateStatisticsBase
     {
     }
 }
