@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -14,10 +16,18 @@ namespace Tests
             [Test]
             public async void Can_list_all()
             {
-                string tag = "test tag";
                 var results = await Api.Tags.ListAsync();
-                results.Should().Contain(x => x.Tag == tag);
-                results.Count.Should().BeGreaterOrEqualTo(1);
+
+                //the api doesn't return results immediately, it may return no results
+                var found = results.OrderBy(x => x.Tag).FirstOrDefault();
+                if (found != null)
+                {
+                    results.Count.Should().BeGreaterOrEqualTo(1);
+                }
+                else
+                {
+                    Assert.Inconclusive("no tags found.");
+                }
             }
         }
 
@@ -27,10 +37,17 @@ namespace Tests
             [Test]
             public async void Can_retrieve_info()
             {
-                string tag = "test tag";
-                var result = await Api.Tags.InfoAsync(tag);
-                result.Should().NotBeNull();
-                result.Tag.Should().Be(tag);
+                var tag = (await Api.Tags.ListAsync()).LastOrDefault();
+                if (tag != null)
+                {
+                    var result = await Api.Tags.InfoAsync(tag.Tag);
+                    result.Should().NotBeNull();
+                    result.Tag.Should().Be(tag.Tag);
+                }
+                else
+                {
+                    Assert.Inconclusive("no tags found");
+                }
             }
         }
 
@@ -40,10 +57,17 @@ namespace Tests
             [Test]
             public async void Can_delete_tag()
             {
-                string tag = "test tag";
-                var result = await Api.Tags.DeleteAsync(tag);
-                result.Should().NotBeNull();
-                result.Tag.Should().Be(tag);
+                var tag = (await Api.Tags.ListAsync()).LastOrDefault();
+                if (tag != null)
+                {
+                    var result = await Api.Tags.DeleteAsync(tag.Tag);
+                    result.Should().NotBeNull();
+                    result.Tag.Should().Be(tag.Tag);
+                }
+                else
+                {
+                    Assert.Inconclusive("no tags found");
+                }
             }
         }
     }
