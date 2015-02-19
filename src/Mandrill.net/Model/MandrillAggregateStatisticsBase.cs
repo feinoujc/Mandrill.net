@@ -1,6 +1,6 @@
 namespace Mandrill.Model
 {
-    public abstract class MandrillMessageAggregateStatisticsBase
+    public class MandrillAggregateStatisticsBase
     {
         public int Sent { get; set; }
 

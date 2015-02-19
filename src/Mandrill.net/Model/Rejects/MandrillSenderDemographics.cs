@@ -4,7 +4,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Mandrill.Model
 {
-    public class MandrillSenderDemographics : MandrillMessageAggregateStatisticsBase
+    public class MandrillSenderDemographics : MandrillAggregateStatisticsBase
     {
         public string Address { get; set; }
 

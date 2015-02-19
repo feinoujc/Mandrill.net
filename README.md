@@ -63,7 +63,7 @@ var result = await api.Messages.SendTemplateAsync(message, "customer-invoice");
 [HttpPost]
 public IHttpActionResult MyWebApiControllerMethod(FormDataCollection value)
 {
-    var events = MandrillMessageEvent.ParseMandrillEvents((value.Get("mandrill_events")));
+    var events = MandrillMessageEvent.ParseMandrillEvents(value.Get("mandrill_events"));
     foreach (var messageEvent in events)
     {
         //...

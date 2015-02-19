@@ -31,6 +31,7 @@ namespace Mandrill
         private MandrillRejectsApi _rejects;
         private MandrillTemplatesApi _templates;
         private MandrillUsersApi _users;
+        private MandrillTagsApi _tags;
 
         public MandrillApi(string apiKey) : this(apiKey, DefaultHttpClientFactory())
         {
@@ -51,6 +52,11 @@ namespace Mandrill
         public IMandrillMessagesApi Messages
         {
             get { return _messages ?? (_messages = new MandrillMessagesApi(this)); }
+        }
+
+        public IMandrillTagsApi Tags
+        {
+            get { return _tags ?? (_tags = new MandrillTagsApi(this)); }
         }
 
         public IMandrillTemplatesApi Templates
