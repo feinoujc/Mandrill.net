@@ -12,6 +12,8 @@ namespace Mandrill
         Task<IList<MandrillTagInfo>> ListAsync();
         Task<MandrillTagInfo> InfoAsync(string tag);
         Task<MandrillTagInfo> DeleteAsync(string tag);
+        Task<IList<MandrillTagTimeSeries>> TimeSeriesAsync(string tag);
+        Task<IList<MandrillTagTimeSeries>> AllTimeSeriesAsync();
     }
 
     public static class MandrillTagApiSynchronousExtensions
@@ -29,6 +31,16 @@ namespace Mandrill
         public static MandrillTagInfo Delete(this IMandrillTagsApi api, string tag)
         {
             return api.DeleteAsync(tag).Result;
+        }
+
+        public static IList<MandrillTagTimeSeries> TimeSeries(this IMandrillTagsApi api, string tag)
+        {
+            return api.TimeSeriesAsync(tag).Result;
+        }
+
+        public static IList<MandrillTagTimeSeries> AllTimeSeries(this IMandrillTagsApi api)
+        {
+            return api.AllTimeSeriesAsync().Result;
         }
     }
 }

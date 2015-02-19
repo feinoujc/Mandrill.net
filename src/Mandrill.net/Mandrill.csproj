@@ -70,6 +70,7 @@
     <Compile Include="Model\Tags\MandrillTagRequest.cs" />
     <Compile Include="Model\Tags\MandrillTagInfo.cs" />
     <Compile Include="Model\MandrillStats.cs" />
+    <Compile Include="Model\Tags\MandrillTagTimeSeries.cs" />
     <Compile Include="Model\Users\MandrillUserInfo.cs" />
     <Compile Include="Model\Users\MandrillUserStats.cs" />
     <Compile Include="Model\WebHook\MandrillDkimInfo.cs" />
