@@ -37,5 +37,20 @@ namespace Mandrill
                     Tag = tag
                 });
         }
+
+        public async Task<IList<MandrillTagTimeSeries>> TimeSeriesAsync(string tag)
+        {
+            return await MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/time-series.json",
+                new MandrillTagRequest
+                {
+                    Tag = tag
+                });
+        }
+
+        public async Task<IList<MandrillTagTimeSeries>> AllTimeSeriesAsync()
+        {
+            return await MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/all-time-series.json",
+                new MandrillTagRequest());
+        }
     }
 }
