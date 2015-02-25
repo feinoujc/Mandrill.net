@@ -41,6 +41,7 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IMandrillWhitelistsApi.cs" />
     <Compile Include="Http\HttpClientExtensions.cs" />
     <Compile Include="Http\LoggingHandler.cs" />
     <Compile Include="IMandrillMessagesApi.cs" />
@@ -51,6 +52,7 @@
     <Compile Include="MandrillApi.cs" />
     <Compile Include="MandrillMessagesApi.cs" />
     <Compile Include="MandrillUsersApi.cs" />
+    <Compile Include="MandrillWhitelistsApi.cs" />
     <Compile Include="Model\Messages\MandrillMergeVarContent.cs" />
     <Compile Include="Model\MandrillAggregateStatisticsBase.cs" />
     <Compile Include="Model\Messages\MandrillMessageMergeLanguage.cs" />
@@ -105,6 +107,8 @@
     <Compile Include="Model\WebHook\MandrillEventLocation.cs" />
     <Compile Include="Model\WebHook\MandrillMessageEvent.cs" />
     <Compile Include="Model\WebHook\MandrillMessageEventType.cs" />
+    <Compile Include="Model\Whitelists\MandrillWhitelistRequest.cs" />
+    <Compile Include="Model\Whitelists\MandrillWhitelistInfo.cs" />
     <Compile Include="Serialization\ListHelper.cs" />
     <Compile Include="Serialization\MandrillJsonContractResolver.cs" />
     <Compile Include="Model\Messages\MandrillMailAddress.cs" />
