@@ -25,45 +25,45 @@ namespace Mandrill
         public static MandrillTemplateInfo Add(this IMandrillTemplatesApi api, string templateName, string code, string text, bool publish, string fromEmail = null, string fromName = null,
             string subject = null, string[] labels = null)
         {
-            return api.AddAsync(templateName, code, templateName, publish, fromEmail, fromName, subject, labels).Result;
+            return AsyncHelper.InvokeSync(api, templates => templates.AddAsync(templateName, code, templateName, publish, fromEmail, fromName, subject, labels));
         }
 
         public static MandrillTemplateInfo Update(this IMandrillTemplatesApi api, string templateName, string code, string text,
             bool publish, string fromEmail = null, string fromName = null, string subject = null, string[] labels = null)
         {
-            return api.UpdateAsync(templateName, code, templateName, publish, fromEmail, fromName, subject, labels).Result;
+            return AsyncHelper.InvokeSync(api, templates => templates.UpdateAsync(templateName, code, templateName, publish, fromEmail, fromName, subject, labels));
         }
 
         public static MandrillTemplateInfo Delete(this IMandrillTemplatesApi api, string templateName)
         {
-            return api.DeleteAsync(templateName).Result;
+            return AsyncHelper.InvokeSync(api, templates => templates.DeleteAsync(templateName));
         }
 
         public static IList<MandrillTemplateInfo> List(this IMandrillTemplatesApi api, string label = null)
         {
-            return api.ListAsync(label).Result;
+            return AsyncHelper.InvokeSync(api, templates => templates.ListAsync(label));
         }
 
         public static MandrillTemplateRenderResponse Render(this IMandrillTemplatesApi api, string templateName,
             List<MandrillTemplateContent> templateContent, List<MandrillMergeVar> mergeVars)
         {
-            return api.RenderAsync(templateName, templateContent, mergeVars).Result;
+            return AsyncHelper.InvokeSync(api, templates => templates.RenderAsync(templateName, templateContent, mergeVars));
         }
 
         public static MandrillTemplateInfo Info(this IMandrillTemplatesApi api, string templateName)
         {
-            return api.InfoAsync(templateName).Result;
+            return AsyncHelper.InvokeSync(api, templates => templates.InfoAsync(templateName));
         }
 
         public static MandrillTemplateInfo Publish(this IMandrillTemplatesApi api, string templateName)
         {
-            return api.PublishAsync(templateName).Result;
+            return AsyncHelper.InvokeSync(api, templates => templates.PublishAsync(templateName));
         }
 
         public static IList<MandrillMessageTimeSeries> TimeSeries(this IMandrillTemplatesApi api, string templateName)
 
         {
-            return api.TimeSeriesAsync(templateName).Result;
+            return AsyncHelper.InvokeSync(api, templates => templates.TimeSeriesAsync(templateName));
         }
     }
 }

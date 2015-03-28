@@ -15,17 +15,17 @@ namespace Mandrill
     {
         public static string Ping(this IMandrillUsersApi api)
         {
-            return api.PingAsync().Result;
+            return AsyncHelper.InvokeSync(api, users => users.PingAsync());
         }
 
         public static IList<MandrillSenderDemographics> Senders(this IMandrillUsersApi api)
         {
-            return api.SendersAsync().Result;
+            return AsyncHelper.InvokeSync(api, users => users.SendersAsync());
         }
 
         public static MandrillUserInfo Info(this IMandrillUsersApi api)
         {
-            return api.InfoAsync().Result;
+            return AsyncHelper.InvokeSync(api, users => users.InfoAsync());
         }
     }
 }

@@ -109,6 +109,7 @@
     <Compile Include="Model\WebHook\MandrillMessageEventType.cs" />
     <Compile Include="Model\Whitelists\MandrillWhitelistRequest.cs" />
     <Compile Include="Model\Whitelists\MandrillWhitelistInfo.cs" />
+    <Compile Include="AsyncHelper.cs" />
     <Compile Include="Serialization\ListHelper.cs" />
     <Compile Include="Serialization\MandrillJsonContractResolver.cs" />
     <Compile Include="Model\Messages\MandrillMailAddress.cs" />

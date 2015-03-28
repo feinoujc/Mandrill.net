@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using FluentAssertions;
+using Mandrill;
 using Mandrill.Model;
 using NUnit.Framework;
 
@@ -62,6 +64,14 @@ namespace Tests
             {
                 var mandrillException = Assert.Throws<MandrillException>(async () => await Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
                 mandrillException.Name.Should().Be("Unknown_Message");
+            }
+
+            [Test]
+            public void Throws_when_not_found_sync()
+            {
+                var mandrillException = Assert.Throws<MandrillException>(() => Api.Messages.Content(Guid.NewGuid().ToString("N")));
+                mandrillException.Name.Should().Be("Unknown_Message");
+                Debug.WriteLine(mandrillException);
             }
         }
 
@@ -307,6 +317,28 @@ namespace Tests
                     Text = "This is a test",
                 };
                 var result = await Api.Messages.SendAsync(message, true);
+
+                result.Should().HaveCount(1);
+                result[0].Email.Should().Be("test1@example.com");
+                result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Rejected);
+                result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Invalid);
+            }
+
+            [Test]
+            public void Can_send_sync()
+            {
+                var message = new MandrillMessage
+                {
+                    FromEmail = "mandrill.net@example.com",
+                    Subject = "test",
+                    Tags = new List<string> { "test-send", "mandrill-net" },
+                    To = new List<MandrillMailAddress>()
+                    {
+                        new MandrillMailAddress("test1@example.com")
+                    },
+                    Text = "This is a test",
+                };
+                var result = Api.Messages.Send(message, true);
 
                 result.Should().HaveCount(1);
                 result[0].Email.Should().Be("test1@example.com");

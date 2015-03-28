@@ -20,27 +20,27 @@ namespace Mandrill
     {
         public static IList<MandrillTagInfo> List(this IMandrillTagsApi api)
         {
-            return api.ListAsync().Result;
+            return AsyncHelper.InvokeSync(api, tags => tags.ListAsync());
         }
 
         public static MandrillTagInfo Info(this IMandrillTagsApi api, string tag)
         {
-            return api.InfoAsync(tag).Result;
+            return AsyncHelper.InvokeSync(api, tags => tags.InfoAsync(tag));
         }
 
         public static MandrillTagInfo Delete(this IMandrillTagsApi api, string tag)
         {
-            return api.DeleteAsync(tag).Result;
+            return AsyncHelper.InvokeSync(api, tags => tags.DeleteAsync(tag));
         }
 
         public static IList<MandrillTagTimeSeries> TimeSeries(this IMandrillTagsApi api, string tag)
         {
-            return api.TimeSeriesAsync(tag).Result;
+            return AsyncHelper.InvokeSync(api, tags => tags.TimeSeriesAsync(tag));
         }
 
         public static IList<MandrillTagTimeSeries> AllTimeSeries(this IMandrillTagsApi api)
         {
-            return api.AllTimeSeriesAsync().Result;
+            return AsyncHelper.InvokeSync(api, tags => tags.AllTimeSeriesAsync());
         }
     }
 }
