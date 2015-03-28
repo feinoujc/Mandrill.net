@@ -4,6 +4,7 @@ Mandrill.net
 Mandrill api wrapper for .net
 
 [![Build Status](https://travis-ci.org/feinoujc/Mandrill.net.svg?branch=master)](https://travis-ci.org/feinoujc/Mandrill.net)
+<a href="http://www.nuget.org/packages/Mandrill.net/"><img src="http://img.shields.io/nuget/v/Mandrill.net.svg?" title="NuGet Status"></a>
 
 ## API Docs
 
