@@ -15,17 +15,18 @@ namespace Mandrill
     {
         public static MandrillRejectAddResponse Add(this IMandrillRejectsApi api, string email, string comment = null, string subaccount = null)
         {
-            return api.AddAsync(email, comment, subaccount).Result;
+            return AsyncHelper.InvokeSync(api, rejects => rejects.AddAsync(email, comment, subaccount));
         }
 
         public static MandrillRejectDeleteResponse Delete(this IMandrillRejectsApi api, string email, string subaccount = null)
         {
-            return api.DeleteAsync(email, subaccount).Result;
+            return AsyncHelper.InvokeSync(api, rejects => rejects.DeleteAsync(email, subaccount));
         }
 
-        public static IList<MandrillRejectInfo> List(this IMandrillRejectsApi api, string email = null, bool? includeExpired = null, string subaccount = null)
+        public static IList<MandrillRejectInfo> List(this IMandrillRejectsApi api, string email = null,
+            bool? includeExpired = null, string subaccount = null)
         {
-            return api.ListAsync(email, includeExpired, subaccount).Result;
+            return AsyncHelper.InvokeSync(api, rejects => rejects.ListAsync(email, includeExpired, subaccount));
         }
     }
 }
