@@ -33,6 +33,7 @@ namespace Mandrill
         private MandrillUsersApi _users;
         private MandrillTagsApi _tags;
         private MandrillWhitelistsApi _whitelists;
+        private MandrillSendersApi _senders;
 
         public MandrillApi(string apiKey) : this(apiKey, DefaultHttpClientFactory())
         {
@@ -73,6 +74,11 @@ namespace Mandrill
         public IMandrillUsersApi Users
         {
             get { return _users ?? (_users = new MandrillUsersApi(this)); }
+        }
+
+        public IMandrillSendersApi Senders
+        {
+            get { return _senders ?? (_senders = new MandrillSendersApi(this)); }
         }
 
         public IMandrillWhitelistsApi Whitelists

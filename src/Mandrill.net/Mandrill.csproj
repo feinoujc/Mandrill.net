@@ -41,6 +41,7 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IMandrillSendersApi.cs" />
     <Compile Include="IMandrillWhitelistsApi.cs" />
     <Compile Include="Http\HttpClientExtensions.cs" />
     <Compile Include="Http\LoggingHandler.cs" />
@@ -51,6 +52,7 @@
     <Compile Include="IMandrillUsersApi.cs" />
     <Compile Include="MandrillApi.cs" />
     <Compile Include="MandrillMessagesApi.cs" />
+    <Compile Include="MandrillSendersApi.cs" />
     <Compile Include="MandrillUsersApi.cs" />
     <Compile Include="MandrillWhitelistsApi.cs" />
     <Compile Include="Model\Messages\MandrillMergeVarContent.cs" />
@@ -69,6 +71,13 @@
     <Compile Include="Model\Messages\MandrillMessageScheduleInfo.cs" />
     <Compile Include="Model\Messages\MandrillScheduleRequest.cs" />
     <Compile Include="Model\Messages\MandrillSendRawMessageRequest.cs" />
+    <Compile Include="Model\Senders\MandrillSenderDomain.cs" />
+    <Compile Include="Model\Senders\MandrillSenderInfo.cs" />
+    <Compile Include="Model\Senders\MandrillSenderRequest.cs" />
+    <Compile Include="Model\Senders\MandrillSenderTimeSeries.cs" />
+    <Compile Include="Model\Senders\MandrillSenderValidDetails.cs" />
+    <Compile Include="Model\Senders\MandrillSenderVerifyDomainRequest.cs" />
+    <Compile Include="Model\Senders\MandrillSenderVerifyDomain.cs" />
     <Compile Include="Model\Tags\MandrillTagRequest.cs" />
     <Compile Include="Model\Tags\MandrillTagInfo.cs" />
     <Compile Include="Model\MandrillStats.cs" />
