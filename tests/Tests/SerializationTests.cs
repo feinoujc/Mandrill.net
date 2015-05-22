@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
@@ -361,6 +362,20 @@ namespace Tests
             events[0].Msg.To[0][0].Should().Be("test@inbound.example.com");
 
             Debug.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
+
+        }
+
+        [Test]
+        public void Can_verify_webhook_signature()
+        {
+            var formData = new NameValueCollection();
+            formData["mandrill_events"] = Properties.Resources.sample_webhook;
+
+            var result = WebHookSignatureHelper.VerifyWebHookSignature("NnvRYvKo0gA99/YGgRSb2JS4c/Y=", "f7YEknp5hLvZVw6BNSaM6g", new Uri("http://requestb.in/wvhpa9wv"), formData);
+            Assert.IsTrue(result);
+
+            var badResult = WebHookSignatureHelper.VerifyWebHookSignature("NnvRYvKo0gA99/YGgRSb2JS4c/Y=", "f7YEknp5hLvZVw6BNSaM6g", new Uri("http://requestb.in/wvhpa9wv?oof=1"), formData);
+            Assert.IsFalse(badResult);
 
         }
 

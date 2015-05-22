@@ -116,6 +116,7 @@
     <Compile Include="Model\WebHook\MandrillEventLocation.cs" />
     <Compile Include="Model\WebHook\MandrillMessageEvent.cs" />
     <Compile Include="Model\WebHook\MandrillMessageEventType.cs" />
+    <Compile Include="Model\WebHook\WebHookSignatureHelper.cs" />
     <Compile Include="Model\Whitelists\MandrillWhitelistRequest.cs" />
     <Compile Include="Model\Whitelists\MandrillWhitelistInfo.cs" />
     <Compile Include="AsyncHelper.cs" />
