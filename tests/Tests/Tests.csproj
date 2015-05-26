@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Senders.cs" />
+    <Compile Include="Subaccounts.cs" />
     <Compile Include="Whitelists.cs" />
     <Compile Include="Tags.cs" />
     <Compile Include="IntegrationTest.cs" />
