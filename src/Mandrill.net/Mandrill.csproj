@@ -50,9 +50,11 @@
     <Compile Include="IMandrillTagsApi.cs" />
     <Compile Include="IMandrillTemplatesApi.cs" />
     <Compile Include="IMandrillUsersApi.cs" />
+    <Compile Include="IMandrillSubaccountsApi.cs" />
     <Compile Include="MandrillApi.cs" />
     <Compile Include="MandrillMessagesApi.cs" />
     <Compile Include="MandrillSendersApi.cs" />
+    <Compile Include="MandrillSubaccountsApi.cs" />
     <Compile Include="MandrillUsersApi.cs" />
     <Compile Include="MandrillWhitelistsApi.cs" />
     <Compile Include="Model\Messages\MandrillMergeVarContent.cs" />
@@ -78,6 +80,11 @@
     <Compile Include="Model\Senders\MandrillSenderValidDetails.cs" />
     <Compile Include="Model\Senders\MandrillSenderVerifyDomainRequest.cs" />
     <Compile Include="Model\Senders\MandrillSenderVerifyDomain.cs" />
+    <Compile Include="Model\Subaccounts\MandrillSubaccountInfo.cs" />
+    <Compile Include="Model\Subaccounts\MandrillSubaccountsRequest.cs" />
+    <Compile Include="Model\Subaccounts\MandrillSubaccountStatus.cs" />
+    <Compile Include="Model\Subaccounts\MandrillSubaccountResponse.cs" />
+    <Compile Include="Model\Subaccounts\MandrillSubaccountStats.cs" />
     <Compile Include="Model\Tags\MandrillTagRequest.cs" />
     <Compile Include="Model\Tags\MandrillTagInfo.cs" />
     <Compile Include="Model\MandrillStats.cs" />
