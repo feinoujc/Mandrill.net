@@ -21,8 +21,8 @@ namespace Mandrill
             var client = new HttpClient();
 #endif
             client.BaseAddress = BaseUrl;
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Mandrill.Net",
-                typeof (MandrillApi).Assembly.GetName().Version.ToString(2)));
+            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Mandrill.net",
+                typeof (MandrillApi).Assembly.GetName().Version.ToString(3)));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             return client;
         };

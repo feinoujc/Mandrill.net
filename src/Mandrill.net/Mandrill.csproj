@@ -41,6 +41,7 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Http\MandrillJsonContent.cs" />
     <Compile Include="IMandrillSendersApi.cs" />
     <Compile Include="IMandrillWhitelistsApi.cs" />
     <Compile Include="Http\HttpClientExtensions.cs" />
