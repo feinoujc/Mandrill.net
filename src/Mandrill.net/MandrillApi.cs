@@ -35,6 +35,8 @@ namespace Mandrill
         private MandrillWhitelistsApi _whitelists;
         private MandrillSendersApi _senders;
         private MandrillSubaccountsApi _subaccounts;
+        private MandrillInboundApi _inbound;
+
 
 
         public MandrillApi(string apiKey) : this(apiKey, DefaultHttpClientFactory())
@@ -91,6 +93,11 @@ namespace Mandrill
         public IMandrillSubaccountsApi Subaccounts
         {
             get { return _subaccounts ?? (_subaccounts = new MandrillSubaccountsApi(this)); }
+        }
+
+        public IMandrillInboundApi Inbound
+        {
+            get { return _inbound ?? (_inbound = new MandrillInboundApi(this)); }
         }
 
         internal async Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value)

@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Http\MandrillJsonContent.cs" />
+    <Compile Include="IMandrillInboundApi.cs" />
     <Compile Include="IMandrillSendersApi.cs" />
     <Compile Include="IMandrillWhitelistsApi.cs" />
     <Compile Include="Http\HttpClientExtensions.cs" />
@@ -53,11 +54,17 @@
     <Compile Include="IMandrillUsersApi.cs" />
     <Compile Include="IMandrillSubaccountsApi.cs" />
     <Compile Include="MandrillApi.cs" />
+    <Compile Include="MandrillInboundApi.cs" />
     <Compile Include="MandrillMessagesApi.cs" />
     <Compile Include="MandrillSendersApi.cs" />
     <Compile Include="MandrillSubaccountsApi.cs" />
     <Compile Include="MandrillUsersApi.cs" />
     <Compile Include="MandrillWhitelistsApi.cs" />
+    <Compile Include="Model\Inbound\MandrillInboundRequest.cs" />
+    <Compile Include="Model\Inbound\MandrillInboundRoute.cs" />
+    <Compile Include="Model\Inbound\MandrillInboundRouteRequest.cs" />
+    <Compile Include="Model\Inbound\MandrillInboundSendRawRequest.cs" />
+    <Compile Include="Model\Inbound\MandrillInboundSendResponse.cs" />
     <Compile Include="Model\Messages\MandrillMergeVarContent.cs" />
     <Compile Include="Model\MandrillAggregateStatisticsBase.cs" />
     <Compile Include="Model\Messages\MandrillMessageMergeLanguage.cs" />
@@ -86,6 +93,7 @@
     <Compile Include="Model\Subaccounts\MandrillSubaccountStatus.cs" />
     <Compile Include="Model\Subaccounts\MandrillSubaccountResponse.cs" />
     <Compile Include="Model\Subaccounts\MandrillSubaccountStats.cs" />
+    <Compile Include="Model\Inbound\MandrillInboundInfo.cs" />
     <Compile Include="Model\Tags\MandrillTagRequest.cs" />
     <Compile Include="Model\Tags\MandrillTagInfo.cs" />
     <Compile Include="Model\MandrillStats.cs" />
