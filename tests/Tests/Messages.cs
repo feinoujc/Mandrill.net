@@ -451,10 +451,13 @@ namespace Tests
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
                 result.Should().HaveCount(2);
-                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+                result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Invalid);
+                result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Rejected);
+
                 result[0].Id.Should().NotBeEmpty();
                 result[1].Id.Should().NotBeEmpty();
-                result[1].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+                result[1].Status.Should().NotBe(MandrillSendMessageResponseStatus.Invalid);
+                result[1].Status.Should().NotBe(MandrillSendMessageResponseStatus.Rejected);
             }
         }
 
@@ -555,7 +558,9 @@ namespace Tests
                 result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
                 result[0].Id.Should().NotBeEmpty();
                 result[1].Id.Should().NotBeEmpty();
-                result[1].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+                result[1].Status.Should().NotBe(MandrillSendMessageResponseStatus.Rejected);
+                result[1].Status.Should().NotBe(MandrillSendMessageResponseStatus.Invalid);
+
             }
 
             [Test]
