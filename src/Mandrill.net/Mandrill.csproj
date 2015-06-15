@@ -44,6 +44,7 @@
     <Compile Include="Http\MandrillJsonContent.cs" />
     <Compile Include="IMandrillInboundApi.cs" />
     <Compile Include="IMandrillSendersApi.cs" />
+    <Compile Include="IMandrillWebhooksApi.cs" />
     <Compile Include="IMandrillWhitelistsApi.cs" />
     <Compile Include="Http\HttpClientExtensions.cs" />
     <Compile Include="Http\LoggingHandler.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="MandrillSendersApi.cs" />
     <Compile Include="MandrillSubaccountsApi.cs" />
     <Compile Include="MandrillUsersApi.cs" />
+    <Compile Include="MandrillWebHooksApi.cs" />
     <Compile Include="MandrillWhitelistsApi.cs" />
     <Compile Include="Model\Inbound\MandrillInboundRequest.cs" />
     <Compile Include="Model\Inbound\MandrillInboundRoute.cs" />
@@ -132,6 +134,9 @@
     <Compile Include="Model\WebHook\MandrillEventLocation.cs" />
     <Compile Include="Model\WebHook\MandrillMessageEvent.cs" />
     <Compile Include="Model\WebHook\MandrillMessageEventType.cs" />
+    <Compile Include="Model\WebHook\MandrillWebHookEventType.cs" />
+    <Compile Include="Model\WebHook\MandrillWebHookInfo.cs" />
+    <Compile Include="Model\WebHook\MandrillWebHookRequest.cs" />
     <Compile Include="Model\WebHook\WebHookSignatureHelper.cs" />
     <Compile Include="Model\Whitelists\MandrillWhitelistRequest.cs" />
     <Compile Include="Model\Whitelists\MandrillWhitelistInfo.cs" />
