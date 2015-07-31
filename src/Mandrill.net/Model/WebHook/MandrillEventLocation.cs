@@ -1,4 +1,7 @@
-﻿namespace Mandrill.Model
+﻿using System.Runtime.Serialization;
+using Newtonsoft.Json.Serialization;
+
+namespace Mandrill.Model
 {
     public class MandrillEventLocation
     {
@@ -17,5 +20,12 @@
         public string PostalCode { get; set; }
 
         public string Timezone { get; set; }
+
+        [OnError]
+        internal void OnError(StreamingContext context, ErrorContext errorContext)
+        {
+            errorContext.Handled = true;
+        }
     }
+
 }

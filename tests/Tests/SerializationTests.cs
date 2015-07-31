@@ -345,6 +345,20 @@ namespace Tests
             Debug.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
         }
 
+
+        [Test]
+        public void Can_serialize_message_web_hook_with_invalid_longitude_latitude()
+        {
+            string json = Properties.Resources.mandrill_webhook_invalid_json;
+
+            var events = MandrillMessageEvent.ParseMandrillEvents(json);
+
+            events.Should().NotBeNullOrEmpty();
+            events.Should().HaveCount(14);
+
+            Debug.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
+        }
+
         [Test]
         public void Can_serialize_inbound_web_hook()
         {
