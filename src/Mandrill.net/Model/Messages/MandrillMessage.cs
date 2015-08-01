@@ -189,13 +189,6 @@ namespace Mandrill.Model
             GlobalMergeVars.Add(new MandrillMergeVar {Name = name, Content = new MandrillMergeVarContent(content)});
         }
 
-        [Obsolete("Use overload with IEnumerable<Dictionary<string, object>> type")]
-        public void AddGlobalMergeVars(string name, IEnumerable<Dictionary<string, string>> content)
-        {
-            AddGlobalMergeVars(name, content.Select(dictionary => 
-                dictionary.ToDictionary(pair => pair.Key, pair => (object) pair.Value)));
-        }
-
         public void AddGlobalMergeVars(string name, IEnumerable<IDictionary<string, object>> content)
         {
             GlobalMergeVars.Add(new MandrillMergeVar
@@ -227,12 +220,6 @@ namespace Mandrill.Model
                 Name = name,
                 Content = new MandrillMergeVarContent(content)
             });
-        }
-
-        [Obsolete("Use overload with IEnumerable<IDictionary<string, object>> type")]
-        public void AddRcptMergeVars(string rcptEmail, string name, IEnumerable<Dictionary<string, string>> content)
-        {
-            AddRcptMergeVars(rcptEmail, name, content.Select(v => v.ToDictionary(x => x.Key, x => (object) x.Value)));
         }
 
         public void AddRcptMergeVars(string rcptEmail, string name, IEnumerable<IDictionary<string, object>> content)

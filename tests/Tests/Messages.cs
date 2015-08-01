@@ -529,7 +529,7 @@ To: Mr Smith
 
                 var data1 = new[]
                 {
-                    new Dictionary<string, string>
+                    new Dictionary<string, object>
                     {
                         {"sku", "APL43"},
                         {"name", "apples"},
@@ -539,7 +539,7 @@ To: Mr Smith
                         {"ordPrice", "1.60"},
 
                     },
-                    new Dictionary<string, string>
+                    new Dictionary<string, object>
                     {
                         {"sku", "ORA44"},
                         {"name", "Oranges"},
@@ -553,7 +553,7 @@ To: Mr Smith
 
                 var data2 = new[]
                 {
-                    new Dictionary<string, string>
+                    new Dictionary<string, object>
                     {
                         {"sku", "APL54"},
                         {"name", "apples"},
@@ -563,7 +563,7 @@ To: Mr Smith
                         {"ordPrice", "1.98"},
 
                     },
-                    new Dictionary<string, string>
+                    new Dictionary<string, object>
                     {
                         {"sku", "ORA53"},
                         {"name", "Oranges"},
