@@ -11,7 +11,7 @@ namespace Mandrill.Model
         private List<MandrillAttachment> _attachments;
         private List<MandrillMergeVar> _globalMergeVars;
         private List<string> _googleAnalyticsDomains;
-        private Dictionary<string, string> _headers;
+        private Dictionary<string, object> _headers;
         private List<MandrillImage> _images;
         private List<MandrillRcptMergeVar> _mergeVars;
         private Dictionary<string, string> _metadata;
@@ -66,9 +66,9 @@ namespace Mandrill.Model
             set { _to = value; }
         }
 
-        public Dictionary<string, string> Headers
+        public Dictionary<string, object> Headers
         {
-            get { return _headers ?? (_headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
+            get { return _headers ?? (_headers = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)); }
             set { _headers = value; }
         }
 
@@ -159,10 +159,10 @@ namespace Mandrill.Model
         {
             get
             {
-                string value;
+                object value;
                 if (Headers.TryGetValue("Reply-To", out value))
                 {
-                    return value;
+                    return value as string;
                 }
                 return null;
             }
@@ -267,6 +267,16 @@ namespace Mandrill.Model
                 RecipientMetadata.Add(metadata = new MandrillRcptMetadata {Rcpt = rcptEmail});
             }
             metadata.Values[key] = value;
+        }
+
+        public void AddHeader(string key, string value)
+        {
+            Headers[key] = value;
+        }
+
+        public void AddHeader(string key, IEnumerable<string> values)
+        {
+            Headers[key] = values.ToArray();
         }
     }
 }

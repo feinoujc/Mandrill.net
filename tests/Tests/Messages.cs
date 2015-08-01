@@ -6,6 +6,7 @@ using System.Linq;
 using FluentAssertions;
 using Mandrill;
 using Mandrill.Model;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace Tests
@@ -131,6 +132,32 @@ namespace Tests
                 result.To[0].Email.Should().Be("recipient.email@example.com");
                 result.Subject.Should().Be("Some Subject");
                 result.Text.Should().Be("Some content.");
+            }
+
+
+            [Test]
+            public async void Can_parse_full_raw_message_headers()
+            {
+                var rawMessage = @"Delivered-To: MrSmith@gmail.com
+Received: by 10.36.81.3 with SMTP id e3cs239nzb; Tue, 29 Mar 2005 15:11:47 -0800 (PST)
+Return-Path: 
+Received: from mail.emailprovider.com (mail.emailprovider.com [111.111.11.111]) by mx.gmail.com with SMTP id h19si826631rnb.2005.03.29.15.11.46; Tue, 29 Mar 2005 15:11:47 -0800 (PST)
+Message-ID: <20050329231145.62086.mail@mail.emailprovider.com>
+Reply-To: MrsJohnson@gmail.com
+Received: from [11.11.111.111] by mail.emailprovider.com via HTTP; Tue, 29 Mar 2005 15:11:45 PST
+Date: Tue, 29 Mar 2005 15:11:45 -0800 (PST)
+From: Mr Jones 
+Subject: Hello
+To: Mr Smith
+";
+                var result = await Api.Messages.ParseAsync(rawMessage);
+
+                result.Should().NotBeNull();
+                result.Headers["Received"].Should().BeOfType<JArray>();
+                ((JArray) result.Headers["Received"]).Count.Should().Be(3);
+                result.Headers["Delivered-To"].Should().BeOfType<string>();
+                result.Headers["Delivered-To"].Should().Be("MrSmith@gmail.com");
+                result.ReplyTo.Should().Be("MrsJohnson@gmail.com");
             }
         }
 
