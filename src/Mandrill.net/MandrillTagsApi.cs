@@ -54,7 +54,7 @@ namespace Mandrill
         }
     }
 
-    internal partial class MandrillTagsApi : IMandrillTagsApi
+    internal partial class MandrillTagsApi
     {
         public IList<MandrillTagInfo> List()
         {

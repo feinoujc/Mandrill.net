@@ -7,13 +7,11 @@ namespace Mandrill
 {
     internal partial class MandrillWebHooksApi : IMandrillWebHooksApi
     {
-        public MandrillApi MandrillApi { get; set; }
-
         public MandrillWebHooksApi(MandrillApi mandrillApi)
         {
             MandrillApi = mandrillApi;
         }
-
+        public MandrillApi MandrillApi { get; }
 
         public async Task<IList<MandrillWebHookInfo>> ListAsync()
         {

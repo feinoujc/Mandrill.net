@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Mandrill.Model;
 using Mandrill.Serialization;
@@ -9,7 +8,6 @@ using Newtonsoft.Json;
 
 namespace Mandrill
 {
-
     public class MandrillApi
     {
         private static readonly Uri BaseUrl = new Uri("https://mandrillapp.com/api/1.0/");
@@ -17,7 +15,6 @@ namespace Mandrill
         private static readonly string UserAgent =
             $"Mandrill.net/{typeof (MandrillApi).Assembly.GetName().Version.ToString(3)}";
 
-      
         private MandrillInboundApi _inbound;
         private MandrillMessagesApi _messages;
         private MandrillRejectsApi _rejects;
@@ -36,75 +33,46 @@ namespace Mandrill
         }
 
         public string ApiKey { get; }
-        public IMandrillMessagesApi Messages
-        {
-            get { return _messages ?? (_messages = new MandrillMessagesApi(this)); }
-        }
+        public IMandrillMessagesApi Messages => _messages ?? (_messages = new MandrillMessagesApi(this));
 
-        public IMandrillTagsApi Tags
-        {
-            get { return _tags ?? (_tags = new MandrillTagsApi(this)); }
-        }
+        public IMandrillTagsApi Tags => _tags ?? (_tags = new MandrillTagsApi(this));
 
-        public IMandrillTemplatesApi Templates
-        {
-            get { return _templates ?? (_templates = new MandrillTemplatesApi(this)); }
-        }
+        public IMandrillTemplatesApi Templates => _templates ?? (_templates = new MandrillTemplatesApi(this));
 
-        public IMandrillRejectsApi Rejects
-        {
-            get { return _rejects ?? (_rejects = new MandrillRejectsApi(this)); }
-        }
+        public IMandrillRejectsApi Rejects => _rejects ?? (_rejects = new MandrillRejectsApi(this));
 
-        public IMandrillUsersApi Users
-        {
-            get { return _users ?? (_users = new MandrillUsersApi(this)); }
-        }
+        public IMandrillUsersApi Users => _users ?? (_users = new MandrillUsersApi(this));
 
-        public IMandrillSendersApi Senders
-        {
-            get { return _senders ?? (_senders = new MandrillSendersApi(this)); }
-        }
+        public IMandrillSendersApi Senders => _senders ?? (_senders = new MandrillSendersApi(this));
 
-        public IMandrillWhitelistsApi Whitelists
-        {
-            get { return _whitelists ?? (_whitelists = new MandrillWhitelistsApi(this)); }
-        }
+        public IMandrillWhitelistsApi Whitelists => _whitelists ?? (_whitelists = new MandrillWhitelistsApi(this));
 
-        public IMandrillSubaccountsApi Subaccounts
-        {
-            get { return _subaccounts ?? (_subaccounts = new MandrillSubaccountsApi(this)); }
-        }
+        public IMandrillSubaccountsApi Subaccounts => _subaccounts ?? (_subaccounts = new MandrillSubaccountsApi(this));
 
-        public IMandrillInboundApi Inbound
-        {
-            get { return _inbound ?? (_inbound = new MandrillInboundApi(this)); }
-        }
+        public IMandrillInboundApi Inbound => _inbound ?? (_inbound = new MandrillInboundApi(this));
 
-        public IMandrillWebHooksApi WebHooks
-        {
-            get { return _webhooks ?? (_webhooks = new MandrillWebHooksApi(this)); }
-        }
+        public IMandrillWebHooksApi WebHooks => _webhooks ?? (_webhooks = new MandrillWebHooksApi(this));
 
         internal async Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value)
             where TRequest : MandrillRequestBase
         {
             value.Key = ApiKey;
+            
+            var request = CreateHttpWebRequest(requestUri);
+            using (var inputStream = new MemoryStream())
+            using (var jsonWriter = new JsonTextWriter(new StreamWriter(inputStream)))
+            {
+                MandrillSerializer<TRequest>.Serialize(jsonWriter, value);
+                jsonWriter.Flush();
+                inputStream.Seek(0, SeekOrigin.Begin);
+                using (var requestStream = await request.GetRequestStreamAsync())
+                {
+                    await inputStream.CopyToAsync(requestStream);
+                }
+            }
 
             try
             {
-                var request = CreateHttpWebRequest(requestUri);
-                using (var inputStream = new MemoryStream())
-                using (var jsonWriter = new JsonTextWriter(new StreamWriter(inputStream)))
-                {
-                    MandrillSerializer<TRequest>.Serialize(jsonWriter, value);
-                    jsonWriter.Flush();
-                    inputStream.Seek(0, SeekOrigin.Begin);
-                    using (var requestStream = await request.GetRequestStreamAsync())
-                    {
-                        await inputStream.CopyToAsync(requestStream);
-                    }
-                }
                 using (var response = (HttpWebResponse) await request.GetResponseAsync())
                 using (var responseStream = response.GetResponseStream())
                 using (var jsonReader = new JsonTextReader(new StreamReader(responseStream)))
@@ -122,6 +90,7 @@ namespace Mandrill
             where TRequest : MandrillRequestBase
         {
             value.Key = ApiKey;
+
             var request = CreateHttpWebRequest(requestUri);
             using (var inputStream = new MemoryStream())
             using (var jsonWriter = new JsonTextWriter(new StreamWriter(inputStream)))
@@ -131,13 +100,13 @@ namespace Mandrill
                 inputStream.Seek(0, SeekOrigin.Begin);
                 using (var requestStream = request.GetRequestStream())
                 {
-                    inputStream.CopyTo(requestStream);
+                    inputStream.CopyToAsync(requestStream);
                 }
             }
 
             try
             {
-                using (var response = (HttpWebResponse) request.GetResponse())
+                using (var response = (HttpWebResponse)request.GetResponse())
                 using (var responseStream = response.GetResponseStream())
                 using (var jsonReader = new JsonTextReader(new StreamReader(responseStream)))
                 {

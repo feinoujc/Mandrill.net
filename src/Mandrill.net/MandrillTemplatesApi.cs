@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Mandrill.Model;
 using Mandrill.Serialization;
@@ -13,7 +14,7 @@ namespace Mandrill
             MandrillApi = mandrillApi;
         }
 
-        public MandrillApi MandrillApi { get; private set; }
+        public MandrillApi MandrillApi { get; }
 
         public async Task<MandrillTemplateInfo> AddAsync(string templateName, string code, string text, bool publish, string fromEmail = null,
             string fromName = null, string subject = null, string[] labels = null)
@@ -27,7 +28,7 @@ namespace Mandrill
                 FromEmail = fromEmail,
                 FromName = fromName,
                 Subject = subject,
-                Labels = labels.SafeToList()
+                Labels = labels?.ToList()
             });
         }
 
@@ -43,13 +44,13 @@ namespace Mandrill
                 FromEmail = fromEmail,
                 FromName = fromName,
                 Subject = subject,
-                Labels = labels.SafeToList()
+                Labels = labels?.ToList()
             });
         }
 
         public async Task<MandrillTemplateInfo> DeleteAsync(string templateName)
         {
-            if (templateName == null) throw new ArgumentNullException("templateName");
+            if (templateName == null) throw new ArgumentNullException(nameof(templateName));
             return await MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/delete.json", new MandrillTemplateRequest
             {
                 Name = templateName,
@@ -66,7 +67,7 @@ namespace Mandrill
 
         public async Task<MandrillTemplateRenderResponse> RenderAsync(string templateName, List<MandrillTemplateContent> templateContent, List<MandrillMergeVar> mergeVars)
         {
-            if (templateName == null) throw new ArgumentNullException("templateName");
+            if (templateName == null) throw new ArgumentNullException(nameof(templateName));
 
             return await MandrillApi.PostAsync<MandrillTemplateRenderRequest, MandrillTemplateRenderResponse>("templates/render.json",
                 new MandrillTemplateRenderRequest
@@ -79,7 +80,7 @@ namespace Mandrill
 
         public async Task<MandrillTemplateInfo> InfoAsync(string templateName)
         {
-            if (templateName == null) throw new ArgumentNullException("templateName");
+            if (templateName == null) throw new ArgumentNullException(nameof(templateName));
             return await MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/info.json", new MandrillTemplateRequest
             {
                 Name = templateName,
@@ -88,7 +89,7 @@ namespace Mandrill
 
         public async Task<MandrillTemplateInfo> PublishAsync(string templateName)
         {
-            if (templateName == null) throw new ArgumentNullException("templateName");
+            if (templateName == null) throw new ArgumentNullException(nameof(templateName));
             return await MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/publish.json", new MandrillTemplateRequest
             {
                 Name = templateName,
@@ -97,7 +98,7 @@ namespace Mandrill
 
         public async Task<IList<MandrillMessageTimeSeries>> TimeSeriesAsync(string templateName)
         {
-            if (templateName == null) throw new ArgumentNullException("templateName");
+            if (templateName == null) throw new ArgumentNullException(nameof(templateName));
             return await MandrillApi.PostAsync<MandrillTemplateRequest, List<MandrillMessageTimeSeries>>("templates/time-series.json", new MandrillTemplateRequest
             {
                 Name = templateName,
@@ -119,7 +120,7 @@ namespace Mandrill
                 FromEmail = fromEmail,
                 FromName = fromName,
                 Subject = subject,
-                Labels = labels.SafeToList()
+                Labels = labels?.ToList()
             });
         }
 
@@ -135,13 +136,13 @@ namespace Mandrill
                 FromEmail = fromEmail,
                 FromName = fromName,
                 Subject = subject,
-                Labels = labels.SafeToList()
+                Labels = labels?.ToList()
             });
         }
 
         public MandrillTemplateInfo Delete(string templateName)
         {
-            if (templateName == null) throw new ArgumentNullException("templateName");
+            if (templateName == null) throw new ArgumentNullException(nameof(templateName));
             return MandrillApi.Post<MandrillTemplateRequest, MandrillTemplateInfo>("templates/delete.json", new MandrillTemplateRequest
             {
                 Name = templateName,
@@ -158,7 +159,7 @@ namespace Mandrill
 
         public MandrillTemplateRenderResponse Render(string templateName, List<MandrillTemplateContent> templateContent, List<MandrillMergeVar> mergeVars)
         {
-            if (templateName == null) throw new ArgumentNullException("templateName");
+            if (templateName == null) throw new ArgumentNullException(nameof(templateName));
 
             return MandrillApi.Post<MandrillTemplateRenderRequest, MandrillTemplateRenderResponse>("templates/render.json",
                 new MandrillTemplateRenderRequest
@@ -171,7 +172,7 @@ namespace Mandrill
 
         public MandrillTemplateInfo Info(string templateName)
         {
-            if (templateName == null) throw new ArgumentNullException("templateName");
+            if (templateName == null) throw new ArgumentNullException(nameof(templateName));
             return MandrillApi.Post<MandrillTemplateRequest, MandrillTemplateInfo>("templates/info.json", new MandrillTemplateRequest
             {
                 Name = templateName,
@@ -180,7 +181,7 @@ namespace Mandrill
 
         public MandrillTemplateInfo Publish(string templateName)
         {
-            if (templateName == null) throw new ArgumentNullException("templateName");
+            if (templateName == null) throw new ArgumentNullException(nameof(templateName));
             return MandrillApi.Post<MandrillTemplateRequest, MandrillTemplateInfo>("templates/publish.json", new MandrillTemplateRequest
             {
                 Name = templateName,
@@ -189,7 +190,7 @@ namespace Mandrill
 
         public IList<MandrillMessageTimeSeries> TimeSeries(string templateName)
         {
-            if (templateName == null) throw new ArgumentNullException("templateName");
+            if (templateName == null) throw new ArgumentNullException(nameof(templateName));
             return MandrillApi.Post<MandrillTemplateRequest, List<MandrillMessageTimeSeries>>("templates/time-series.json", new MandrillTemplateRequest
             {
                 Name = templateName,

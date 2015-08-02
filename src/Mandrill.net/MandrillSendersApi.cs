@@ -10,7 +10,7 @@ namespace Mandrill
             MandrillApi = mandrillApi;
         }
 
-        public MandrillApi MandrillApi { get; set; }
+        public MandrillApi MandrillApi { get; }
 
         public async Task<IList<MandrillSenderInfo>> ListAsync()
         {

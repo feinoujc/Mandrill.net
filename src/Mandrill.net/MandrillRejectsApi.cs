@@ -12,11 +12,10 @@ namespace Mandrill
             MandrillApi = mandrillApi;
         }
 
-        public MandrillApi MandrillApi { get; set; }
-
+        public MandrillApi MandrillApi { get; }
         public async Task<MandrillRejectAddResponse> AddAsync(string email, string comment = null, string subaccount = null)
         {
-            if (email == null) throw new ArgumentNullException("email");
+            if (email == null) throw new ArgumentNullException(nameof(email));
             return await MandrillApi.PostAsync<MandrillRejectRequest, MandrillRejectAddResponse>("rejects/add.json",
                 new MandrillRejectRequest
                 {
@@ -29,7 +28,7 @@ namespace Mandrill
 
         public async Task<MandrillRejectDeleteResponse> DeleteAsync(string email, string subaccount = null)
         {
-            if (email == null) throw new ArgumentNullException("email");
+            if (email == null) throw new ArgumentNullException(nameof(email));
             return await MandrillApi.PostAsync<MandrillRejectRequest, MandrillRejectDeleteResponse>("rejects/delete.json",
                 new MandrillRejectRequest
                 {
@@ -54,7 +53,7 @@ namespace Mandrill
     {
         public MandrillRejectAddResponse Add(string email, string comment = null, string subaccount = null)
         {
-            if (email == null) throw new ArgumentNullException("email");
+            if (email == null) throw new ArgumentNullException(nameof(email));
             return MandrillApi.Post<MandrillRejectRequest, MandrillRejectAddResponse>("rejects/add.json",
                 new MandrillRejectRequest
                 {
@@ -67,7 +66,7 @@ namespace Mandrill
 
         public MandrillRejectDeleteResponse Delete(string email, string subaccount = null)
         {
-            if (email == null) throw new ArgumentNullException("email");
+            if (email == null) throw new ArgumentNullException(nameof(email));
             return MandrillApi.Post<MandrillRejectRequest, MandrillRejectDeleteResponse>("rejects/delete.json",
                 new MandrillRejectRequest
                 {

@@ -10,11 +10,11 @@ namespace Mandrill.Model
     {
         public static bool VerifyWebHookSignature(string signature, string key, Uri absoluteUri, NameValueCollection formPost)
         {
-            if (signature == null) throw new ArgumentNullException("signature");
-            if (key == null) throw new ArgumentNullException("key");
-            if (absoluteUri == null) throw new ArgumentNullException("absoluteUri");
-            if (formPost == null) throw new ArgumentNullException("formPost");
-            if (!absoluteUri.IsAbsoluteUri) throw new ArgumentException("uri must be an absolute uri", "absoluteUri");
+            if (signature == null) throw new ArgumentNullException(nameof(signature));
+            if (key == null) throw new ArgumentNullException(nameof(key));
+            if (absoluteUri == null) throw new ArgumentNullException(nameof(absoluteUri));
+            if (formPost == null) throw new ArgumentNullException(nameof(formPost));
+            if (!absoluteUri.IsAbsoluteUri) throw new ArgumentException("uri must be an absolute uri", nameof(absoluteUri));
 
             var toSign = new StringBuilder();
             toSign.Append(absoluteUri);

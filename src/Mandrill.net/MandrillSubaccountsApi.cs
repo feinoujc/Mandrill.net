@@ -6,12 +6,12 @@ namespace Mandrill
 {
     internal partial class MandrillSubaccountsApi : IMandrillSubaccountsApi
     {
-        public MandrillApi MandrillApi { get; set; }
-
         public MandrillSubaccountsApi(MandrillApi mandrillApi)
         {
             MandrillApi = mandrillApi;
         }
+
+        public MandrillApi MandrillApi { get; }
 
         public async Task<IList<MandrillSubaccountResponse>> ListAsync(string q = null)
         {
