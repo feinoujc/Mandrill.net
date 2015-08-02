@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
+using System.IO;
+using System.Net;
 using System.Threading.Tasks;
-using Mandrill.Http;
 using Mandrill.Model;
+using Mandrill.Serialization;
+using Newtonsoft.Json;
 
 namespace Mandrill
 {
@@ -12,137 +12,149 @@ namespace Mandrill
     {
         private static readonly Uri BaseUrl = new Uri("https://mandrillapp.com/api/1.0/");
 
-        private static readonly Func<HttpClient> DefaultHttpClientFactory = () =>
-        {
-#if DEBUG
-// ReSharper disable once UseObjectOrCollectionInitializer
-            var client = new HttpClient(new LoggingHandler(new HttpClientHandler()));
-#else
-            var client = new HttpClient();
-#endif
-            client.BaseAddress = BaseUrl;
-            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Mandrill.net",
-                typeof (MandrillApi).Assembly.GetName().Version.ToString(3)));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            return client;
-        };
+        private static readonly string UserAgent =
+            $"Mandrill.net/{typeof (MandrillApi).Assembly.GetName().Version.ToString(3)}";
 
+        private MandrillInboundApi _inbound;
         private MandrillMessagesApi _messages;
         private MandrillRejectsApi _rejects;
-        private MandrillTemplatesApi _templates;
-        private MandrillUsersApi _users;
-        private MandrillTagsApi _tags;
-        private MandrillWhitelistsApi _whitelists;
         private MandrillSendersApi _senders;
         private MandrillSubaccountsApi _subaccounts;
-        private MandrillInboundApi _inbound;
-        private IMandrillWebHooksApi _webhooks;
+        private MandrillTagsApi _tags;
+        private MandrillTemplatesApi _templates;
+        private MandrillUsersApi _users;
+        private MandrillWebHooksApi _webhooks;
+        private MandrillWhitelistsApi _whitelists;
 
-
-        public MandrillApi(string apiKey) : this(apiKey, DefaultHttpClientFactory())
+        public MandrillApi(string apiKey)
         {
-        }
-
-
-        public MandrillApi(string apiKey, HttpClient httpClient)
-        {
-            if (apiKey == null) throw new ArgumentNullException("apiKey");
+            if (apiKey == null) throw new ArgumentNullException(nameof(apiKey));
             ApiKey = apiKey;
-            HttpClient = httpClient;
         }
 
-        public string ApiKey { get; private set; }
+        public string ApiKey { get; }
+        public IMandrillMessagesApi Messages => _messages ?? (_messages = new MandrillMessagesApi(this));
 
-        public HttpClient HttpClient { get; private set; }
+        public IMandrillTagsApi Tags => _tags ?? (_tags = new MandrillTagsApi(this));
 
-        public IMandrillMessagesApi Messages
-        {
-            get { return _messages ?? (_messages = new MandrillMessagesApi(this)); }
-        }
+        public IMandrillTemplatesApi Templates => _templates ?? (_templates = new MandrillTemplatesApi(this));
 
-        public IMandrillTagsApi Tags
-        {
-            get { return _tags ?? (_tags = new MandrillTagsApi(this)); }
-        }
+        public IMandrillRejectsApi Rejects => _rejects ?? (_rejects = new MandrillRejectsApi(this));
 
-        public IMandrillTemplatesApi Templates
-        {
-            get { return _templates ?? (_templates = new MandrillTemplatesApi(this)); }
-        }
+        public IMandrillUsersApi Users => _users ?? (_users = new MandrillUsersApi(this));
 
-        public IMandrillRejectsApi Rejects
-        {
-            get { return _rejects ?? (_rejects = new MandrillRejectsApi(this)); }
-        }
+        public IMandrillSendersApi Senders => _senders ?? (_senders = new MandrillSendersApi(this));
 
-        public IMandrillUsersApi Users
-        {
-            get { return _users ?? (_users = new MandrillUsersApi(this)); }
-        }
+        public IMandrillWhitelistsApi Whitelists => _whitelists ?? (_whitelists = new MandrillWhitelistsApi(this));
 
-        public IMandrillSendersApi Senders
-        {
-            get { return _senders ?? (_senders = new MandrillSendersApi(this)); }
-        }
+        public IMandrillSubaccountsApi Subaccounts => _subaccounts ?? (_subaccounts = new MandrillSubaccountsApi(this));
 
-        public IMandrillWhitelistsApi Whitelists
-        {
-            get { return _whitelists ?? (_whitelists = new MandrillWhitelistsApi(this)); }
-        }
+        public IMandrillInboundApi Inbound => _inbound ?? (_inbound = new MandrillInboundApi(this));
 
-        public IMandrillSubaccountsApi Subaccounts
-        {
-            get { return _subaccounts ?? (_subaccounts = new MandrillSubaccountsApi(this)); }
-        }
-
-        public IMandrillInboundApi Inbound
-        {
-            get { return _inbound ?? (_inbound = new MandrillInboundApi(this)); }
-        }
-
-        public IMandrillWebHooksApi WebHooks
-        {
-            get { return _webhooks ?? (_webhooks = new MandrillWebHooksApi(this)); }
-        }
+        public IMandrillWebHooksApi WebHooks => _webhooks ?? (_webhooks = new MandrillWebHooksApi(this));
 
         internal async Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value)
             where TRequest : MandrillRequestBase
         {
             value.Key = ApiKey;
-            var response = await HttpClient.PostAsJsonAsync(requestUri, value);
-            await EnsureSuccessAsync(response);
-            return await response.Content.ReadAsJsonAsync<TResponse>();
+            
+            var request = CreateHttpWebRequest(requestUri);
+            using (var inputStream = new MemoryStream())
+            using (var jsonWriter = new JsonTextWriter(new StreamWriter(inputStream)))
+            {
+                MandrillSerializer<TRequest>.Serialize(jsonWriter, value);
+                jsonWriter.Flush();
+                inputStream.Seek(0, SeekOrigin.Begin);
+                using (var requestStream = await request.GetRequestStreamAsync())
+                {
+                    await inputStream.CopyToAsync(requestStream);
+                }
+            }
+
+            try
+            {
+                using (var response = (HttpWebResponse) await request.GetResponseAsync())
+                using (var responseStream = response.GetResponseStream())
+                using (var jsonReader = new JsonTextReader(new StreamReader(responseStream)))
+                {
+                    return MandrillSerializer<TResponse>.Deserialize(jsonReader);
+                }
+            }
+            catch (WebException webException)
+            {
+                throw ExtractMandrillErrorResponse(requestUri, webException);
+            }
         }
 
-        private async Task<HttpResponseMessage> EnsureSuccessAsync(HttpResponseMessage response, [CallerMemberName] string caller = null)
+        internal TResponse Post<TRequest, TResponse>(string requestUri, TRequest value)
+            where TRequest : MandrillRequestBase
         {
-            if (!response.IsSuccessStatusCode)
+            value.Key = ApiKey;
+
+            var request = CreateHttpWebRequest(requestUri);
+            using (var inputStream = new MemoryStream())
+            using (var jsonWriter = new JsonTextWriter(new StreamWriter(inputStream)))
             {
-                MandrillErrorResponse error = null;
-                //try to extract the error response json first, swallow if its not there
+                MandrillSerializer<TRequest>.Serialize(jsonWriter, value);
+                jsonWriter.Flush();
+                inputStream.Seek(0, SeekOrigin.Begin);
+                using (var requestStream = request.GetRequestStream())
+                {
+                    inputStream.CopyToAsync(requestStream);
+                }
+            }
+
+            try
+            {
+                using (var response = (HttpWebResponse)request.GetResponse())
+                using (var responseStream = response.GetResponseStream())
+                using (var jsonReader = new JsonTextReader(new StreamReader(responseStream)))
+                {
+                    return MandrillSerializer<TResponse>.Deserialize(jsonReader);
+                }
+            }
+            catch (WebException webException)
+            {
+                throw ExtractMandrillErrorResponse(requestUri, webException);
+            }
+        }
+
+        private static MandrillException ExtractMandrillErrorResponse(string requestUri, WebException webException)
+        {
+            MandrillErrorResponse error = null;
+            var webResponse = webException.Response as HttpWebResponse;
+            if (webResponse != null)
+            {
                 try
                 {
-                    error = await response.Content.ReadAsJsonAsync<MandrillErrorResponse>();
+                    using (var response = webResponse)
+                    using (var responseStream = response.GetResponseStream())
+                    using (var jsonReader = new JsonTextReader(new StreamReader(responseStream)))
+                    {
+                        error = MandrillSerializer<MandrillErrorResponse>.Deserialize(jsonReader);
+                    }
                 }
                 catch (Exception)
                 {
+                    // ignored
                 }
 
-                //then call this to get the web exception to wrap
-                try
+                if (error != null)
                 {
-                    response.EnsureSuccessStatusCode();
-                }
-                catch (HttpRequestException inner)
-                {
-                    if (error != null)
-                    {
-                        throw new MandrillException(error, inner);
-                    }
-                    throw new MandrillException(string.Format("{0} failed", caller), inner);
+                    return new MandrillException(error, webException);
                 }
             }
-            return response;
+            return new MandrillException($"{requestUri} failed", webException);
+        }
+
+        protected virtual HttpWebRequest CreateHttpWebRequest(string relativeUri)
+        {
+            var request = WebRequest.CreateHttp(new Uri(BaseUrl, relativeUri));
+            request.UserAgent = UserAgent;
+            request.Accept = "application/json";
+            request.ContentType = "application/json";
+            request.Method = "POST";
+            return request;
         }
     }
 }

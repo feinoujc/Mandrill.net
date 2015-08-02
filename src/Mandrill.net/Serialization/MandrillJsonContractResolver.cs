@@ -49,11 +49,7 @@ namespace Mandrill.Serialization
                         jsonProperty.ShouldSerialize = instance =>
                         {
                             var collection = prop.GetValue(instance) as ICollection;
-                            if (collection != null)
-                            {
-                                return collection.Count > 0;
-                            }
-                            return false;
+                            return collection?.Count > 0;
                         };
                     }
                 }
@@ -70,11 +66,7 @@ namespace Mandrill.Serialization
                     jsonProperty.ShouldSerialize = instance =>
                     {
                         var dictionary = prop.GetValue(instance) as IDictionary<string, string>;
-                        if (dictionary != null)
-                        {
-                            return dictionary.Count > 0;
-                        }
-                        return false;
+                        return dictionary?.Count > 0;
                     };
                 }
             }
@@ -88,11 +80,7 @@ namespace Mandrill.Serialization
                     jsonProperty.ShouldSerialize = instance =>
                     {
                         var dictionary = prop.GetValue(instance) as IDictionary<string, object>;
-                        if (dictionary != null)
-                        {
-                            return dictionary.Count > 0;
-                        }
-                        return false;
+                        return dictionary?.Count > 0;
                     };
                 }
             }

@@ -32,7 +32,7 @@ namespace Mandrill.Model
         {
             using (var reader = new JsonTextReader(new StringReader(json)))
             {
-                return JArray.Load(reader).ToObject<List<MandrillMessageEvent>>(MandrillSerializer.Instance);
+                return MandrillSerializer<List<MandrillMessageEvent>>.Deserialize(reader);
             }
         }
     }

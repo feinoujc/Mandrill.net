@@ -20,8 +20,7 @@ namespace Mandrill.Model
         }
 
         internal MandrillException(MandrillErrorResponse errorResponse, Exception inner)
-            : base(string.Format("status: {0}, code: {1}, name: {2}, message: {3}",
-                errorResponse.Status, errorResponse.Code, errorResponse.Name, errorResponse.Message), inner)
+            : base($"status: {errorResponse.Status}, code: {errorResponse.Code}, name: {errorResponse.Name}, message: {errorResponse.Message}", inner)
         {
             Status = errorResponse.Status;
             Code = errorResponse.Code;
@@ -39,9 +38,9 @@ namespace Mandrill.Model
         }
 
 
-        public string Status { get; private set; }
-        public int? Code { get; private set; }
-        public string Name { get; private set; }
+        public string Status { get; }
+        public int? Code { get; }
+        public string Name { get; }
 
 
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
@@ -49,7 +48,7 @@ namespace Mandrill.Model
         {
             if (info == null)
             {
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
             }
 
             info.AddValue("Status", Status);

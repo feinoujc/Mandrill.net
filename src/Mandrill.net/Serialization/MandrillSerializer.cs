@@ -8,10 +8,7 @@ namespace Mandrill.Serialization
     {
         private static readonly Lazy<JsonSerializer> LazyJsonSerializer = new Lazy<JsonSerializer>(CreateSerializer);
 
-        public static JsonSerializer Instance
-        {
-            get { return LazyJsonSerializer.Value; }
-        }
+        public static JsonSerializer Instance => LazyJsonSerializer.Value;
 
         private static JsonSerializer CreateSerializer()
         {
@@ -23,6 +20,19 @@ namespace Mandrill.Serialization
             settings.NullValueHandling = NullValueHandling.Ignore;
             settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
             return JsonSerializer.Create(settings);
+        }
+    }
+
+    public static class MandrillSerializer<T>
+    {
+        public static T Deserialize(JsonReader reader)
+        {
+            return MandrillSerializer.Instance.Deserialize<T>(reader);
+        }
+
+        public static void Serialize(JsonWriter writer, T value)
+        {
+            MandrillSerializer.Instance.Serialize(writer, value);
         }
     }
 }

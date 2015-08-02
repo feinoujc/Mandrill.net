@@ -7,7 +7,7 @@ namespace Mandrill.Model
     public class MandrillMessageContent
     {
         private List<string> _tags;
-        private Dictionary<string, string> _headers;
+        private Dictionary<string, object> _headers;
         private List<MandrillAttachment> _attachments;
 
         public DateTime Ts { get; set; }
@@ -29,9 +29,9 @@ namespace Mandrill.Model
             set { _tags = value; }
         }
 
-        public Dictionary<string, string> Headers
+        public Dictionary<string, object> Headers
         {
-            get { return _headers ?? (_headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
+            get { return _headers ?? (_headers = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)); }
             set { _headers = value; }
         }
 

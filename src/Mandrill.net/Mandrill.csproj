@@ -41,13 +41,10 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Http\MandrillJsonContent.cs" />
     <Compile Include="IMandrillInboundApi.cs" />
     <Compile Include="IMandrillSendersApi.cs" />
     <Compile Include="IMandrillWebhooksApi.cs" />
     <Compile Include="IMandrillWhitelistsApi.cs" />
-    <Compile Include="Http\HttpClientExtensions.cs" />
-    <Compile Include="Http\LoggingHandler.cs" />
     <Compile Include="IMandrillMessagesApi.cs" />
     <Compile Include="IMandrillRejectsApi.cs" />
     <Compile Include="IMandrillTagsApi.cs" />
@@ -140,8 +137,6 @@
     <Compile Include="Model\WebHook\WebHookSignatureHelper.cs" />
     <Compile Include="Model\Whitelists\MandrillWhitelistRequest.cs" />
     <Compile Include="Model\Whitelists\MandrillWhitelistInfo.cs" />
-    <Compile Include="AsyncHelper.cs" />
-    <Compile Include="Serialization\ListHelper.cs" />
     <Compile Include="Serialization\MandrillJsonContractResolver.cs" />
     <Compile Include="Model\Messages\MandrillMailAddress.cs" />
     <Compile Include="Model\Messages\MandrillAttachment.cs" />

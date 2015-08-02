@@ -4,29 +4,21 @@ using Mandrill.Model;
 
 namespace Mandrill
 {
-    public interface IMandrillRejectsApi
+    public partial interface IMandrillRejectsApi
     {
         Task<MandrillRejectAddResponse> AddAsync(string email, string comment = null, string subaccount = null);
         Task<MandrillRejectDeleteResponse> DeleteAsync(string email, string subaccount = null);
         Task<IList<MandrillRejectInfo>> ListAsync(string email = null, bool? includeExpired = null, string subaccount = null);
     }
 
-    public static class MandrillRejectsApiSynchronousExtensions
+    public partial interface IMandrillRejectsApi
     {
-        public static MandrillRejectAddResponse Add(this IMandrillRejectsApi api, string email, string comment = null, string subaccount = null)
-        {
-            return AsyncHelper.InvokeSync(api, rejects => rejects.AddAsync(email, comment, subaccount));
-        }
+        MandrillRejectAddResponse Add(string email, string comment = null, string subaccount = null);
 
-        public static MandrillRejectDeleteResponse Delete(this IMandrillRejectsApi api, string email, string subaccount = null)
-        {
-            return AsyncHelper.InvokeSync(api, rejects => rejects.DeleteAsync(email, subaccount));
-        }
+        MandrillRejectDeleteResponse Delete(string email, string subaccount = null);
 
-        public static IList<MandrillRejectInfo> List(this IMandrillRejectsApi api, string email = null,
-            bool? includeExpired = null, string subaccount = null)
-        {
-            return AsyncHelper.InvokeSync(api, rejects => rejects.ListAsync(email, includeExpired, subaccount));
-        }
+        IList<MandrillRejectInfo> List(string email = null,
+            bool? includeExpired = null, string subaccount = null);
+
     }
 }
