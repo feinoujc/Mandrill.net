@@ -17,7 +17,7 @@ namespace Mandrill
             MandrillApi = mandrillApi;
         }
 
-        public MandrillApi MandrillApi { get; }
+        public MandrillApi MandrillApi { get; private set; }
         public async Task<IList<MandrillSendMessageResponse>> SendAsync(MandrillMessage message, bool async = false, string ipPool = null, DateTime? sendAtUtc = null)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));

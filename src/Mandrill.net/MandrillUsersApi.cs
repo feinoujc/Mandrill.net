@@ -12,7 +12,7 @@ namespace Mandrill
             MandrillApi = mandrillApi;
         }
 
-        public MandrillApi MandrillApi { get; }
+        public MandrillApi MandrillApi { get; private set; }
 
         public async Task<string> PingAsync()
         {

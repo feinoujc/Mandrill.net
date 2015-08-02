@@ -38,9 +38,9 @@ namespace Mandrill.Model
         }
 
 
-        public string Status { get; }
-        public int? Code { get; }
-        public string Name { get; }
+        public string Status { get; private set; }
+        public int? Code { get; private set; }
+        public string Name { get; private set; }
 
 
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]

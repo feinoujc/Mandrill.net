@@ -32,7 +32,7 @@ namespace Mandrill
             ApiKey = apiKey;
         }
 
-        public string ApiKey { get; }
+        public string ApiKey { get; private set; }
         public IMandrillMessagesApi Messages => _messages ?? (_messages = new MandrillMessagesApi(this));
 
         public IMandrillTagsApi Tags => _tags ?? (_tags = new MandrillTagsApi(this));

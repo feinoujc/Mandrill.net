@@ -14,7 +14,7 @@ namespace Mandrill
             MandrillApi = mandrillApi;
         }
 
-        public MandrillApi MandrillApi { get; }
+        public MandrillApi MandrillApi { get; private set; }
 
         public async Task<MandrillTemplateInfo> AddAsync(string templateName, string code, string text, bool publish, string fromEmail = null,
             string fromName = null, string subject = null, string[] labels = null)
