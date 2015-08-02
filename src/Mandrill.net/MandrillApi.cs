@@ -26,7 +26,7 @@ namespace Mandrill
         private MandrillTagsApi _tags;
         private MandrillTemplatesApi _templates;
         private MandrillUsersApi _users;
-        private IMandrillWebHooksApi _webhooks;
+        private MandrillWebHooksApi _webhooks;
         private MandrillWhitelistsApi _whitelists;
 
         public MandrillApi(string apiKey)
@@ -97,7 +97,7 @@ namespace Mandrill
                 using (var inputStream = new MemoryStream())
                 using (var jsonWriter = new JsonTextWriter(new StreamWriter(inputStream)))
                 {
-                    MandrillSerializer.Instance.Serialize(jsonWriter, value);
+                    MandrillSerializer<TRequest>.Serialize(jsonWriter, value);
                     jsonWriter.Flush();
                     inputStream.Seek(0, SeekOrigin.Begin);
                     using (var requestStream = await request.GetRequestStreamAsync())
@@ -109,7 +109,7 @@ namespace Mandrill
                 using (var responseStream = response.GetResponseStream())
                 using (var jsonReader = new JsonTextReader(new StreamReader(responseStream)))
                 {
-                    return MandrillSerializer.Instance.Deserialize<TResponse>(jsonReader);
+                    return MandrillSerializer<TResponse>.Deserialize(jsonReader);
                 }
             }
             catch (WebException webException)
@@ -124,10 +124,10 @@ namespace Mandrill
             value.Key = ApiKey;
             var request = CreateHttpWebRequest(requestUri);
             using (var inputStream = new MemoryStream())
-            using (var jw = new JsonTextWriter(new StreamWriter(inputStream)))
+            using (var jsonWriter = new JsonTextWriter(new StreamWriter(inputStream)))
             {
-                MandrillSerializer.Instance.Serialize(jw, value);
-                jw.Flush();
+                MandrillSerializer<TRequest>.Serialize(jsonWriter, value);
+                jsonWriter.Flush();
                 inputStream.Seek(0, SeekOrigin.Begin);
                 using (var requestStream = request.GetRequestStream())
                 {
@@ -139,9 +139,9 @@ namespace Mandrill
             {
                 using (var response = (HttpWebResponse) request.GetResponse())
                 using (var responseStream = response.GetResponseStream())
-                using (var jr = new JsonTextReader(new StreamReader(responseStream)))
+                using (var jsonReader = new JsonTextReader(new StreamReader(responseStream)))
                 {
-                    return MandrillSerializer.Instance.Deserialize<TResponse>(jr);
+                    return MandrillSerializer<TResponse>.Deserialize(jsonReader);
                 }
             }
             catch (WebException webException)
@@ -162,7 +162,7 @@ namespace Mandrill
                     using (var responseStream = response.GetResponseStream())
                     using (var jsonReader = new JsonTextReader(new StreamReader(responseStream)))
                     {
-                        error = MandrillSerializer.Instance.Deserialize<MandrillErrorResponse>(jsonReader);
+                        error = MandrillSerializer<MandrillErrorResponse>.Deserialize(jsonReader);
                     }
                 }
                 catch (Exception)

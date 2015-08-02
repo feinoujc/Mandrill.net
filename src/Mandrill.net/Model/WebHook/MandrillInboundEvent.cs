@@ -19,7 +19,7 @@ namespace Mandrill.Model
         {
             using (var reader = new JsonTextReader(new StringReader(json)))
             {
-                return JArray.Load(reader).ToObject<List<MandrillInboundEvent>>(MandrillSerializer.Instance);
+                return MandrillSerializer<List<MandrillInboundEvent>>.Deserialize(reader);
             }
         }
     }

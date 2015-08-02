@@ -25,4 +25,17 @@ namespace Mandrill.Serialization
             return JsonSerializer.Create(settings);
         }
     }
+
+    public static class MandrillSerializer<T>
+    {
+        public static T Deserialize(JsonReader reader)
+        {
+            return MandrillSerializer.Instance.Deserialize<T>(reader);
+        }
+
+        public static void Serialize(JsonWriter writer, T value)
+        {
+            MandrillSerializer.Instance.Serialize(writer, value);
+        }
+    }
 }
