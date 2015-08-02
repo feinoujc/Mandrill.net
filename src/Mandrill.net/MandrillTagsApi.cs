@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Mandrill
 {
-    class MandrillTagsApi : IMandrillTagsApi
+    internal partial class MandrillTagsApi : IMandrillTagsApi
     {
         public MandrillTagsApi(MandrillApi mandrillApi)
         {
@@ -50,6 +50,48 @@ namespace Mandrill
         public async Task<IList<MandrillTagTimeSeries>> AllTimeSeriesAsync()
         {
             return await MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/all-time-series.json",
+                new MandrillTagRequest());
+        }
+    }
+
+    internal partial class MandrillTagsApi : IMandrillTagsApi
+    {
+        public IList<MandrillTagInfo> List()
+        {
+            return MandrillApi.Post<MandrillTagRequest, IList<MandrillTagInfo>>("tags/list.json",
+                new MandrillTagRequest());
+        }
+
+        public MandrillTagInfo Info(string tag)
+        {
+            return MandrillApi.Post<MandrillTagRequest, MandrillTagInfo>("tags/info.json",
+                new MandrillTagRequest
+                {
+                    Tag = tag
+                });
+        }
+
+        public MandrillTagInfo Delete(string tag)
+        {
+            return MandrillApi.Post<MandrillTagRequest, MandrillTagInfo>("tags/delete.json",
+                new MandrillTagRequest
+                {
+                    Tag = tag
+                });
+        }
+
+        public IList<MandrillTagTimeSeries> TimeSeries(string tag)
+        {
+            return MandrillApi.Post<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/time-series.json",
+                new MandrillTagRequest
+                {
+                    Tag = tag
+                });
+        }
+
+        public IList<MandrillTagTimeSeries> AllTimeSeries()
+        {
+            return MandrillApi.Post<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/all-time-series.json",
                 new MandrillTagRequest());
         }
     }

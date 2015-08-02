@@ -7,7 +7,7 @@ using Mandrill.Model;
 
 namespace Mandrill
 {
-    public interface IMandrillWebHooksApi
+    public partial interface IMandrillWebHooksApi
     {
         Task<IList<MandrillWebHookInfo>> ListAsync();
         Task<MandrillWebHookInfo> AddAsync(Uri url, string description = null, IList<MandrillWebHookEventType> events = null);
@@ -16,31 +16,12 @@ namespace Mandrill
         Task<MandrillWebHookInfo> DeleteAsync(int id);
     }
 
-    public static class MandrillWebHooksApiSynchronousExtensions
+    public partial interface IMandrillWebHooksApi
     {
-        public static IList<MandrillWebHookInfo> List(this IMandrillWebHooksApi api)
-        {
-            return AsyncHelper.InvokeSync(api, hooksApi => hooksApi.ListAsync());
-        }
-
-        public static MandrillWebHookInfo Add(this IMandrillWebHooksApi api, Uri url, string description = null, IList<MandrillWebHookEventType> events = null)
-        {
-            return AsyncHelper.InvokeSync(api, hooksApi => hooksApi.AddAsync(url, description, events));
-        }
-
-        public static MandrillWebHookInfo Info(this IMandrillWebHooksApi api, int id)
-        {
-            return AsyncHelper.InvokeSync(api, hooksApi => hooksApi.InfoAsync(id));
-        }
-
-        public static MandrillWebHookInfo Update(this IMandrillWebHooksApi api, int id, Uri url, string description = null, IList<MandrillWebHookEventType> events = null)
-        {
-            return AsyncHelper.InvokeSync(api, hooksApi => hooksApi.UpdateAsync(id, url, description, events));
-        }
-
-        public static MandrillWebHookInfo Delete(this IMandrillWebHooksApi api, int id)
-        {
-            return AsyncHelper.InvokeSync(api, hooksApi => hooksApi.DeleteAsync(id));
-        }
+        IList<MandrillWebHookInfo> List();
+        MandrillWebHookInfo Add(Uri url, string description = null, IList<MandrillWebHookEventType> events = null);
+        MandrillWebHookInfo Info(int id);
+        MandrillWebHookInfo Update(int id, Uri url, string description = null, IList<MandrillWebHookEventType> events = null);
+        MandrillWebHookInfo Delete(int id);
     }
 }

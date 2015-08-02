@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Mandrill
 {
-    public interface IMandrillTagsApi
+    public partial interface IMandrillTagsApi
     {
         Task<IList<MandrillTagInfo>> ListAsync();
         Task<MandrillTagInfo> InfoAsync(string tag);
@@ -16,31 +16,12 @@ namespace Mandrill
         Task<IList<MandrillTagTimeSeries>> AllTimeSeriesAsync();
     }
 
-    public static class MandrillTagApiSynchronousExtensions
+    public partial interface IMandrillTagsApi
     {
-        public static IList<MandrillTagInfo> List(this IMandrillTagsApi api)
-        {
-            return AsyncHelper.InvokeSync(api, tags => tags.ListAsync());
-        }
-
-        public static MandrillTagInfo Info(this IMandrillTagsApi api, string tag)
-        {
-            return AsyncHelper.InvokeSync(api, tags => tags.InfoAsync(tag));
-        }
-
-        public static MandrillTagInfo Delete(this IMandrillTagsApi api, string tag)
-        {
-            return AsyncHelper.InvokeSync(api, tags => tags.DeleteAsync(tag));
-        }
-
-        public static IList<MandrillTagTimeSeries> TimeSeries(this IMandrillTagsApi api, string tag)
-        {
-            return AsyncHelper.InvokeSync(api, tags => tags.TimeSeriesAsync(tag));
-        }
-
-        public static IList<MandrillTagTimeSeries> AllTimeSeries(this IMandrillTagsApi api)
-        {
-            return AsyncHelper.InvokeSync(api, tags => tags.AllTimeSeriesAsync());
-        }
+        IList<MandrillTagInfo> List();
+        MandrillTagInfo Info(string tag);
+        MandrillTagInfo Delete(string tag);
+        IList<MandrillTagTimeSeries> TimeSeries(string tag);
+        IList<MandrillTagTimeSeries> AllTimeSeries();
     }
 }
