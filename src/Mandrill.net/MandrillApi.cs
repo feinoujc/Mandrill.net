@@ -100,7 +100,7 @@ namespace Mandrill
                 inputStream.Seek(0, SeekOrigin.Begin);
                 using (var requestStream = request.GetRequestStream())
                 {
-                    inputStream.CopyToAsync(requestStream);
+                    inputStream.CopyTo(requestStream);
                 }
             }
 
