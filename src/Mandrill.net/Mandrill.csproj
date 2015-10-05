@@ -41,6 +41,7 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IMandrillExportsApi.cs" />
     <Compile Include="IMandrillInboundApi.cs" />
     <Compile Include="IMandrillSendersApi.cs" />
     <Compile Include="IMandrillWebhooksApi.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="IMandrillUsersApi.cs" />
     <Compile Include="IMandrillSubaccountsApi.cs" />
     <Compile Include="MandrillApi.cs" />
+    <Compile Include="MandrillExportsApi.cs" />
     <Compile Include="MandrillInboundApi.cs" />
     <Compile Include="MandrillMessagesApi.cs" />
     <Compile Include="MandrillSendersApi.cs" />
@@ -59,6 +61,8 @@
     <Compile Include="MandrillUsersApi.cs" />
     <Compile Include="MandrillWebHooksApi.cs" />
     <Compile Include="MandrillWhitelistsApi.cs" />
+    <Compile Include="Model\Exports\MandrillExportInfo.cs" />
+    <Compile Include="Model\Exports\MandrillExportRequest.cs" />
     <Compile Include="Model\Inbound\MandrillInboundRequest.cs" />
     <Compile Include="Model\Inbound\MandrillInboundRoute.cs" />
     <Compile Include="Model\Inbound\MandrillInboundRouteRequest.cs" />
@@ -156,6 +160,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

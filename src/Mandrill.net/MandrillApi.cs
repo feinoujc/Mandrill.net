@@ -15,6 +15,7 @@ namespace Mandrill
         private static readonly string UserAgent =
             $"Mandrill.net/{typeof (MandrillApi).Assembly.GetName().Version.ToString(3)}";
 
+        private MandrillExportsApi _exports;
         private MandrillInboundApi _inbound;
         private MandrillMessagesApi _messages;
         private MandrillRejectsApi _rejects;
@@ -52,6 +53,8 @@ namespace Mandrill
         public IMandrillInboundApi Inbound => _inbound ?? (_inbound = new MandrillInboundApi(this));
 
         public IMandrillWebHooksApi WebHooks => _webhooks ?? (_webhooks = new MandrillWebHooksApi(this));
+
+        public IMandrillExportsApi Exports => _exports ?? (_exports = new MandrillExportsApi(this));
 
         internal async Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value)
             where TRequest : MandrillRequestBase

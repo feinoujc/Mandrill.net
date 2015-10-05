@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exports.cs" />
     <Compile Include="Inbound.cs" />
     <Compile Include="Senders.cs" />
     <Compile Include="Subaccounts.cs" />
