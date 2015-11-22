@@ -16,10 +16,10 @@ namespace Mandrill
 
         public MandrillApi MandrillApi { get; private set; }
 
-        public async Task<MandrillTemplateInfo> AddAsync(string templateName, string code, string text, bool publish, string fromEmail = null,
+        public Task<MandrillTemplateInfo> AddAsync(string templateName, string code, string text, bool publish, string fromEmail = null,
             string fromName = null, string subject = null, string[] labels = null)
         {
-            return await MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/add.json", new MandrillTemplateRequest
+            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/add.json", new MandrillTemplateRequest
             {
                 Name = templateName,
                 Code = code,
@@ -32,10 +32,10 @@ namespace Mandrill
             });
         }
 
-        public async Task<MandrillTemplateInfo> UpdateAsync(string templateName, string code, string text, bool publish, string fromEmail = null,
+        public Task<MandrillTemplateInfo> UpdateAsync(string templateName, string code, string text, bool publish, string fromEmail = null,
           string fromName = null, string subject = null, string[] labels = null)
         {
-            return await MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/update.json", new MandrillTemplateRequest
+            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/update.json", new MandrillTemplateRequest
             {
                 Name = templateName,
                 Code = code,
@@ -48,28 +48,28 @@ namespace Mandrill
             });
         }
 
-        public async Task<MandrillTemplateInfo> DeleteAsync(string templateName)
+        public Task<MandrillTemplateInfo> DeleteAsync(string templateName)
         {
             if (templateName == null) throw new ArgumentNullException(nameof(templateName));
-            return await MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/delete.json", new MandrillTemplateRequest
+            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/delete.json", new MandrillTemplateRequest
             {
                 Name = templateName,
             });
         }
 
-        public async Task<IList<MandrillTemplateInfo>> ListAsync(string label = null)
+        public Task<IList<MandrillTemplateInfo>> ListAsync(string label = null)
         {
-            return await MandrillApi.PostAsync<MandrillTemplateListRequest, IList<MandrillTemplateInfo>>("templates/list.json", new MandrillTemplateListRequest
+            return MandrillApi.PostAsync<MandrillTemplateListRequest, IList<MandrillTemplateInfo>>("templates/list.json", new MandrillTemplateListRequest
             {
                 Label = label,
             });
         }
 
-        public async Task<MandrillTemplateRenderResponse> RenderAsync(string templateName, List<MandrillTemplateContent> templateContent, List<MandrillMergeVar> mergeVars)
+        public Task<MandrillTemplateRenderResponse> RenderAsync(string templateName, List<MandrillTemplateContent> templateContent, List<MandrillMergeVar> mergeVars)
         {
             if (templateName == null) throw new ArgumentNullException(nameof(templateName));
 
-            return await MandrillApi.PostAsync<MandrillTemplateRenderRequest, MandrillTemplateRenderResponse>("templates/render.json",
+            return MandrillApi.PostAsync<MandrillTemplateRenderRequest, MandrillTemplateRenderResponse>("templates/render.json",
                 new MandrillTemplateRenderRequest
                 {
                     TemplateName = templateName,
@@ -78,33 +78,35 @@ namespace Mandrill
                 });
         }
 
-        public async Task<MandrillTemplateInfo> InfoAsync(string templateName)
+        public Task<MandrillTemplateInfo> InfoAsync(string templateName)
         {
             if (templateName == null) throw new ArgumentNullException(nameof(templateName));
-            return await MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/info.json", new MandrillTemplateRequest
+            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/info.json", new MandrillTemplateRequest
             {
                 Name = templateName,
             });
         }
 
-        public async Task<MandrillTemplateInfo> PublishAsync(string templateName)
+        public Task<MandrillTemplateInfo> PublishAsync(string templateName)
         {
             if (templateName == null) throw new ArgumentNullException(nameof(templateName));
-            return await MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/publish.json", new MandrillTemplateRequest
+            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/publish.json", new MandrillTemplateRequest
             {
                 Name = templateName,
             });
         }
 
-        public async Task<IList<MandrillMessageTimeSeries>> TimeSeriesAsync(string templateName)
+        public Task<IList<MandrillMessageTimeSeries>> TimeSeriesAsync(string templateName)
         {
             if (templateName == null) throw new ArgumentNullException(nameof(templateName));
-            return await MandrillApi.PostAsync<MandrillTemplateRequest, List<MandrillMessageTimeSeries>>("templates/time-series.json", new MandrillTemplateRequest
+            return MandrillApi.PostAsync<MandrillTemplateRequest, IList<MandrillMessageTimeSeries>>("templates/time-series.json", new MandrillTemplateRequest
             {
                 Name = templateName,
             });
         }
     }
+
+#if !DNXCORE50
     internal partial class MandrillTemplatesApi
     {
       
@@ -197,4 +199,5 @@ namespace Mandrill
             });
         }
     }
+#endif
 }

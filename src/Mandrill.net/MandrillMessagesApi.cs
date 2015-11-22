@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Mandrill.Model;
-using Mandrill.Serialization;
 
 namespace Mandrill
 {
@@ -18,7 +17,9 @@ namespace Mandrill
         }
 
         public MandrillApi MandrillApi { get; private set; }
-        public async Task<IList<MandrillSendMessageResponse>> SendAsync(MandrillMessage message, bool async = false, string ipPool = null, DateTime? sendAtUtc = null)
+
+        public Task<IList<MandrillSendMessageResponse>> SendAsync(MandrillMessage message, bool async = false,
+            string ipPool = null, DateTime? sendAtUtc = null)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
@@ -27,16 +28,19 @@ namespace Mandrill
                 throw new ArgumentException("date must be in utc", nameof(sendAtUtc));
             }
 
-            return await MandrillApi.PostAsync<MandrillSendMessageRequest, List<MandrillSendMessageResponse>>("messages/send.json", new MandrillSendMessageRequest
-            {
-                Message = message,
-                Async = async,
-                IpPool = ipPool,
-                SendAt = sendAtUtc?.ToString(SendAtDateFormat)
-            });
+            return
+                MandrillApi.PostAsync<MandrillSendMessageRequest, IList<MandrillSendMessageResponse>>(
+                    "messages/send.json", new MandrillSendMessageRequest
+                    {
+                        Message = message,
+                        Async = async,
+                        IpPool = ipPool,
+                        SendAt = sendAtUtc?.ToString(SendAtDateFormat)
+                    });
         }
 
-        public async Task<IList<MandrillSendMessageResponse>> SendTemplateAsync(MandrillMessage message, string templateName, IList<MandrillTemplateContent> templateContent = null, bool async = false,
+        public Task<IList<MandrillSendMessageResponse>> SendTemplateAsync(MandrillMessage message, string templateName,
+            IList<MandrillTemplateContent> templateContent = null, bool async = false,
             string ipPool = null, DateTime? sendAtUtc = null)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
@@ -47,130 +51,148 @@ namespace Mandrill
                 throw new ArgumentException("date must be in utc", nameof(sendAtUtc));
             }
 
-            return await MandrillApi.PostAsync<MandrillSendMessageRequest, List<MandrillSendMessageResponse>>("messages/send-template.json",
-                new MandrillSendTemplateRequest
-                {
-                    Message = message,
-                    TemplateName = templateName,
-                    TemplateContent = templateContent?.ToList(),
-                    Async = async,
-                    IpPool = ipPool,
-                    SendAt = sendAtUtc?.ToString(SendAtDateFormat)
-                });
+            return
+                MandrillApi.PostAsync<MandrillSendMessageRequest, IList<MandrillSendMessageResponse>>(
+                    "messages/send-template.json",
+                    new MandrillSendTemplateRequest
+                    {
+                        Message = message,
+                        TemplateName = templateName,
+                        TemplateContent = templateContent?.ToList(),
+                        Async = async,
+                        IpPool = ipPool,
+                        SendAt = sendAtUtc?.ToString(SendAtDateFormat)
+                    });
         }
 
-        public async Task<IList<MandrillSendMessageResponse>> SendRawAsync(string rawMessage, string fromEmail = null, string fromName = null, IList<string> to = null, bool? async = null,
+        public Task<IList<MandrillSendMessageResponse>> SendRawAsync(string rawMessage, string fromEmail = null,
+            string fromName = null, IList<string> to = null, bool? async = null,
             string ipPool = null, DateTime? sendAtUtc = null, string returnPathDomain = null)
         {
             if (rawMessage == null) throw new ArgumentNullException(nameof(rawMessage));
-            return await MandrillApi.PostAsync<MandrillSendRawMessageRequest, List<MandrillSendMessageResponse>>("messages/send-raw.json",
-                new MandrillSendRawMessageRequest
-                {
-                    RawMessage = rawMessage,
-                    FromEmail = fromEmail,
-                    FromName = fromName,
-                    To = to?.ToList(),
-                    Async = async,
-                    IpPool = ipPool,
-                    SendAt = sendAtUtc?.ToString(SendAtDateFormat),
-                    ReturnPathDomain = returnPathDomain
-                });
+            return
+                MandrillApi.PostAsync<MandrillSendRawMessageRequest, IList<MandrillSendMessageResponse>>(
+                    "messages/send-raw.json",
+                    new MandrillSendRawMessageRequest
+                    {
+                        RawMessage = rawMessage,
+                        FromEmail = fromEmail,
+                        FromName = fromName,
+                        To = to?.ToList(),
+                        Async = async,
+                        IpPool = ipPool,
+                        SendAt = sendAtUtc?.ToString(SendAtDateFormat),
+                        ReturnPathDomain = returnPathDomain
+                    });
         }
 
 
-        public async Task<IList<MandrillMessageInfo>> SearchAsync(string query, DateTime? dateFrom = null, DateTime? dateTo = null, IList<string> tags = null, IList<string> senders = null,
+        public Task<IList<MandrillMessageInfo>> SearchAsync(string query, DateTime? dateFrom = null,
+            DateTime? dateTo = null, IList<string> tags = null, IList<string> senders = null,
             IList<string> apiKeys = null, int? limit = null)
         {
-            return await MandrillApi.PostAsync<MandrillMessageSearchRequest, List<MandrillMessageInfo>>("messages/search.json",
-                new MandrillMessageSearchRequest
-                {
-                    DateFrom = dateFrom?.ToString(SearchDateFormat),
-                    DateTo = dateTo?.ToString(SearchDateFormat),
-                    Query = query,
-                    Tags = tags?.ToList(),
-                    Senders = senders?.ToList(),
-                    ApiKeys = apiKeys?.ToList(),
-                    Limit = limit
-                });
+            return
+                MandrillApi.PostAsync<MandrillMessageSearchRequest, IList<MandrillMessageInfo>>("messages/search.json",
+                    new MandrillMessageSearchRequest
+                    {
+                        DateFrom = dateFrom?.ToString(SearchDateFormat),
+                        DateTo = dateTo?.ToString(SearchDateFormat),
+                        Query = query,
+                        Tags = tags?.ToList(),
+                        Senders = senders?.ToList(),
+                        ApiKeys = apiKeys?.ToList(),
+                        Limit = limit
+                    });
         }
 
 
-        public async Task<IList<MandrillMessageTimeSeries>> SearchTimeSeriesAsync(string query, DateTime? dateFrom = null, DateTime? dateTo = null, IList<string> tags = null,
+        public Task<IList<MandrillMessageTimeSeries>> SearchTimeSeriesAsync(string query, DateTime? dateFrom = null,
+            DateTime? dateTo = null, IList<string> tags = null,
             IList<string> senders = null)
         {
-            return await MandrillApi.PostAsync<MandrillMessageSearchRequest, List<MandrillMessageTimeSeries>>("messages/search-time-series.json",
-                new MandrillMessageSearchRequest
-                {
-                    DateFrom = dateFrom?.ToString(SearchDateFormat),
-                    DateTo = dateTo?.ToString(SearchDateFormat),
-                    Query = query,
-                    Tags = tags?.ToList(),
-                    Senders = senders?.ToList()
-                });
+            return
+                MandrillApi.PostAsync<MandrillMessageSearchRequest, IList<MandrillMessageTimeSeries>>(
+                    "messages/search-time-series.json",
+                    new MandrillMessageSearchRequest
+                    {
+                        DateFrom = dateFrom?.ToString(SearchDateFormat),
+                        DateTo = dateTo?.ToString(SearchDateFormat),
+                        Query = query,
+                        Tags = tags?.ToList(),
+                        Senders = senders?.ToList()
+                    });
         }
 
-        public async Task<MandrillMessageInfo> InfoAync(string id)
+        public Task<MandrillMessageInfo> InfoAync(string id)
         {
-            return await MandrillApi.PostAsync<MandrillMessageInfoRequest, MandrillMessageInfo>("messages/info.json",
+            return MandrillApi.PostAsync<MandrillMessageInfoRequest, MandrillMessageInfo>("messages/info.json",
                 new MandrillMessageInfoRequest
                 {
                     Id = id
                 });
         }
 
-        public async Task<MandrillMessageContent> ContentAsync(string id)
+        public Task<MandrillMessageContent> ContentAsync(string id)
         {
-            return await MandrillApi.PostAsync<MandrillMessageInfoRequest, MandrillMessageContent>("messages/content.json",
+            return MandrillApi.PostAsync<MandrillMessageInfoRequest, MandrillMessageContent>("messages/content.json",
                 new MandrillMessageInfoRequest
                 {
                     Id = id
                 });
         }
 
-        public async Task<MandrillMessage> ParseAsync(string rawMessage)
+        public Task<MandrillMessage> ParseAsync(string rawMessage)
         {
             if (rawMessage == null) throw new ArgumentNullException(nameof(rawMessage));
 
-            return await MandrillApi.PostAsync<MandrillSendRawMessageRequest, MandrillMessage>("messages/parse.json",
+            return MandrillApi.PostAsync<MandrillSendRawMessageRequest, MandrillMessage>("messages/parse.json",
                 new MandrillSendRawMessageRequest
                 {
                     RawMessage = rawMessage
                 });
         }
 
-        public async Task<IList<MandrillMessageScheduleInfo>> ListScheduledAsync(string to = null)
+        public Task<IList<MandrillMessageScheduleInfo>> ListScheduledAsync(string to = null)
         {
-            return await MandrillApi.PostAsync<MandrillScheduleRequest, IList<MandrillMessageScheduleInfo>>("messages/list-scheduled.json",
-                new MandrillScheduleRequest
-                {
-                    To = to
-                });
+            return
+                MandrillApi.PostAsync<MandrillScheduleRequest, IList<MandrillMessageScheduleInfo>>(
+                    "messages/list-scheduled.json",
+                    new MandrillScheduleRequest
+                    {
+                        To = to
+                    });
         }
 
-        public async Task<MandrillMessageScheduleInfo> RescheduleAsync(string id, DateTime sendAtUtc)
+        public Task<MandrillMessageScheduleInfo> RescheduleAsync(string id, DateTime sendAtUtc)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
-            if (sendAtUtc.Kind != DateTimeKind.Utc) throw new ArgumentException("date must be in utc", nameof(sendAtUtc));
+            if (sendAtUtc.Kind != DateTimeKind.Utc)
+                throw new ArgumentException("date must be in utc", nameof(sendAtUtc));
 
-            return await MandrillApi.PostAsync<MandrillScheduleRequest, MandrillMessageScheduleInfo>("messages/reschedule.json",
-                new MandrillScheduleRequest
-                {
-                    Id = id,
-                    SendAt = sendAtUtc.ToString(SendAtDateFormat)
-                });
+            return
+                MandrillApi.PostAsync<MandrillScheduleRequest, MandrillMessageScheduleInfo>("messages/reschedule.json",
+                    new MandrillScheduleRequest
+                    {
+                        Id = id,
+                        SendAt = sendAtUtc.ToString(SendAtDateFormat)
+                    });
         }
 
-        public async Task<MandrillMessageScheduleInfo> CancelScheduledAsync(string id)
+        public Task<MandrillMessageScheduleInfo> CancelScheduledAsync(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            return await MandrillApi.PostAsync<MandrillScheduleRequest, MandrillMessageScheduleInfo>("messages/cancel-scheduled.json",
-                new MandrillScheduleRequest
-                {
-                    Id = id,
-                });
+            return
+                MandrillApi.PostAsync<MandrillScheduleRequest, MandrillMessageScheduleInfo>(
+                    "messages/cancel-scheduled.json",
+                    new MandrillScheduleRequest
+                    {
+                        Id = id,
+                    });
         }
     }
+
+#if !DNXCORE50
 
     internal partial class MandrillMessagesApi
     {
@@ -207,15 +229,15 @@ namespace Mandrill
             }
 
             return MandrillApi.Post<MandrillSendMessageRequest, List<MandrillSendMessageResponse>>(
-                    "messages/send-template.json", value: new MandrillSendTemplateRequest
-                    {
-                        Message = message,
-                        TemplateName = templateName,
-                        TemplateContent = templateContent?.ToList(),
-                        Async = async,
-                        IpPool = ipPool,
-                        SendAt = sendAtUtc?.ToString(SendAtDateFormat)
-                    });
+                "messages/send-template.json", value: new MandrillSendTemplateRequest
+                {
+                    Message = message,
+                    TemplateName = templateName,
+                    TemplateContent = templateContent?.ToList(),
+                    Async = async,
+                    IpPool = ipPool,
+                    SendAt = sendAtUtc?.ToString(SendAtDateFormat)
+                });
         }
 
         public IList<MandrillSendMessageResponse> SendRaw(string rawMessage, string fromEmail = null,
@@ -224,18 +246,18 @@ namespace Mandrill
         {
             if (rawMessage == null) throw new ArgumentNullException(nameof(rawMessage));
             return MandrillApi.Post<MandrillSendRawMessageRequest, List<MandrillSendMessageResponse>>(
-                    "messages/send-raw.json",
-                    new MandrillSendRawMessageRequest
-                    {
-                        RawMessage = rawMessage,
-                        FromEmail = fromEmail,
-                        FromName = fromName,
-                        To = to?.ToList(),
-                        Async = async,
-                        IpPool = ipPool,
-                        SendAt = sendAtUtc?.ToString(SendAtDateFormat),
-                        ReturnPathDomain = returnPathDomain
-                    });
+                "messages/send-raw.json",
+                new MandrillSendRawMessageRequest
+                {
+                    RawMessage = rawMessage,
+                    FromEmail = fromEmail,
+                    FromName = fromName,
+                    To = to?.ToList(),
+                    Async = async,
+                    IpPool = ipPool,
+                    SendAt = sendAtUtc?.ToString(SendAtDateFormat),
+                    ReturnPathDomain = returnPathDomain
+                });
         }
 
 
@@ -262,14 +284,14 @@ namespace Mandrill
             IList<string> senders = null)
         {
             return MandrillApi.Post<MandrillMessageSearchRequest, List<MandrillMessageTimeSeries>>(
-                    "messages/search-time-series.json", value: new MandrillMessageSearchRequest
-                    {
-                        DateFrom = dateFrom?.ToString(SearchDateFormat),
-                        DateTo = dateTo?.ToString(SearchDateFormat),
-                        Query = query,
-                        Tags = tags?.ToList(),
-                        Senders = senders?.ToList()
-                    });
+                "messages/search-time-series.json", value: new MandrillMessageSearchRequest
+                {
+                    DateFrom = dateFrom?.ToString(SearchDateFormat),
+                    DateTo = dateTo?.ToString(SearchDateFormat),
+                    Query = query,
+                    Tags = tags?.ToList(),
+                    Senders = senders?.ToList()
+                });
         }
 
         public MandrillMessageInfo Info(string id)
@@ -304,17 +326,18 @@ namespace Mandrill
         public IList<MandrillMessageScheduleInfo> ListScheduled(string to = null)
         {
             return MandrillApi.Post<MandrillScheduleRequest, IList<MandrillMessageScheduleInfo>>(
-                    "messages/list-scheduled.json",
-                    new MandrillScheduleRequest
-                    {
-                        To = to
-                    });
+                "messages/list-scheduled.json",
+                new MandrillScheduleRequest
+                {
+                    To = to
+                });
         }
 
         public MandrillMessageScheduleInfo Reschedule(string id, DateTime sendAtUtc)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
-            if (sendAtUtc.Kind != DateTimeKind.Utc) throw new ArgumentException("date must be in utc", nameof(sendAtUtc));
+            if (sendAtUtc.Kind != DateTimeKind.Utc)
+                throw new ArgumentException("date must be in utc", nameof(sendAtUtc));
 
             return MandrillApi.Post<MandrillScheduleRequest, MandrillMessageScheduleInfo>("messages/reschedule.json",
                 new MandrillScheduleRequest
@@ -328,11 +351,13 @@ namespace Mandrill
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
-            return MandrillApi.Post<MandrillScheduleRequest, MandrillMessageScheduleInfo>("messages/cancel-scheduled.json",
+            return
+                MandrillApi.Post<MandrillScheduleRequest, MandrillMessageScheduleInfo>("messages/cancel-scheduled.json",
                     new MandrillScheduleRequest
                     {
                         Id = id,
                     });
         }
     }
+#endif
 }

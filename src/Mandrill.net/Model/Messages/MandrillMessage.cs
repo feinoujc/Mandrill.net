@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mail;
 using Newtonsoft.Json;
+
 
 namespace Mandrill.Model
 {
@@ -166,7 +166,7 @@ namespace Mandrill.Model
                 }
                 return null;
             }
-            set { Headers["Reply-To"] = value != null ? new MailAddress(value).ToString() : null; }
+            set { Headers["Reply-To"] = value; }
         }
 
         public void AddTo(string email)

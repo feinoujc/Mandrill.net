@@ -2,9 +2,6 @@ using System;
 
 namespace Mandrill.Serialization
 {
-    /// <summary>
-    ///     http://stackapps.com/questions/1175/how-to-convert-unix-timestamp-to-net-datetime/1176#1176
-    /// </summary>
     internal static class UnixDateTimeHelper
     {
         private const string InvalidUnixEpochErrorMessage = "Unix epoc starts January 1st, 1970";
@@ -19,10 +16,7 @@ namespace Mandrill.Serialization
         }
 
 
-        /// <summary>
-        ///     Convert a DateTime into a long
-        /// </summary>
-        public static Int64 ToUnixTime(this DateTime self)
+        public static long ToUnixTime(this DateTime self)
         {
             if (self == DateTime.MinValue)
             {

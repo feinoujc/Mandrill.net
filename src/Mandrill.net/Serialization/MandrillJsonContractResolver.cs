@@ -12,11 +12,6 @@ namespace Mandrill.Serialization
     {
         private static readonly Regex CamelCaseRegex = new Regex("^[A-Z][a-z]+(?:[A-Z][a-z]+)*$", RegexOptions.Compiled);
 
-
-        public MandrillJsonContractResolver() : base(true)
-        {
-        }
-
         protected static string ConvertCamelCasePropertyNamesToLowerCaseUnderscoreStyle(string propertyName)
         {
             if (CamelCaseRegex.IsMatch(propertyName))
@@ -38,7 +33,7 @@ namespace Mandrill.Serialization
             var propertyType = jsonProperty.PropertyType;
 
             //don't serialize empty lists (unless required)
-            if (propertyType.IsGenericType && propertyType.GenericTypeArguments.Length == 1)
+            if (propertyType.GetTypeInfo().IsGenericType && propertyType.GenericTypeArguments.Length == 1)
             {
                 if (member.GetCustomAttribute<RequiredAttribute>() == null)
                 {

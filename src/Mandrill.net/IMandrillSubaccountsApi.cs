@@ -15,6 +15,7 @@ namespace Mandrill
         Task<MandrillSubaccountResponse> ResumeAsync(string id);
     }
 
+#if !DNXCORE50
     public partial interface IMandrillSubaccountsApi
     {
         IList<MandrillSubaccountResponse> List(string q = null);
@@ -25,4 +26,5 @@ namespace Mandrill
         MandrillSubaccountResponse Pause(string id);
         MandrillSubaccountResponse Resume(string id);
     }
+#endif
 }

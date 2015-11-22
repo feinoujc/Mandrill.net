@@ -13,15 +13,15 @@ namespace Mandrill
         }
         public MandrillApi MandrillApi { get; private set; }
 
-        public async Task<IList<MandrillWebHookInfo>> ListAsync()
+        public Task<IList<MandrillWebHookInfo>> ListAsync()
         {
-            return await MandrillApi.PostAsync<MandrillWebHookRequest, IList<MandrillWebHookInfo>>("webhooks/list.json",
+            return MandrillApi.PostAsync<MandrillWebHookRequest, IList<MandrillWebHookInfo>>("webhooks/list.json",
                 new MandrillWebHookRequest());
         }
 
-        public async Task<MandrillWebHookInfo> AddAsync(Uri url, string description = null, IList<MandrillWebHookEventType> events = null)
+        public Task<MandrillWebHookInfo> AddAsync(Uri url, string description = null, IList<MandrillWebHookEventType> events = null)
         {
-            return await MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/add.json",
+            return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/add.json",
                 new MandrillWebHookRequest()
                 {
                     Url = url,
@@ -30,18 +30,18 @@ namespace Mandrill
                 });
         }
 
-        public async Task<MandrillWebHookInfo> InfoAsync(int id)
+        public Task<MandrillWebHookInfo> InfoAsync(int id)
         {
-            return await MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/info.json",
+            return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/info.json",
                 new MandrillWebHookRequest()
                 {
                     Id = id
                 });
         }
 
-        public async Task<MandrillWebHookInfo> UpdateAsync(int id, Uri url, string description = null, IList<MandrillWebHookEventType> events = null)
+        public Task<MandrillWebHookInfo> UpdateAsync(int id, Uri url, string description = null, IList<MandrillWebHookEventType> events = null)
         {
-            return await MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/update.json",
+            return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/update.json",
                 new MandrillWebHookRequest()
                 {
                     Id = id,
@@ -51,9 +51,9 @@ namespace Mandrill
                 });
         }
 
-        public async Task<MandrillWebHookInfo> DeleteAsync(int id)
+        public Task<MandrillWebHookInfo> DeleteAsync(int id)
         {
-            return await MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/delete.json",
+            return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/delete.json",
                 new MandrillWebHookRequest()
                 {
                     Id = id,
@@ -61,6 +61,7 @@ namespace Mandrill
         }
     }
 
+#if !DNXCORE50
     internal partial class MandrillWebHooksApi
     {
        
@@ -111,4 +112,5 @@ namespace Mandrill
                 });
         }
     }
+#endif
 }

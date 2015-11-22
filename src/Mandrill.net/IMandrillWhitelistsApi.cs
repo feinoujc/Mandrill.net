@@ -13,6 +13,7 @@ namespace Mandrill
         Task<MandrillWhitelistInfo> AddAsync(string email);
         Task<MandrillWhitelistInfo> DeleteAsync(string email);
     }
+#if !DNXCORE50
 
     public partial interface IMandrillWhitelistsApi
     {
@@ -20,4 +21,5 @@ namespace Mandrill
         MandrillWhitelistInfo Add(string email);
         MandrillWhitelistInfo Delete(string email);
     }
+#endif
 }

@@ -20,17 +20,18 @@ namespace Mandrill
                 new MandrillUsersRequest()))["PING"].Value<string>();
         }
 
-        public async Task<IList<MandrillSenderDemographics>> SendersAsync()
+        public Task<IList<MandrillSenderDemographics>> SendersAsync()
         {
-            return await MandrillApi.PostAsync<MandrillUsersRequest, List<MandrillSenderDemographics>>("users/senders.json", new MandrillUsersRequest());
+            return MandrillApi.PostAsync<MandrillUsersRequest, IList<MandrillSenderDemographics>>("users/senders.json", new MandrillUsersRequest());
         }
 
-        public async Task<MandrillUserInfo> InfoAsync()
+        public Task<MandrillUserInfo> InfoAsync()
         {
-            return await MandrillApi.PostAsync<MandrillUsersRequest, MandrillUserInfo>("users/info.json", new MandrillUsersRequest());
+            return MandrillApi.PostAsync<MandrillUsersRequest, MandrillUserInfo>("users/info.json", new MandrillUsersRequest());
         }
     }
 
+#if !DNXCORE50
     internal partial class MandrillUsersApi
     {
         public string Ping()
@@ -49,4 +50,5 @@ namespace Mandrill
             return MandrillApi.Post<MandrillUsersRequest, MandrillUserInfo>("users/info.json", new MandrillUsersRequest());
         }
     }
+#endif
 }

@@ -13,10 +13,10 @@ namespace Mandrill
         }
 
         public MandrillApi MandrillApi { get; private set; }
-        public async Task<MandrillRejectAddResponse> AddAsync(string email, string comment = null, string subaccount = null)
+        public Task<MandrillRejectAddResponse> AddAsync(string email, string comment = null, string subaccount = null)
         {
             if (email == null) throw new ArgumentNullException(nameof(email));
-            return await MandrillApi.PostAsync<MandrillRejectRequest, MandrillRejectAddResponse>("rejects/add.json",
+            return MandrillApi.PostAsync<MandrillRejectRequest, MandrillRejectAddResponse>("rejects/add.json",
                 new MandrillRejectRequest
                 {
                     Email = email,
@@ -26,10 +26,10 @@ namespace Mandrill
         }
 
 
-        public async Task<MandrillRejectDeleteResponse> DeleteAsync(string email, string subaccount = null)
+        public Task<MandrillRejectDeleteResponse> DeleteAsync(string email, string subaccount = null)
         {
             if (email == null) throw new ArgumentNullException(nameof(email));
-            return await MandrillApi.PostAsync<MandrillRejectRequest, MandrillRejectDeleteResponse>("rejects/delete.json",
+            return MandrillApi.PostAsync<MandrillRejectRequest, MandrillRejectDeleteResponse>("rejects/delete.json",
                 new MandrillRejectRequest
                 {
                     Email = email,
@@ -37,9 +37,9 @@ namespace Mandrill
                 });
         }
 
-        public async Task<IList<MandrillRejectInfo>> ListAsync(string email = null, bool? includeExpired = null, string subaccount = null)
+        public Task<IList<MandrillRejectInfo>> ListAsync(string email = null, bool? includeExpired = null, string subaccount = null)
         {
-            return await MandrillApi.PostAsync<MandrillRejectRequest, IList<MandrillRejectInfo>>("rejects/list.json",
+            return MandrillApi.PostAsync<MandrillRejectRequest, IList<MandrillRejectInfo>>("rejects/list.json",
                 new MandrillRejectRequest
                 {
                     Email = email,
@@ -49,6 +49,7 @@ namespace Mandrill
         }
     }
 
+#if !DNXCORE50
     internal partial class MandrillRejectsApi
     {
         public MandrillRejectAddResponse Add(string email, string comment = null, string subaccount = null)
@@ -86,4 +87,5 @@ namespace Mandrill
                 });
         }
     }
+#endif
 }

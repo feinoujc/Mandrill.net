@@ -14,46 +14,47 @@ namespace Mandrill
 
         public MandrillApi MandrillApi { get; set; }
 
-        public async Task<IList<MandrillTagInfo>> ListAsync()
+        public Task<IList<MandrillTagInfo>> ListAsync()
         {
-            return await MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagInfo>>("tags/list.json",
+            return MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagInfo>>("tags/list.json",
                 new MandrillTagRequest());
         }
 
-        public async Task<MandrillTagInfo> InfoAsync(string tag)
+        public Task<MandrillTagInfo> InfoAsync(string tag)
         {
-            return await MandrillApi.PostAsync<MandrillTagRequest, MandrillTagInfo>("tags/info.json",
+            return MandrillApi.PostAsync<MandrillTagRequest, MandrillTagInfo>("tags/info.json",
                 new MandrillTagRequest
                 {
                     Tag = tag
                 });
         }
 
-        public async Task<MandrillTagInfo> DeleteAsync(string tag)
+        public Task<MandrillTagInfo> DeleteAsync(string tag)
         {
-            return await MandrillApi.PostAsync<MandrillTagRequest, MandrillTagInfo>("tags/delete.json",
+            return MandrillApi.PostAsync<MandrillTagRequest, MandrillTagInfo>("tags/delete.json",
                 new MandrillTagRequest
                 {
                     Tag = tag
                 });
         }
 
-        public async Task<IList<MandrillTagTimeSeries>> TimeSeriesAsync(string tag)
+        public Task<IList<MandrillTagTimeSeries>> TimeSeriesAsync(string tag)
         {
-            return await MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/time-series.json",
+            return MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/time-series.json",
                 new MandrillTagRequest
                 {
                     Tag = tag
                 });
         }
 
-        public async Task<IList<MandrillTagTimeSeries>> AllTimeSeriesAsync()
+        public Task<IList<MandrillTagTimeSeries>> AllTimeSeriesAsync()
         {
-            return await MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/all-time-series.json",
+            return MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/all-time-series.json",
                 new MandrillTagRequest());
         }
     }
 
+#if !DNXCORE50
     internal partial class MandrillTagsApi
     {
         public IList<MandrillTagInfo> List()
@@ -95,4 +96,6 @@ namespace Mandrill
                 new MandrillTagRequest());
         }
     }
+
+#endif
 }

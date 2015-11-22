@@ -34,6 +34,7 @@ namespace Mandrill
         Task<MandrillMessageScheduleInfo> CancelScheduledAsync(string id);
     }
 
+#if !DNXCORE50
     public partial interface IMandrillMessagesApi
     {
         IList<MandrillSendMessageResponse> Send(MandrillMessage message,
@@ -63,4 +64,5 @@ namespace Mandrill
         MandrillMessageScheduleInfo Reschedule(string id, DateTime sendAtUtc);
         MandrillMessageScheduleInfo CancelScheduled(string id);
     }
+#endif
 }

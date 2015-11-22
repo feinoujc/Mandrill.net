@@ -13,17 +13,17 @@ namespace Mandrill
 
         public MandrillApi MandrillApi { get; private set; }
 
-        public async Task<IList<MandrillSubaccountResponse>> ListAsync(string q = null)
+        public Task<IList<MandrillSubaccountResponse>> ListAsync(string q = null)
         {
-            return await MandrillApi.PostAsync<MandrillSubaccountsRequest, IList<MandrillSubaccountResponse>>("subaccounts/list.json", new MandrillSubaccountsRequest()
+            return MandrillApi.PostAsync<MandrillSubaccountsRequest, IList<MandrillSubaccountResponse>>("subaccounts/list.json", new MandrillSubaccountsRequest()
             {
                 Q = q
             });
         }
 
-        public async Task<MandrillSubaccountResponse> AddAsync(string id, string name = null, string notes = null, int? customQuota = null)
+        public Task<MandrillSubaccountResponse> AddAsync(string id, string name = null, string notes = null, int? customQuota = null)
         {
-            return await MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/add.json", new MandrillSubaccountsRequest()
+            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/add.json", new MandrillSubaccountsRequest()
             {
                 Id = id,
                 Name = name,
@@ -32,17 +32,17 @@ namespace Mandrill
             });
         }
 
-        public async Task<MandrillSubaccountInfo> InfoAsync(string id)
+        public Task<MandrillSubaccountInfo> InfoAsync(string id)
         {
-            return await MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountInfo>("subaccounts/info.json", new MandrillSubaccountsRequest()
+            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountInfo>("subaccounts/info.json", new MandrillSubaccountsRequest()
             {
                 Id = id,
             });
         }
 
-        public async Task<MandrillSubaccountResponse> UpdateAsync(string id, string name = null, string notes = null, int? customQuota = null)
+        public Task<MandrillSubaccountResponse> UpdateAsync(string id, string name = null, string notes = null, int? customQuota = null)
         {
-            return await MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/update.json", new MandrillSubaccountsRequest()
+            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/update.json", new MandrillSubaccountsRequest()
             {
                 Id = id,
                 Name = name,
@@ -51,31 +51,32 @@ namespace Mandrill
             });
         }
 
-        public async Task<MandrillSubaccountResponse> DeleteAsync(string id)
+        public Task<MandrillSubaccountResponse> DeleteAsync(string id)
         {
-            return await MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountInfo>("subaccounts/delete.json", new MandrillSubaccountsRequest()
+            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/delete.json", new MandrillSubaccountsRequest()
             {
                 Id = id,
             });
         }
 
-        public async Task<MandrillSubaccountResponse> PauseAsync(string id)
+        public Task<MandrillSubaccountResponse> PauseAsync(string id)
         {
-            return await MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountInfo>("subaccounts/pause.json", new MandrillSubaccountsRequest()
+            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/pause.json", new MandrillSubaccountsRequest()
             {
                 Id = id,
             });
         }
 
-        public async Task<MandrillSubaccountResponse> ResumeAsync(string id)
+        public Task<MandrillSubaccountResponse> ResumeAsync(string id)
         {
-            return await MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountInfo>("subaccounts/resume.json", new MandrillSubaccountsRequest()
+            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/resume.json", new MandrillSubaccountsRequest()
             {
                 Id = id,
             });
         }
     }
 
+#if !DNXCORE50
     internal partial class MandrillSubaccountsApi
     {
      
@@ -141,4 +142,5 @@ namespace Mandrill
             });
         }
     }
+#endif
 }

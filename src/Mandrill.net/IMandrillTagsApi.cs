@@ -15,7 +15,7 @@ namespace Mandrill
         Task<IList<MandrillTagTimeSeries>> TimeSeriesAsync(string tag);
         Task<IList<MandrillTagTimeSeries>> AllTimeSeriesAsync();
     }
-
+#if !DNXCORE50
     public partial interface IMandrillTagsApi
     {
         IList<MandrillTagInfo> List();
@@ -24,4 +24,5 @@ namespace Mandrill
         IList<MandrillTagTimeSeries> TimeSeries(string tag);
         IList<MandrillTagTimeSeries> AllTimeSeries();
     }
+#endif
 }
