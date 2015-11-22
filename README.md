@@ -16,16 +16,34 @@ https://mandrillapp.com/api/docs/
 Install-Package Mandrill.net
 ```
 
-### Send a new transactional message through Mandrill
+### .NET Core support
+
+.NET core support is available in pre-release
+
+```ps
+Install-Package Mandrill.net -Pre
+```
+
+### Send a new transactional message through Mandrill (async)
 
 ```cs
 var api = new MandrillApi("YOUR_API_KEY_GOES_HERE");
 var message = new MandrillMessage("from@example.com", "to@example.com",
                 "hello mandrill!", "...how are you?");
 var result = await api.Messages.SendAsync(message);
-//or non-async (all methods have non-async version)
-//var result = api.Messages.Send(message);
 ```
+
+### Send a new transactional message through Mandrill (non-async)
+
+All the api's are available in async or non-async in the .net 4.5 target version of this library. In .NET Core, only async is supported because the underlying api's for web requests in .NET are async only.
+
+```cs
+var api = new MandrillApi("YOUR_API_KEY_GOES_HERE");
+var message = new MandrillMessage("from@example.com", "to@example.com",
+                "hello mandrill!", "...how are you?");
+var result = api.Messages.Send(message);
+```
+
 
 ### Send a new transactional message through Mandrill using a template
 ```cs
