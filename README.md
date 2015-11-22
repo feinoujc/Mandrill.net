@@ -91,6 +91,10 @@ public IHttpActionResult MyWebApiControllerMethod(FormDataCollection value)
 }
 ```
 
+## Integrations
+
+* [NServiceBus.Mandrill](https://github.com/feinoujc/NServiceBus.Mandrill) - Integrates NServiceBus messaging framework and mandrill, for more reliable mail processing
+
 ## API coverage
 
 
