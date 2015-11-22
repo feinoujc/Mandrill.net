@@ -82,12 +82,32 @@ var result = await api.Messages.SendTemplateAsync(message, "customer-invoice");
 [HttpPost]
 public IHttpActionResult MyWebApiControllerMethod(FormDataCollection value)
 {
+    //optional: validate your webhook signature
+    // see https://mandrill.zendesk.com/hc/en-us/articles/205583257-How-to-Authenticate-Webhook-Requests
+    if(!ValidateRequest(value))
+    {
+      return Forbidden();
+    }
+    
     var events = MandrillMessageEvent.ParseMandrillEvents(value.Get("mandrill_events"));
     foreach (var messageEvent in events)
     {
-        //...
+        // do something with the event
     }
     return Ok();
+}
+
+private bool ValidateRequest(FormDataCollection value)
+{
+   IEnumerable<string> headers;
+   if (!Request.Headers.TryGetValues("X-Mandrill-Signature", out headers))
+   {
+     return false;
+   }
+   var signature = headers.Single();
+   var key = "MANDRILL_WEBHOOK_KEY_HERE";
+   
+   return WebHookSignatureHelper.VerifyWebHookSignature(signature, key, Request.RequestUri, value.ReadAsNameValueCollection());
 }
 ```
 
