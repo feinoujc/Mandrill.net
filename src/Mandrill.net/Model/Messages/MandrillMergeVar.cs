@@ -4,6 +4,6 @@ namespace Mandrill.Model
     {
         public string Name { get; set; }
 
-        public MandrillMergeVarContent Content { get; set; }
+        public dynamic Content { get; set; }
     }
 }

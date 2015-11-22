@@ -706,7 +706,7 @@ To: Mr Smith
 
 
                 message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToShortDateString());
-                message.AddGlobalMergeVars("PRODUCTS", item1, item2);
+                message.AddGlobalMergeVars("PRODUCTS", new [] { item1, item2 });
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
