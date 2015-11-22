@@ -70,7 +70,7 @@ namespace Mandrill
                 });
         }
     }
-
+#if !DNXCORE50
     internal partial class MandrillExportsApi
     {
         public IList<MandrillExportInfo> List()
@@ -127,4 +127,5 @@ namespace Mandrill
                 });
         }
     }
+#endif
 }

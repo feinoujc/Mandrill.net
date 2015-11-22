@@ -20,6 +20,8 @@ namespace Mandrill
         Task<IList<MandrillMessageTimeSeries>> TimeSeriesAsync(string templateName);
     }
 
+    #if !DNXCORE50
+
     public partial interface IMandrillTemplatesApi
     {
         MandrillTemplateInfo Add(string templateName, string code, string text, bool publish, string fromEmail = null,
@@ -35,4 +37,5 @@ namespace Mandrill
         MandrillTemplateInfo Publish(string templateName);
         IList<MandrillMessageTimeSeries> TimeSeries(string templateName);
     }
+#endif
 }

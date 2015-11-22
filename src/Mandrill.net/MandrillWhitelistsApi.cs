@@ -12,27 +12,27 @@ namespace Mandrill
 
         public MandrillApi MandrillApi { get; private set; }
 
-        public async Task<IList<MandrillWhitelistInfo>> ListAsync(string email)
+        public Task<IList<MandrillWhitelistInfo>> ListAsync(string email)
         {
-            return await MandrillApi.PostAsync<MandrillWhitelistRequest, IList<MandrillWhitelistInfo>>("whitelists/list.json",
+            return MandrillApi.PostAsync<MandrillWhitelistRequest, IList<MandrillWhitelistInfo>>("whitelists/list.json",
                 new MandrillWhitelistRequest
                 {
                     Email = email
                 });
         }
 
-        public async Task<MandrillWhitelistInfo> AddAsync(string email)
+        public Task<MandrillWhitelistInfo> AddAsync(string email)
         {
-            return await MandrillApi.PostAsync<MandrillWhitelistRequest, MandrillWhitelistInfo>("whitelists/add.json",
+            return MandrillApi.PostAsync<MandrillWhitelistRequest, MandrillWhitelistInfo>("whitelists/add.json",
                 new MandrillWhitelistRequest
                 {
                     Email = email
                 });
         }
 
-        public async Task<MandrillWhitelistInfo> DeleteAsync(string email)
+        public Task<MandrillWhitelistInfo> DeleteAsync(string email)
         {
-            return await MandrillApi.PostAsync<MandrillWhitelistRequest, MandrillWhitelistInfo>("whitelists/delete.json",
+            return MandrillApi.PostAsync<MandrillWhitelistRequest, MandrillWhitelistInfo>("whitelists/delete.json",
                 new MandrillWhitelistRequest
                 {
                     Email = email
@@ -40,6 +40,7 @@ namespace Mandrill
         }
     }
 
+#if !DNXCORE50
     internal partial class MandrillWhitelistsApi
     {
         public IList<MandrillWhitelistInfo> List(string email)
@@ -69,4 +70,5 @@ namespace Mandrill
                 });
         }
     }
+#endif
 }

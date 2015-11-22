@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Mandrill.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -55,7 +56,7 @@ namespace Mandrill.Serialization
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof (MandrillMergeVarContent).IsAssignableFrom(objectType);
+            return typeof (MandrillMergeVarContent).GetTypeInfo().IsAssignableFrom(objectType.GetTypeInfo());
         }
     }
 }

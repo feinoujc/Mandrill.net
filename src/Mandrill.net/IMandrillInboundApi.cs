@@ -21,6 +21,7 @@ namespace Mandrill
             string helo = null, string clientAddress = null);
     }
 
+#if !DNXCORE50
     public partial interface IMandrillInboundApi
     {
         IList<MandrillInboundInfo> Domains();
@@ -36,4 +37,5 @@ namespace Mandrill
             IList<string> to = null, string mailFrom = null, string helo = null,
             string clientAddress = null);
     }
+#endif
 }
