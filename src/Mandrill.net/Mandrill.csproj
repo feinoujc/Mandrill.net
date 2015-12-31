@@ -69,7 +69,6 @@
     <Compile Include="Model\Inbound\MandrillInboundRouteRequest.cs" />
     <Compile Include="Model\Inbound\MandrillInboundSendRawRequest.cs" />
     <Compile Include="Model\Inbound\MandrillInboundSendResponse.cs" />
-    <Compile Include="Model\Messages\MandrillMergeVarContent.cs" />
     <Compile Include="Model\MandrillAggregateStatisticsBase.cs" />
     <Compile Include="Model\Messages\MandrillMessageMergeLanguage.cs" />
     <Compile Include="Model\Rejects\MandrillRejectAddResponse.cs" />
@@ -151,7 +150,6 @@
     <Compile Include="Model\Messages\MandrillRcptMergeVar.cs" />
     <Compile Include="Model\Messages\MandrillRcptMetadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Serialization\MandrillMergeVarContentConverter.cs" />
     <Compile Include="Serialization\MandrillSerializer.cs" />
     <Compile Include="MandrillTagsApi.cs" />
     <Compile Include="Serialization\UnixDateTimeConverter.cs" />

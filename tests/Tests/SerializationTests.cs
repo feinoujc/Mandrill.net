@@ -310,7 +310,7 @@ namespace Tests
             message.MergeLanguage.Should().Be(MandrillMessageMergeLanguage.Mailchimp);
             message.GlobalMergeVars.Should().HaveCount(1);
             message.GlobalMergeVars[0].Name.Should().Be("merge1");
-            message.GlobalMergeVars[0].Content.Should().Be((MandrillMergeVarContent) "merge1 content");
+            ((string)message.GlobalMergeVars[0].Content).Should().Be("merge1 content");
             message.RecipientMetadata.Should().HaveCount(1);
             message.RecipientMetadata[0].Rcpt.Should().Be("recipient.email@example.com");
             message.RecipientMetadata[0].Values.Should().HaveCount(1);

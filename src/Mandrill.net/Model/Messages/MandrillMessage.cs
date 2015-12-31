@@ -186,28 +186,18 @@ namespace Mandrill.Model
 
         public void AddGlobalMergeVars(string name, string content)
         {
-            GlobalMergeVars.Add(new MandrillMergeVar {Name = name, Content = new MandrillMergeVarContent(content)});
+            GlobalMergeVars.Add(new MandrillMergeVar {Name = name, Content = content});
         }
 
-        public void AddGlobalMergeVars(string name, IEnumerable<IDictionary<string, object>> content)
+        public void AddGlobalMergeVars(string name, dynamic content)
         {
             GlobalMergeVars.Add(new MandrillMergeVar
             {
                 Name = name,
-                Content = new MandrillMergeVarContent(content)
+                Content = content
             });
         }
-
-        public void AddGlobalMergeVars(string name, params IDictionary<string, object>[] content)
-        {
-            GlobalMergeVars.Add(new MandrillMergeVar
-            {
-                Name = name,
-                Content = new MandrillMergeVarContent(content)
-            });
-        }
-
-
+        
         public void AddRcptMergeVars(string rcptEmail, string name, string content)
         {
             var mergeVar = MergeVars.FirstOrDefault(x => x.Rcpt == rcptEmail);
@@ -218,11 +208,11 @@ namespace Mandrill.Model
             mergeVar.Vars.Add(new MandrillMergeVar
             {
                 Name = name,
-                Content = new MandrillMergeVarContent(content)
+                Content = content
             });
         }
 
-        public void AddRcptMergeVars(string rcptEmail, string name, IEnumerable<IDictionary<string, object>> content)
+        public void AddRcptMergeVars(string rcptEmail, string name, dynamic content)
         {
             var mergeVar = MergeVars.FirstOrDefault(x => x.Rcpt == rcptEmail);
             if (mergeVar == null)
@@ -232,13 +222,8 @@ namespace Mandrill.Model
             mergeVar.Vars.Add(new MandrillMergeVar
             {
                 Name = name,
-                Content = new MandrillMergeVarContent(content)
+                Content = content
             });
-        }
-
-        public void AddRcptMergeVars(string rcptEmail, string name, params IDictionary<string, object>[] content)
-        {
-            AddRcptMergeVars(rcptEmail, name, content.ToList());
         }
 
         public void AddMetadata(string key, string value)
