@@ -70,7 +70,7 @@ namespace Tests
             [Test]
             public void Throws_when_not_found_sync()
             {
-                var mandrillException = Assert.Throws<MandrillException>(() => Api.Messages.Content(Guid.NewGuid().ToString("N")));
+                var mandrillException = Assert.Throws<MandrillException>(async () => await Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
                 mandrillException.Name.Should().Be("Unknown_Message");
                 Debug.WriteLine(mandrillException);
             }
@@ -351,6 +351,7 @@ To: Mr Smith
                 result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Invalid);
             }
 
+#if !DNXCORE50
             [Test]
             public void Can_send_sync()
             {
@@ -372,7 +373,7 @@ To: Mr Smith
                 result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Rejected);
                 result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Invalid);
             }
-
+#endif
             [Test]
             [Ignore("Requires account with $")]
             public async void Can_send_scheduled()
@@ -471,7 +472,7 @@ To: Mr Smith
                     },
                 };
 
-                message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToShortDateString());
+                message.AddGlobalMergeVars("ORDERDATE", string.Format("{0:d}", DateTime.UtcNow));
                 message.AddRcptMergeVars("test1@example.com", "INVOICEDETAILS", "invoice for test1@example.com");
                 message.AddRcptMergeVars("test2@example.com", "INVOICEDETAILS", "invoice for test2@example.com");
 
@@ -575,7 +576,7 @@ To: Mr Smith
                     }
                 };
 
-                message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToShortDateString());
+                message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToString("d"));
                 message.AddRcptMergeVars("test1@example.com", "PRODUCTS", data1);
                 message.AddRcptMergeVars("test2@example.com", "PRODUCTS", data2);
 
@@ -655,7 +656,7 @@ To: Mr Smith
                     }
                 };
 
-                message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToShortDateString());
+                message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToString("d"));
                 message.AddRcptMergeVars("test1@example.com", "PRODUCTS", data1);
                 message.AddRcptMergeVars("test2@example.com", "PRODUCTS",  data2);
 
@@ -705,7 +706,7 @@ To: Mr Smith
                 item2.tags = new { id = "tag2", enabled = false };
 
 
-                message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToShortDateString());
+                message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToString("d"));
                 message.AddGlobalMergeVars("PRODUCTS", new [] { item1, item2 });
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);

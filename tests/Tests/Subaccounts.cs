@@ -17,11 +17,11 @@ namespace Tests
         private class Add : Subaccounts
         {
             [Test]
-            public void Can_add_subaccount()
+            public async void Can_add_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
-                var result = Api.Subaccounts.Add(id, name: "test", notes: notes, customQuota: null);
+                var result = await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
                 result.Id.Should().Be(id);
             }
         }
@@ -30,15 +30,15 @@ namespace Tests
         private class List : Subaccounts
         {
             [Test]
-            public void Can_list_subaccount()
+            public async void Can_list_subaccount()
             {
-                var results = Api.Subaccounts.List(q:null);
+                var results = await Api.Subaccounts.ListAsync(q:null);
                 results.Count.Should().BeGreaterOrEqualTo(0);
             }
             [Test]
-            public void Can_filter_subaccount()
+            public async void Can_filter_subaccount()
             {
-                var results = Api.Subaccounts.List(q: Guid.NewGuid().ToString("N"));
+                var results = await Api.Subaccounts.ListAsync(q: Guid.NewGuid().ToString("N"));
                 results.Count.Should().Be(0);
             }
         }
@@ -47,13 +47,13 @@ namespace Tests
         private class Update : Subaccounts
         {
             [Test]
-            public void Can_update_subaccount()
+            public async void Can_update_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
-                Api.Subaccounts.Add(id, name: "test", notes: notes, customQuota: null);
+                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
 
-                var result = Api.Subaccounts.Update(id, name: "test", notes: "update", customQuota: 5000);
+                var result = await Api.Subaccounts.UpdateAsync(id, name: "test", notes: "update", customQuota: 5000);
                 result.CustomQuota.Should().Be(5000);
             }
           
@@ -63,13 +63,13 @@ namespace Tests
         private class Pause : Subaccounts
         {
             [Test]
-            public void Can_pause_subaccount()
+            public async void Can_pause_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
-                Api.Subaccounts.Add(id, name: "test", notes: notes, customQuota: null);
+                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
 
-                var result = Api.Subaccounts.Pause(id);
+                var result = await Api.Subaccounts.PauseAsync(id);
                 result.Status.Should().Be(MandrillSubaccountStatus.Paused);
             }
 
@@ -79,16 +79,16 @@ namespace Tests
         private class Resume : Subaccounts
         {
             [Test]
-            public void Can_resume_subaccount()
+            public async void Can_resume_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
-                Api.Subaccounts.Add(id, name: "test", notes: notes, customQuota: null);
+                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
 
-                var result = Api.Subaccounts.Pause(id);
+                var result = await Api.Subaccounts.PauseAsync(id);
                 result.Status.Should().Be(MandrillSubaccountStatus.Paused);
 
-                result = Api.Subaccounts.Resume(id);
+                result = await Api.Subaccounts.ResumeAsync(id);
                 result.Status.Should().Be(MandrillSubaccountStatus.Active);
             }
 
@@ -98,13 +98,13 @@ namespace Tests
         private class Delete : Subaccounts
         {
             [Test]
-            public void Can_delete_subaccount()
+            public async void Can_delete_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
-                Api.Subaccounts.Add(id, name: "test", notes: notes, customQuota: null);
+                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
 
-                var result = Api.Subaccounts.Delete(id);
+                var result = await Api.Subaccounts.DeleteAsync(id);
                 result.Id.Should().Be(id);
             }
 
@@ -114,13 +114,13 @@ namespace Tests
         private class Info : Subaccounts
         {
             [Test]
-            public void Can_get_info_subaccount()
+            public async void Can_get_info_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
-                Api.Subaccounts.Add(id, name: "test", notes: notes, customQuota: null);
+                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
 
-                var result = Api.Subaccounts.Info(id);
+                var result = await Api.Subaccounts.InfoAsync(id);
                 result.Id.Should().Be(id);
                 result.Last30Days.Clicks.Should().Be(0);
             }

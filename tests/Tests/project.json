@@ -1,0 +1,36 @@
+{
+  "version": "2.0.0-beta1",
+  "description": ".NET wrapper for the Mandrill API Tests",
+  "authors": [ "feinoujc" ],
+  "tags": [ "mandrill", "mailchimp", "mail" ],
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+  "frameworks": {
+    "net45": {
+      "frameworkAssemblies": {
+
+      }
+    },
+    "dnx451": { },
+    "dnxcore50": {
+      "dependencies": {
+        "System.Dynamic.Runtime": "4.0.0",
+        "Microsoft.CSharp": "4.0.0",
+        "System.Reflection": "4.0.10",
+        "System.Console": "4.0.0-*"
+      }
+    }
+  },
+  "dependencies": {
+    "FluentAssertions": "4.1.1",
+    "Mandrill.net": "2.0.0-beta1",
+    "Newtonsoft.Json": "7.0.1",
+    "Nunit": "3.0.1",
+    "NUnitLite": "3.0.1"
+
+  },
+  "commands": {
+    "test": "Tests"
+  }
+}

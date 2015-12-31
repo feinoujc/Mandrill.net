@@ -15,7 +15,7 @@ namespace Tests
         public override void SetUp()
         {
             base.SetUp();
-            var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_OUTBOUND_WEBHOOK", EnvironmentVariableTarget.Process) ?? "http://devnull-as-a-service.com/dev/null";
+            var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_OUTBOUND_WEBHOOK") ?? "http://devnull-as-a-service.com/dev/null";
 
             WebhookUri = new Uri(configuredWebHook);
 
@@ -34,7 +34,7 @@ namespace Tests
         [Test]
         public void Throws_when_bad_url()
         {
-            Assert.Throws<MandrillException>(() => Api.WebHooks.Add(new Uri("http://www.invalid_url.org")));
+            Assert.Throws<MandrillException>(() => Api.WebHooks.AddAsync(new Uri("http://www.invalid_url.org")).Wait());
         }
 
         [Test]

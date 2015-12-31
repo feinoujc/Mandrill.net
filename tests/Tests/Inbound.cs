@@ -55,7 +55,7 @@ namespace Tests
             public override void SetUp()
             {
                 base.SetUp();
-                var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_INBOUND_WEBHOOK", EnvironmentVariableTarget.Process) ?? "http://devnull-as-a-service.com/dev/null";
+                var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_INBOUND_WEBHOOK") ?? "http://devnull-as-a-service.com/dev/null";
 
                 WebhookUri = new Uri(configuredWebHook);
 

@@ -42,7 +42,6 @@ namespace Tests
             });
 
             var json = JObject.FromObject(message, MandrillSerializer.Instance);
-            Console.WriteLine(json.ToString());
             json["global_merge_vars"].Should().NotBeEmpty();
             json["global_merge_vars"].First["content"].Value<string>().Should().Be("some content");
         }
@@ -73,7 +72,7 @@ namespace Tests
             });
 
             var json = JObject.FromObject(message, MandrillSerializer.Instance);
-            Console.WriteLine(json.ToString());
+
             json["global_merge_vars"].Should().NotBeEmpty();
             var result = json["global_merge_vars"].First["content"]
                 .ToObject<List<Dictionary<string, object>>>(MandrillSerializer.Instance);

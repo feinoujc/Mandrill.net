@@ -9,7 +9,7 @@ namespace Tests
     {
         private static readonly Lazy<string> ApiKeyLazy = new Lazy<string>(() =>
         {
-            var apiKey = Environment.GetEnvironmentVariable("MANDRILL_API_KEY", EnvironmentVariableTarget.Process);
+            var apiKey = Environment.GetEnvironmentVariable("MANDRILL_API_KEY");
             if (string.IsNullOrEmpty(apiKey))
             {
                 throw new AssertionException("You must set the user environment variable MANDRILL_API_KEY in order to run these tests. " +
