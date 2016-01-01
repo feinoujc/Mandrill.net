@@ -59,7 +59,6 @@ namespace Tests
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
-                _added.Add(domain);
 
                 var results = await Api.Inbound.DeleteDomainAsync(domain);
                 results.Domain.Should().Be(domain);
