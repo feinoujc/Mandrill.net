@@ -117,13 +117,14 @@ namespace Tests
             public async Task Can_publish_template()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
-                var skew = DateTime.UtcNow.AddSeconds(-1);
-                //discards fractional time
-                skew = new DateTime(skew.Year, skew.Month, skew.Day, skew.Hour, skew.Minute, skew.Second, DateTimeKind.Utc);
+                var now = DateTime.UtcNow;
+                var skew = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second - 2,
+                    DateTimeKind.Utc);
+             
                 var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
                 var result = await Api.Templates.PublishAsync(added.Name);
 
-                result.PublishedAt.Should().BeAfter(skew);
+                result.PublishedAt.Should().BeOnOrAfter(skew);
             }
         }
 

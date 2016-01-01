@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
@@ -6,10 +7,21 @@ using NUnit.Framework;
 namespace Tests
 {
     [Category("rejects")]
-    class Rejects : IntegrationTest
+    internal class Rejects : IntegrationTest
     {
+        private HashSet<string> _added = new HashSet<string>();
+
+        public override void TearDown()
+        {
+            foreach (var id in _added)
+            {
+                var result = Api.Rejects.DeleteAsync(id).Result;
+            }
+            base.TearDown();
+        }
+
         [Category("rejects/add.json")]
-        class Add:Rejects
+        private class Add : Rejects
         {
             [Test]
             public async Task Can_add_email_to_rejects()
@@ -17,11 +29,12 @@ namespace Tests
                 var email = Guid.NewGuid().ToString("N") + "@example.com";
                 var result = await Api.Rejects.AddAsync(email, comment: "test", subaccount: null);
                 result.Added.Should().BeTrue();
+                _added.Add(email);
             }
         }
 
         [Category("rejects/delete.json")]
-        class Delete : Rejects
+        private class Delete : Rejects
         {
             [Test]
             public async Task Can_delete_email_from_rejects()
@@ -34,7 +47,7 @@ namespace Tests
         }
 
         [Category("rejects/list.json")]
-        class List : Rejects
+        private class List : Rejects
         {
             [Test]
             public async Task Can_list_filter_by_email()
@@ -44,6 +57,7 @@ namespace Tests
                 var results = await Api.Rejects.ListAsync(email, subaccount: null);
                 results.Should().Contain(x => x.Email == email);
                 results.Count.Should().Be(1);
+                _added.Add(email);
             }
 
 
@@ -55,6 +69,7 @@ namespace Tests
                 var results = await Api.Rejects.ListAsync(null, subaccount: null);
                 results.Should().Contain(x => x.Email == email);
                 results.Count.Should().BeGreaterOrEqualTo(1);
+                _added.Add(email);
             }
         }
     }

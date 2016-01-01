@@ -10,6 +10,15 @@ namespace Tests
     [Category("whitelists")]
     class Whitelists : IntegrationTest
     {
+        private HashSet<string> _added = new HashSet<string>();
+        public override void TearDown()
+        {
+            foreach (var email in _added)
+            {
+                var result = Api.Whitelists.DeleteAsync(email).Result;
+            }
+            base.TearDown();
+        }
 
         [Category("whitelists/list.json")]
         class List : Whitelists
@@ -31,7 +40,7 @@ namespace Tests
                     Assert.Inconclusive("no emails found on whitelist.");
                 }
             }
-
+            
             [Test]
             public async Task Can_list_all_filtered()
             {
@@ -63,6 +72,7 @@ namespace Tests
                 var email = Guid.NewGuid().ToString("N") + "@example.com";
                 var result = await Api.Whitelists.AddAsync(email);
                 result.Added.Should().BeTrue();
+                _added.Add(result.Email);
             }
         }
 
@@ -74,6 +84,7 @@ namespace Tests
             {
                 var email = Guid.NewGuid().ToString("N") + "@example.com";
                 await Api.Whitelists.AddAsync(email);
+
                 var result = await Api.Whitelists.DeleteAsync(email);
                 result.Deleted.Should().BeTrue();
             }

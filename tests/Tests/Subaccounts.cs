@@ -13,6 +13,17 @@ namespace Tests
     [Category("subaccounts")]
     internal class Subaccounts : IntegrationTest
     {
+        HashSet<string> _added = new HashSet<string>();
+
+        public override void TearDown()
+        {
+            foreach (var id in _added)
+            {
+                var result = Api.Subaccounts.DeleteAsync(id).Result;
+            }
+            base.TearDown();
+        }
+
         [Category("subaccounts/add.json")]
         private class Add : Subaccounts
         {
@@ -23,6 +34,7 @@ namespace Tests
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
                 var result = await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
                 result.Id.Should().Be(id);
+                _added.Add(result.Id);
             }
         }
 
@@ -55,6 +67,7 @@ namespace Tests
 
                 var result = await Api.Subaccounts.UpdateAsync(id, name: "test", notes: "update", customQuota: 5000);
                 result.CustomQuota.Should().Be(5000);
+                _added.Add(result.Id);
             }
           
         }
@@ -71,6 +84,7 @@ namespace Tests
 
                 var result = await Api.Subaccounts.PauseAsync(id);
                 result.Status.Should().Be(MandrillSubaccountStatus.Paused);
+                _added.Add(result.Id);
             }
 
         }
@@ -90,6 +104,7 @@ namespace Tests
 
                 result = await Api.Subaccounts.ResumeAsync(id);
                 result.Status.Should().Be(MandrillSubaccountStatus.Active);
+                _added.Add(result.Id);
             }
 
         }
@@ -123,6 +138,7 @@ namespace Tests
                 var result = await Api.Subaccounts.InfoAsync(id);
                 result.Id.Should().Be(id);
                 result.Last30Days.Clicks.Should().Be(0);
+                _added.Add(result.Id);
             }
 
         }

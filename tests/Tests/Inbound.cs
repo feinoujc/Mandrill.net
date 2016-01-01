@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
@@ -8,6 +9,17 @@ namespace Tests
     [Category("inbound")]
     internal class Inbound : IntegrationTest
     {
+        private HashSet<string> _added = new HashSet<string>();
+
+        public override void TearDown()
+        {
+            foreach (var id in _added)
+            {
+                var result = Api.Inbound.DeleteDomainAsync(id).Result;
+            }
+            base.TearDown();
+        }
+
         [Category("inbound/domains")]
         private class Domains : Inbound
         {
@@ -17,12 +29,15 @@ namespace Tests
                 var results = await Api.Inbound.DomainsAsync();
                 results.Count.Should().BeGreaterOrEqualTo(0);
             }
+            
 
             [Test]
             public async Task Can_add_domain()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 var results = await Api.Inbound.AddDomainAsync(domain);
+                _added.Add(results.Domain);
+
                 results.Domain.Should().Be(domain);
             }
 
@@ -31,9 +46,12 @@ namespace Tests
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
+                _added.Add(domain);
+
                 var result = await Api.Inbound.CheckDomainAsync(domain);
 
                 result.ValidMx.Should().Be(false);
+
             }
 
             [Test]
@@ -41,6 +59,7 @@ namespace Tests
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
+                _added.Add(domain);
 
                 var results = await Api.Inbound.DeleteDomainAsync(domain);
                 results.Domain.Should().Be(domain);
@@ -68,6 +87,7 @@ namespace Tests
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
+                _added.Add(domain);
 
                 var route = await Api.Inbound.AddRouteAsync(domain, domain, WebhookUri);
 
@@ -92,6 +112,7 @@ namespace Tests
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
+                _added.Add(domain);
 
                 var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri);
                 result.Id.Should().NotBeNull();
@@ -127,6 +148,7 @@ namespace Tests
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
+                _added.Add(domain);
 
                 var id = Guid.NewGuid().ToString("N");
                 var pattern = string.Format("{0}-*", id);

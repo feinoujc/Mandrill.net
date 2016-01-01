@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Mandrill;
@@ -11,8 +12,8 @@ namespace Tests
     internal class Webhooks : IntegrationTest
     {
         protected Uri WebhookUri { get; set; }
+        private HashSet<int> _added = new HashSet<int>(); 
 
-        [SetUp]
         public override void SetUp()
         {
             base.SetUp();
@@ -23,11 +24,22 @@ namespace Tests
             //configure webhook api at http://requestb.in
         }
 
+        public override void TearDown()
+        {
+            foreach (var id in _added)
+            {
+                var result = Api.WebHooks.DeleteAsync(id).Result;
+            }
+            base.TearDown();
+        }
+
         [Test]
         public async Task Can_add()
         {
             var result = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] {MandrillWebHookEventType.Unsub,});
             result.Should().NotBeNull();
+            _added.Add(result.Id);
+
             result.Events.Should().NotBeEmpty();
             result.Events[0].Should().Be(MandrillWebHookEventType.Unsub);
         }
@@ -49,14 +61,19 @@ namespace Tests
         public async Task Can_delete()
         {
             var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] {MandrillWebHookEventType.Unsub,});
+            _added.Add(added.Id);
+
             var result = await Api.WebHooks.DeleteAsync(added.Id);
             result.Id.Should().Be(added.Id);
+            _added.Remove(result.Id);
         }
 
         [Test]
         public async Task Can_get()
         {
             var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] {MandrillWebHookEventType.Unsub,});
+            _added.Add(added.Id);
+
             var result = await Api.WebHooks.InfoAsync(added.Id);
             result.Id.Should().Be(added.Id);
         }
@@ -65,6 +82,8 @@ namespace Tests
         public async Task Can_update()
         {
             var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] {MandrillWebHookEventType.Unsub,});
+            _added.Add(added.Id);
+
             var result = await Api.WebHooks.UpdateAsync(added.Id, WebhookUri, description: "An updated description", events: new[] {MandrillWebHookEventType.Unsub,});
             result.Id.Should().Be(added.Id);
         }

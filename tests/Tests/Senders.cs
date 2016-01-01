@@ -10,7 +10,6 @@ namespace Tests
     [Category("senders")]
     class Senders : IntegrationTest
     {
-
         [Category("senders/list.json")]
         class List : Senders
         {
