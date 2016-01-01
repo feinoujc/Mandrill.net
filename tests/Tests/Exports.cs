@@ -3,6 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using FluentAssertions;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Tests
 {
@@ -12,7 +13,7 @@ namespace Tests
         class List : Exports
         {
             [Test]
-            public async void Can_list_all()
+            public async Task Can_list_all()
             {
                 var results = await Api.Exports.ListAsync();
 
@@ -33,7 +34,7 @@ namespace Tests
         class Info : Exports
         {
             [Test]
-            public async void Can_retrieve_info()
+            public async Task Can_retrieve_info()
             {
                 var export = (await Api.Exports.ListAsync()).LastOrDefault();
                 if (export != null)
@@ -53,7 +54,7 @@ namespace Tests
         class Rejects : Exports
         {
             [Test]
-            public async void Can_export_info()
+            public async Task Can_export_info()
             {
                 // notifyEmail is an optional field that will 
                 // be emailed when the export is done compiling. omitting for test purposes.
@@ -69,7 +70,7 @@ namespace Tests
         class Whitelist: Exports
         {
             [Test]
-            public async void Can_export_info()
+            public async Task Can_export_info()
             {
                 // notifyEmail is an optional field that will 
                 // be emailed when the export is done compiling. omitting for test purposes.
@@ -85,7 +86,7 @@ namespace Tests
         class Activity : Exports
         {
             [Test]
-            public async void Can_export_activity()
+            public async Task Can_export_activity()
             {
                 // all of the activity parameters are optional. unsure of how much test
                 // coverage you'd like here, so stubbed out the parameters to be filled

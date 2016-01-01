@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Mandrill.Model;
 using NUnit.Framework;
@@ -41,7 +42,7 @@ namespace Tests
         internal class Add : Templates
         {
             [Test]
-            public async void Can_add_template()
+            public async Task Can_add_template()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
                 var result = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
@@ -57,7 +58,7 @@ namespace Tests
         internal class Info : Templates
         {
             [Test]
-            public async void Can_get_template_info()
+            public async Task Can_get_template_info()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
                 var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
@@ -74,7 +75,7 @@ namespace Tests
         internal class List : Templates
         {
             [Test]
-            public async void Can_list_all_templates()
+            public async Task Can_list_all_templates()
             {
                 var testLabel = Guid.NewGuid().ToString("N");
                 var templates = Enumerable.Range(1, 10).Select(i => AddToBeDeleted(Guid.NewGuid().ToString())).ToArray();
@@ -90,7 +91,7 @@ namespace Tests
             }
 
             [Test]
-            public async void Can_list_templates()
+            public async Task Can_list_templates()
             {
                 var testLabel = Guid.NewGuid().ToString("N");
                 var templates = Enumerable.Range(1, 10).Select(i => AddToBeDeleted(Guid.NewGuid().ToString())).ToArray();
@@ -115,10 +116,12 @@ namespace Tests
         internal class Publish : Templates
         {
             [Test]
-            public async void Can_publish_template()
+            public async Task Can_publish_template()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
                 var skew = DateTime.UtcNow.AddSeconds(-1);
+                //discards fractional time
+                skew = new DateTime(skew.Year, skew.Month, skew.Day, skew.Hour, skew.Minute, skew.Second, DateTimeKind.Utc);
                 var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
                 var result = await Api.Templates.PublishAsync(added.Name);
 
@@ -130,7 +133,7 @@ namespace Tests
         internal class Render : Templates
         {
             [Test]
-            public async void Can_render()
+            public async Task Can_render()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
                 await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
@@ -158,7 +161,7 @@ namespace Tests
         internal class TimeSeries : Templates
         {
             [Test]
-            public async void Can_get_time_series()
+            public async Task Can_get_time_series()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
                 var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
@@ -175,7 +178,7 @@ namespace Tests
         internal class Update : Templates
         {
             [Test]
-            public async void Can_update()
+            public async Task Can_update()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
                 await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);

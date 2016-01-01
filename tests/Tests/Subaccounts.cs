@@ -17,7 +17,7 @@ namespace Tests
         private class Add : Subaccounts
         {
             [Test]
-            public async void Can_add_subaccount()
+            public async Task Can_add_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
@@ -30,13 +30,13 @@ namespace Tests
         private class List : Subaccounts
         {
             [Test]
-            public async void Can_list_subaccount()
+            public async Task Can_list_subaccount()
             {
                 var results = await Api.Subaccounts.ListAsync(q:null);
                 results.Count.Should().BeGreaterOrEqualTo(0);
             }
             [Test]
-            public async void Can_filter_subaccount()
+            public async Task Can_filter_subaccount()
             {
                 var results = await Api.Subaccounts.ListAsync(q: Guid.NewGuid().ToString("N"));
                 results.Count.Should().Be(0);
@@ -47,7 +47,7 @@ namespace Tests
         private class Update : Subaccounts
         {
             [Test]
-            public async void Can_update_subaccount()
+            public async Task Can_update_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
@@ -63,7 +63,7 @@ namespace Tests
         private class Pause : Subaccounts
         {
             [Test]
-            public async void Can_pause_subaccount()
+            public async Task Can_pause_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
@@ -79,7 +79,7 @@ namespace Tests
         private class Resume : Subaccounts
         {
             [Test]
-            public async void Can_resume_subaccount()
+            public async Task Can_resume_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
@@ -98,7 +98,7 @@ namespace Tests
         private class Delete : Subaccounts
         {
             [Test]
-            public async void Can_delete_subaccount()
+            public async Task Can_delete_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
@@ -114,7 +114,7 @@ namespace Tests
         private class Info : Subaccounts
         {
             [Test]
-            public async void Can_get_info_subaccount()
+            public async Task Can_get_info_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");

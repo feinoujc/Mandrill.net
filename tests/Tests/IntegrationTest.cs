@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Mandrill;
 using NUnit.Framework;
 
 namespace Tests
 {
+
+
     [Category("integration")]
     internal abstract class IntegrationTest
     {
@@ -36,6 +39,20 @@ namespace Tests
         public virtual void TearDown()
         {
             LazyApi = null;
+        }
+
+        protected async static Task<T> ThrowsAsync<T>(Func<Task> testCode) where T : Exception
+        {
+            try
+            {
+                await testCode();
+                Assert.Throws<T>(() => { });
+            }
+            catch (T exception)
+            {
+                return exception;
+            }
+            return null;
         }
     }
 }

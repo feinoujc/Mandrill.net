@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -11,14 +12,14 @@ namespace Tests
         private class Domains : Inbound
         {
             [Test]
-            public async void Can_get_domains()
+            public async Task Can_get_domains()
             {
                 var results = await Api.Inbound.DomainsAsync();
                 results.Count.Should().BeGreaterOrEqualTo(0);
             }
 
             [Test]
-            public async void Can_add_domain()
+            public async Task Can_add_domain()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 var results = await Api.Inbound.AddDomainAsync(domain);
@@ -26,7 +27,7 @@ namespace Tests
             }
 
             [Test]
-            public async void Can_check_domain()
+            public async Task Can_check_domain()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
@@ -36,7 +37,7 @@ namespace Tests
             }
 
             [Test]
-            public async void Can_delete_domain()
+            public async Task Can_delete_domain()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
@@ -63,7 +64,7 @@ namespace Tests
             }
 
             [Test]
-            public async void Can_get_routes()
+            public async Task Can_get_routes()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
@@ -76,7 +77,7 @@ namespace Tests
             }
 
             [Test]
-            public async void Can_add_route()
+            public async Task Can_add_route()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
@@ -87,7 +88,7 @@ namespace Tests
             }
 
             [Test]
-            public async void Can_update_route()
+            public async Task Can_update_route()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
@@ -106,7 +107,7 @@ namespace Tests
 
 
             [Test]
-            public async void Can_delete_route()
+            public async Task Can_delete_route()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
@@ -122,7 +123,7 @@ namespace Tests
             }
 
             [Test]
-            public async void Can_send_raw()
+            public async Task Can_send_raw()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);

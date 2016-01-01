@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Mandrill;
 using Mandrill.Model;
@@ -13,7 +14,7 @@ namespace Tests
         internal class Info : Users
         {
             [Test]
-            public async void Can_get_info()
+            public async Task Can_get_info()
             {
                 var result = await Api.Users.InfoAsync();
 
@@ -34,17 +35,17 @@ namespace Tests
         internal class Ping : Users
         {
             [Test]
-            public async void Can_ping()
+            public async Task Can_ping()
             {
                 var ping = await Api.Users.PingAsync();
                 ping.Should().Be("PONG!");
             }
 
             [Test]
-            public void Throws_when_invalid_key()
+            public async Task Throws_when_invalid_key()
             {
                 var badApi = new MandrillApi(Guid.NewGuid().ToString("N"));
-                var mandrillExpection = Assert.Throws<MandrillException>(() => badApi.Users.PingAsync().Wait());
+                var mandrillExpection = await ThrowsAsync<MandrillException>(() => badApi.Users.PingAsync());
                 mandrillExpection.Name.Should().Be("Invalid_Key");
             }
         }
@@ -53,7 +54,7 @@ namespace Tests
         internal class Senders : Users
         {
             [Test]
-            public async void Can_list_senders()
+            public async Task Can_list_senders()
             {
                 var results = await Api.Users.SendersAsync();
 

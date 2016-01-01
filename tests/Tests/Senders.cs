@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -14,7 +15,7 @@ namespace Tests
         class List : Senders
         {
             [Test]
-            public async void Can_list_all()
+            public async Task Can_list_all()
             {
                 var results = await Api.Senders.ListAsync();
 
@@ -35,7 +36,7 @@ namespace Tests
         class Domains : Senders
         {
             [Test]
-            public async void Can_list_sender_domains()
+            public async Task Can_list_sender_domains()
             {
                 var results = await Api.Senders.DomainsAsync();
 
@@ -56,7 +57,7 @@ namespace Tests
         class Add : Senders
         {
             [Test]
-            public async void Can_add_domain()
+            public async Task Can_add_domain()
             {
                 var domain = Guid.NewGuid().ToString("N") + "example.com";
                 var result = await Api.Senders.AddDomainAsync(domain);
@@ -68,7 +69,7 @@ namespace Tests
         class Check : Senders
         {
             [Test]
-            public async void Can_check_domain()
+            public async Task Can_check_domain()
             {
                 var domain = Guid.NewGuid().ToString("N") + "example.com";
                 await Api.Senders.AddDomainAsync(domain);
@@ -81,7 +82,7 @@ namespace Tests
         class Verify : Senders
         {
             [Test]
-            public async void Can_verify_domain()
+            public async Task Can_verify_domain()
             {
                 var domain = Guid.NewGuid().ToString("N") + "example.com";
                 // Not sure the best way to stub a mailbox here. This call
@@ -98,7 +99,7 @@ namespace Tests
         class Info : Senders
         {
             [Test]
-            public async void Can_retrieve_info()
+            public async Task Can_retrieve_info()
             {
                 var address = (await Api.Senders.ListAsync()).LastOrDefault();
                 if (address != null)
@@ -118,7 +119,7 @@ namespace Tests
         class TimeSeries : Senders
         {
             [Test]
-            public async void Can_get_sender_time_series()
+            public async Task Can_get_sender_time_series()
             {
                 var address = (await Api.Senders.ListAsync()).LastOrDefault();
                 if (address != null)

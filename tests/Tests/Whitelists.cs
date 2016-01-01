@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -14,7 +15,7 @@ namespace Tests
         class List : Whitelists
         {
             [Test]
-            public async void Can_list_all()
+            public async Task Can_list_all()
             {
                 string email = null;
                 var results = await Api.Whitelists.ListAsync(email);
@@ -32,7 +33,7 @@ namespace Tests
             }
 
             [Test]
-            public async void Can_list_all_filtered()
+            public async Task Can_list_all_filtered()
             {
                 string email = null;
                 var entirelist = await Api.Whitelists.ListAsync(email);
@@ -57,7 +58,7 @@ namespace Tests
         class Add : Whitelists 
         {
             [Test]
-            public async void Can_add_whitelist()
+            public async Task Can_add_whitelist()
             {
                 var email = Guid.NewGuid().ToString("N") + "@example.com";
                 var result = await Api.Whitelists.AddAsync(email);
@@ -69,7 +70,7 @@ namespace Tests
         class Delete : Whitelists
         {
             [Test]
-            public async void Can_delete_whitelist()
+            public async Task Can_delete_whitelist()
             {
                 var email = Guid.NewGuid().ToString("N") + "@example.com";
                 await Api.Whitelists.AddAsync(email);

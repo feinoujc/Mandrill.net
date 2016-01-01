@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Mandrill;
 using Mandrill.Model;
@@ -18,7 +19,7 @@ namespace Tests
         internal class CancelScheduled : Messages
         {
             [Test]
-            public async void Can_cancel_scheduled()
+            public async Task Can_cancel_scheduled()
             {
                 var list = await Api.Messages.ListScheduledAsync();
 
@@ -39,7 +40,7 @@ namespace Tests
         internal class Content : Messages
         {
             [Test]
-            public async void Can_retrieve_content()
+            public async Task Can_retrieve_content()
             {
                 var results = await Api.Messages.SearchAsync(null, DateTime.Today.AddDays(-1));
 
@@ -61,16 +62,16 @@ namespace Tests
             }
 
             [Test]
-            public void Throws_when_not_found()
+            public async Task Throws_when_not_found()
             {
-                var mandrillException = Assert.Throws<MandrillException>(async () => await Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
+                var mandrillException = await ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
                 mandrillException.Name.Should().Be("Unknown_Message");
             }
 
             [Test]
-            public void Throws_when_not_found_sync()
+            public async Task Throws_when_not_found_sync()
             {
-                var mandrillException = Assert.Throws<MandrillException>(async () => await Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
+                var mandrillException = await ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
                 mandrillException.Name.Should().Be("Unknown_Message");
                 Debug.WriteLine(mandrillException);
             }
@@ -80,7 +81,7 @@ namespace Tests
         internal class Info : Messages
         {
             [Test]
-            public async void Can_retrieve_info()
+            public async Task Can_retrieve_info()
             {
                 var results = await Api.Messages.SearchAsync("email:example.com");
 
@@ -100,9 +101,9 @@ namespace Tests
             }
 
             [Test]
-            public void Throws_when_not_found()
+            public async Task Throws_when_not_found()
             {
-                var mandrillException = Assert.Throws<MandrillException>(async () => await Api.Messages.InfoAync(Guid.NewGuid().ToString("N")));
+                var mandrillException = await ThrowsAsync<MandrillException>(() => Api.Messages.InfoAync(Guid.NewGuid().ToString("N")));
                 mandrillException.Name.Should().Be("Unknown_Message");
             }
         }
@@ -111,7 +112,7 @@ namespace Tests
         internal class ListScheduled : Messages
         {
             [Test]
-            public async void Can_list_scheduled()
+            public async Task Can_list_scheduled()
             {
                 var result = await Api.Messages.ListScheduledAsync();
                 result.Should().NotBeNull();
@@ -123,7 +124,7 @@ namespace Tests
         internal class Parse : Messages
         {
             [Test]
-            public async void Can_parse_raw_message()
+            public async Task Can_parse_raw_message()
             {
                 var rawMessage = "From: sender@example.com\nTo: recipient.email@example.com\nSubject: Some Subject\n\nSome content.";
                 var result = await Api.Messages.ParseAsync(rawMessage);
@@ -136,7 +137,7 @@ namespace Tests
 
 
             [Test]
-            public async void Can_parse_full_raw_message_headers()
+            public async Task Can_parse_full_raw_message_headers()
             {
                 var rawMessage = @"Delivered-To: MrSmith@gmail.com
 Received: by 10.36.81.3 with SMTP id e3cs239nzb; Tue, 29 Mar 2005 15:11:47 -0800 (PST)
@@ -165,7 +166,7 @@ To: Mr Smith
         internal class Reschedule : Messages
         {
             [Test]
-            public async void Can_reschedule()
+            public async Task Can_reschedule()
             {
                 var list = await Api.Messages.ListScheduledAsync();
 
@@ -188,7 +189,7 @@ To: Mr Smith
         internal class Search : Messages
         {
             [Test]
-            public async void Can_search_all_params()
+            public async Task Can_search_all_params()
             {
                 var results = await Api.Messages.SearchAsync("email:example.com",
                     DateTime.Today.AddDays(-1),
@@ -213,7 +214,7 @@ To: Mr Smith
             }
 
             [Test]
-            public async void Can_search_query()
+            public async Task Can_search_query()
             {
                 var results = await Api.Messages.SearchAsync("email:example.com", limit: 1);
 
@@ -235,7 +236,7 @@ To: Mr Smith
         internal class SearchTimeSeries : Messages
         {
             [Test]
-            public async void Can_search_all_params()
+            public async Task Can_search_all_params()
             {
                 var results = await Api.Messages.SearchTimeSeriesAsync("email:example.com",
                     DateTime.Today.AddDays(-1),
@@ -255,7 +256,7 @@ To: Mr Smith
             }
 
             [Test]
-            public async void Can_search_open_query()
+            public async Task Can_search_open_query()
             {
                 var results = await Api.Messages.SearchTimeSeriesAsync(null);
 
@@ -275,7 +276,7 @@ To: Mr Smith
         internal class Send : Messages
         {
             [Test]
-            public async void Can_send_message()
+            public async Task Can_send_message()
             {
                 var message = new MandrillMessage
                 {
@@ -307,7 +308,7 @@ To: Mr Smith
             }
 
             [Test]
-            public void Can_throw_errors_when_error_response()
+            public async Task Can_throw_errors_when_error_response()
             {
                 var invalidSubaccount = Guid.NewGuid().ToString("N");
                 var message = new MandrillMessage
@@ -323,14 +324,14 @@ To: Mr Smith
                     Subaccount = invalidSubaccount
                 };
 
-                var result = Assert.Throws<MandrillException>(async () => await Api.Messages.SendAsync(message));
+                var result = await ThrowsAsync<MandrillException>(() => Api.Messages.SendAsync(message));
                 result.Should().NotBeNull();
                 result.Name.Should().Be("Unknown_Subaccount");
                 result.Message.Should().Contain(invalidSubaccount);
             }
 
             [Test]
-            public async void Can_send_async()
+            public async Task Can_send_async()
             {
                 var message = new MandrillMessage
                 {
@@ -376,7 +377,7 @@ To: Mr Smith
 #endif
             [Test]
             [Ignore("Requires account with $")]
-            public async void Can_send_scheduled()
+            public async Task Can_send_scheduled()
             {
                 var message = new MandrillMessage
                 {
@@ -399,12 +400,12 @@ To: Mr Smith
             }
 
             [Test]
-            public void Throws_if_scheduled_is_not_utc()
+            public async Task Throws_if_scheduled_is_not_utc()
             {
                 var message = new MandrillMessage();
 
                 var sendAtLocal = DateTime.SpecifyKind(DateTime.Now.AddHours(1), DateTimeKind.Local);
-                var result = Assert.Throws<ArgumentException>(async () => await Api.Messages.SendAsync(message, sendAtUtc: sendAtLocal));
+                var result = await ThrowsAsync<ArgumentException>(() => Api.Messages.SendAsync(message, sendAtUtc: sendAtLocal));
 
                 result.ParamName.Should().Be("sendAtUtc");
             }
@@ -414,7 +415,7 @@ To: Mr Smith
         internal class SendRaw : Messages
         {
             [Test]
-            public async void Can_send_raw_message()
+            public async Task Can_send_raw_message()
             {
                 var rawMessage = "From: sender@example.com\nTo: recipient.email@example.com\nSubject: Some Subject\n\nSome content.";
                 var fromEmail = "sender@example.com";
@@ -458,7 +459,7 @@ To: Mr Smith
             }
 
             [Test]
-            public async void Can_send_template()
+            public async Task Can_send_template()
             {
                 var message = new MandrillMessage
                 {
@@ -512,7 +513,7 @@ To: Mr Smith
             }
 
             [Test]
-            public async void Can_send_template_string_dictionary()
+            public async Task Can_send_template_string_dictionary()
             {
                 var message = new MandrillMessage
                 {
@@ -592,7 +593,7 @@ To: Mr Smith
             }
 
             [Test]
-            public async void Can_send_template_object_list()
+            public async Task Can_send_template_object_list()
             {
                 var message = new MandrillMessage
                 {
@@ -671,7 +672,7 @@ To: Mr Smith
 
 
             [Test]
-            public async void Can_send_template_dynamic()
+            public async Task Can_send_template_dynamic()
             {
                 var message = new MandrillMessage
                 {

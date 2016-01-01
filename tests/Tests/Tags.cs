@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -14,7 +15,7 @@ namespace Tests
         class List : Tags
         {
             [Test]
-            public async void Can_list_all()
+            public async Task Can_list_all()
             {
                 var results = await Api.Tags.ListAsync();
 
@@ -35,7 +36,7 @@ namespace Tests
         class Info : Tags
         {
             [Test]
-            public async void Can_retrieve_info()
+            public async Task Can_retrieve_info()
             {
                 var tag = (await Api.Tags.ListAsync()).LastOrDefault();
                 if (tag != null)
@@ -55,7 +56,7 @@ namespace Tests
         class Delete : Tags
         {
             [Test]
-            public async void Can_delete_tag()
+            public async Task Can_delete_tag()
             {
                 var tag = (await Api.Tags.ListAsync()).LastOrDefault();
                 if (tag != null)
@@ -75,7 +76,7 @@ namespace Tests
         class TimeSeries : Tags
         {
             [Test]
-            public async void Can_get_tag_time_series()
+            public async Task Can_get_tag_time_series()
             {
                 var tag = (await Api.Tags.ListAsync()).LastOrDefault();
                 if (tag != null)
@@ -104,7 +105,7 @@ namespace Tests
         class AllTimeSeries : Tags
         {
             [Test]
-            public async void Can_get_tag_all_time_series()
+            public async Task Can_get_tag_all_time_series()
             {
                 var results = await Api.Tags.AllTimeSeriesAsync();
 

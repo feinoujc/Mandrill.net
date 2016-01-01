@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -11,7 +12,7 @@ namespace Tests
         class Add:Rejects
         {
             [Test]
-            public async void Can_add_email_to_rejects()
+            public async Task Can_add_email_to_rejects()
             {
                 var email = Guid.NewGuid().ToString("N") + "@example.com";
                 var result = await Api.Rejects.AddAsync(email, comment: "test", subaccount: null);
@@ -23,7 +24,7 @@ namespace Tests
         class Delete : Rejects
         {
             [Test]
-            public async void Can_delete_email_from_rejects()
+            public async Task Can_delete_email_from_rejects()
             {
                 var email = Guid.NewGuid().ToString("N") + "@example.com";
                 await Api.Rejects.AddAsync(email, comment: "test", subaccount: null);
@@ -36,7 +37,7 @@ namespace Tests
         class List : Rejects
         {
             [Test]
-            public async void Can_list_filter_by_email()
+            public async Task Can_list_filter_by_email()
             {
                 var email = Guid.NewGuid().ToString("N") + "@example.com";
                 await Api.Rejects.AddAsync(email, comment: "test", subaccount: null);
@@ -47,7 +48,7 @@ namespace Tests
 
 
             [Test]
-            public async void Can_list_all()
+            public async Task Can_list_all()
             {
                 var email = Guid.NewGuid().ToString("N") + "@example.com";
                 await Api.Rejects.AddAsync(email, comment: "test", subaccount: null);
