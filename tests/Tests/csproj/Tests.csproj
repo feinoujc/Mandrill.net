@@ -31,16 +31,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FluentAssertions">
-      <HintPath>..\..\packages\FluentAssertions.3.2.2\lib\net45\FluentAssertions.dll</HintPath>
+      <HintPath>..\..\..\packages\FluentAssertions.3.2.2\lib\net45\FluentAssertions.dll</HintPath>
     </Reference>
     <Reference Include="FluentAssertions.Core">
-      <HintPath>..\..\packages\FluentAssertions.3.2.2\lib\net45\FluentAssertions.Core.dll</HintPath>
+      <HintPath>..\..\..\packages\FluentAssertions.3.2.2\lib\net45\FluentAssertions.Core.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.7\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\packages\Newtonsoft.Json.6.0.7\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>..\..\packages\NUnit.3.0.1\lib\net45\nunit.framework.dll</HintPath>
+      <HintPath>..\..\..\packages\NUnit.3.0.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -53,53 +53,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Exports.cs" />
-    <Compile Include="Inbound.cs" />
-    <Compile Include="Senders.cs" />
-    <Compile Include="Subaccounts.cs" />
-    <Compile Include="Webhooks.cs" />
-    <Compile Include="Whitelists.cs" />
-    <Compile Include="Tags.cs" />
-    <Compile Include="IntegrationTest.cs" />
-    <Compile Include="Messages.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
+    <Compile Include="..\Exports.cs" />
+    <Compile Include="..\Inbound.cs" />
+    <Compile Include="..\Senders.cs" />
+    <Compile Include="..\Subaccounts.cs" />
+    <Compile Include="..\TestData.cs">
+      <Link>TestData.cs</Link>
     </Compile>
-    <Compile Include="Rejects.cs" />
-    <Compile Include="SerializationTests.cs" />
-    <Compile Include="TemplateContent.cs" />
-    <Compile Include="Templates.cs" />
-    <Compile Include="Users.cs" />
+    <Compile Include="..\Webhooks.cs" />
+    <Compile Include="..\Whitelists.cs" />
+    <Compile Include="..\Tags.cs" />
+    <Compile Include="..\IntegrationTest.cs" />
+    <Compile Include="..\Messages.cs" />
+    <Compile Include="..\Properties\AssemblyInfo.cs" />
+    <Compile Include="..\Rejects.cs" />
+    <Compile Include="..\SerializationTests.cs" />
+    <Compile Include="..\TemplateContent.cs" />
+    <Compile Include="..\Templates.cs" />
+    <Compile Include="..\Users.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Mandrill.net\Mandrill.csproj">
+    <ProjectReference Include="..\..\..\src\Mandrill.net\csproj\Mandrill.csproj">
       <Project>{ce62869f-2f07-4230-bc84-ce07e7719f14}</Project>
       <Name>Mandrill</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\mandrill_webhook_example.json.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\mandrill_inbound.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\mandrill_webhook_invalid.json.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

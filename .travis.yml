@@ -5,5 +5,5 @@ install:
   - nuget install NUnit.Console -Version 3.0.1 -OutputDirectory packages
 script:
   - xbuild /p:Configuration=Release Mandrill.net.sln
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then mono --runtime=v4.0 ./packages/NUnit.Console.3.0.1/tools/nunit3-console.exe --noresult --full --labels=On --where:cat==integration ./tests/Tests/bin/Release/Tests.dll; fi'
-  - mono --runtime=v4.0 ./packages/NUnit.Console.3.0.1/tools/nunit3-console.exe --noresult --full --labels=On --where:cat!=integration ./tests/Tests/bin/Release/Tests.dll
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then mono --runtime=v4.0 ./packages/NUnit.Console.3.0.1/tools/nunit3-console.exe --noresult --full --labels=On --where:cat==integration ./tests/Tests/csproj/bin/Release/Tests.dll; fi'
+  - mono --runtime=v4.0 ./packages/NUnit.Console.3.0.1/tools/nunit3-console.exe --noresult --full --labels=On --where:cat!=integration ./tests/Tests/csproj/bin/Release/Tests.dll
