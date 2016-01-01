@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Mandrill.Model
 {
@@ -15,7 +16,7 @@ namespace Mandrill.Model
 
         public Dictionary<string, object> Headers
         {
-            get { return _headers ?? (_headers = new Dictionary<string, object>()); }
+            get { return _headers ?? (_headers = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)); }
             set { _headers = value; }
         }
 
