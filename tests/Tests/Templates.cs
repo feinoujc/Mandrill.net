@@ -19,14 +19,12 @@ namespace Tests
             return templateName;
         }
 
-        [TestFixtureSetUp]
         public override void SetUp()
         {
             base.SetUp();
             TemplatesToCleanup = new HashSet<string>();
         }
 
-        [TestFixtureTearDown]
         public override void TearDown()
         {
             foreach (var templateName in TemplatesToCleanup)

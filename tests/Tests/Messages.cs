@@ -441,7 +441,6 @@ To: Mr Smith
         {
             protected string TestTemplateName;
 
-            [TestFixtureSetUp]
             public override void SetUp()
             {
                 base.SetUp();
@@ -450,7 +449,6 @@ To: Mr Smith
                 result.Should().NotBeNull();
             }
 
-            [TestFixtureTearDown]
             public override void TearDown()
             {
                 var result = Api.Templates.DeleteAsync(TestTemplateName).Result;
@@ -495,7 +493,6 @@ To: Mr Smith
         {
             protected string TestTemplateName;
 
-            [TestFixtureSetUp]
             public override void SetUp()
             {
                 base.SetUp();
@@ -504,7 +501,6 @@ To: Mr Smith
                 result.Should().NotBeNull();
             }
 
-            [TestFixtureTearDown]
             public override void TearDown()
             {
                 var result = Api.Templates.DeleteAsync(TestTemplateName).Result;
