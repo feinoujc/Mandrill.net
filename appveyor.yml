@@ -10,7 +10,7 @@ install:
   - dnu restore
   - dnu pack src/Mandrill.net --configuration Release --out artifacts
   - cd ./tests/Tests
-  - dnx test --labels=All --noresult --verbose --where:cat!=exports
+  - dnx test --labels=All --verbose --where:cat!=exports
 build: off
 artifacts:
   - path: artifacts\**\*.nupkg
