@@ -11,3 +11,9 @@ install:
 build: off
 artifacts:
   - path: artifacts\**\*.nupkg
+deploy:
+  provider: NuGet
+  api_key:
+    secure: yYZGBnyhi9s3qBjVh9KhSnneM/qVxkGiSfNkXWekPyMFSFbDYYoXiuZxwMAQm8YV
+  skip_symbols: false
+  artifact: /.*\.nupkg/
