@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Tests
 {
+    [Category("exports")]
     class Exports : IntegrationTest
     {
         [Category("exports/list.json")]

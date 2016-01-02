@@ -7,6 +7,6 @@ install:
 script:
   - cd ./tests/Tests
   - dnu build
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then dnx test --labels=All --where:cat==integration --noresult --verbose; fi'
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then dnx test --labels=All --where:"cat==integration && cat !=exports" --noresult --verbose; fi'
   - dnx test --labels=All --where:cat!=integration --noresult --verbose
 
