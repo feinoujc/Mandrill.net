@@ -6,6 +6,8 @@ install:
   - dnvm upgrade
   - dnu restore
   - dnu pack src/Mandrill.net --configuration Release --out artifacts
+  - cd ./tests/Tests
+  - dnx test --labels=All --noresult --verbose
 build: off
 artifacts:
   - path: artifacts\**\*.nupkg
