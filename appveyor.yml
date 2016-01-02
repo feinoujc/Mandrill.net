@@ -13,6 +13,9 @@ artifacts:
   - path: artifacts\**\*.nupkg
 deploy:
   provider: NuGet
+  on:
+    branch: master
+    appveyor_repo_tag: true
   api_key:
     secure: yYZGBnyhi9s3qBjVh9KhSnneM/qVxkGiSfNkXWekPyMFSFbDYYoXiuZxwMAQm8YV
   skip_symbols: false
