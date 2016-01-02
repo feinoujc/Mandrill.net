@@ -2,11 +2,15 @@
 os: Visual Studio 2015
 environment:
   VisualStudioVersion: 14.0
+  matrix:
+    - RUNTIME: coreclr
+    - RUNTIME: clr
 install:
   - dnvm upgrade
   - dnu restore
   - dnu pack src/Mandrill.net --configuration Release --out artifacts
   - cd ./tests/Tests
+  - dnvm use default -r %RUNTIME%
   - dnx test --labels=All --noresult --verbose --where:cat!=exports
 build: off
 artifacts:
