@@ -1,14 +1,5 @@
 ﻿{
-  "version": "2.0.0-beta1",
-  "description": ".NET wrapper for the Mandrill API Tests",
-  "authors": [
-    "feinoujc"
-  ],
-  "tags": [
-    "mandrill",
-    "mailchimp",
-    "mail"
-  ],
+  "version": "1.0.0-*",
   "compilationOptions": {
     "emitEntryPoint": true
   },
@@ -28,7 +19,7 @@
   },
   "dependencies": {
     "FluentAssertions": "4.1.0",
-    "Mandrill.net": "2.0.0-beta1",
+    "Mandrill.net": "2.0.0-*",
     "Newtonsoft.Json": "7.0.1",
     "Nunit": "3.0.1",
     "NUnitLite": "3.0.1"
