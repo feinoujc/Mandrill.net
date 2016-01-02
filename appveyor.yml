@@ -1,0 +1,11 @@
+
+os: Visual Studio 2015
+environment:
+  VisualStudioVersion: 14.0
+install:
+  - dnvm upgrade
+  - dnu restore
+  - dnu pack src/Mandrill.net --configuration Release --out artifacts
+build: off
+artifacts:
+  - path: artifacts\**\*.nupkg
