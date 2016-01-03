@@ -5,13 +5,22 @@ environment:
   matrix:
     - runtime: coreclr
     - runtime: clr
-install:
+assembly_info:
+  patch: true
+  file: AssemblyInfo.*
+  assembly_version: "{version}"
+  assembly_file_version: "{version}"
+  assembly_informational_version: "{version}"
+before_build:
   - dnvm upgrade -r %runtime%
   - dnu restore
+build: off
+build_script:
   - dnu pack src/Mandrill.net --configuration Release --out artifacts
+test: off
+test_script:
   - cd ./tests/Tests
   - dnx test --labels=All --verbose --where:cat!=exports
-build: off
 artifacts:
   - path: artifacts\**\*.nupkg
 deploy:
