@@ -17,14 +17,6 @@ https://mandrillapp.com/api/docs/
 Install-Package Mandrill.net
 ```
 
-### .NET Core support
-
-.NET core support is available in pre-release
-
-```ps
-Install-Package Mandrill.net -Pre
-```
-
 ### Send a new transactional message through Mandrill (async)
 
 ```cs
