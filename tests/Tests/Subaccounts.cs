@@ -138,8 +138,13 @@ namespace Tests
                 var result = await Api.Subaccounts.InfoAsync(id);
                 result.Id.Should().Be(id);
                 result.Last30Days.Clicks.Should().Be(0);
+                result.FirstSentAt.Should().Be((DateTime?) null);
+
                 _added.Add(result.Id);
+              
+
             }
+
 
         }
     }

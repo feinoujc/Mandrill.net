@@ -20,7 +20,7 @@ namespace Mandrill.Model
         public DateTime CreatedAt { get; set; }
 
         [JsonConverter(typeof (IsoDateTimeConverter))]
-        public string FirstSentAt { get; set; }
+        public DateTime? FirstSentAt { get; set; }
 
         public int SentWeekly { get; set; }
 
