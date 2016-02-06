@@ -5,6 +5,9 @@ environment:
   matrix:
     - runtime: coreclr
     - runtime: clr
+init:
+- if not defined APPVEYOR_PULL_REQUEST_NUMBER set EXCLUDE_TEST_CATEGORY=exports if defined APPVEYOR_PULL_REQUEST_NUMBER set EXCLUDE_TEST_CATEGORY=integration 
+
 assembly_info:
   patch: true
   file: AssemblyInfo.*
@@ -20,7 +23,7 @@ build_script:
 test: off
 test_script:
   - cd ./tests/Tests
-  - dnx test --labels=All --verbose --where:cat!=exports
+  - dnx test --labels=All --verbose --where:cat!=$(EXCLUDE_TEST_CATEGORY)
 artifacts:
   - path: artifacts\**\*.nupkg
 deploy:
