@@ -13,6 +13,8 @@ namespace Mandrill.Model
         Click,
         Spam,
         Unsub,
-        Reject
+        Reject,
+        Blacklist,
+        Whitelist
     }
 }
