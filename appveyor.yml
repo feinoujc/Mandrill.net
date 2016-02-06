@@ -5,6 +5,10 @@ environment:
   matrix:
     - runtime: coreclr
     - runtime: clr
+branches:
+  only:
+    - master
+    - develop
 assembly_info:
   patch: true
   file: AssemblyInfo.*
