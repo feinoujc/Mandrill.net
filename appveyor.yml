@@ -23,7 +23,7 @@ build_script:
 test: off
 test_script:
   - cd ./tests/Tests
-  - dnx test --labels=All --verbose --where:cat!=$(EXCLUDE_TEST_CATEGORY)
+  - dnx test --labels=All --verbose --where:cat!=%EXCLUDE_TEST_CATEGORY%
 artifacts:
   - path: artifacts\**\*.nupkg
 deploy:
