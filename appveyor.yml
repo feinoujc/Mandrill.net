@@ -11,9 +11,15 @@ assembly_info:
   assembly_version: "{version}"
   assembly_file_version: "{version}"
   assembly_informational_version: "{version}-$(appveyor_repo_commit)"
-before_build:
+cache:
+  - C:\Users\appveyor\.dnx\runtimes
+  - C:\Users\appveyor\.dnx\packages
+install:
   - dnvm upgrade -r %runtime%
+before_build:
   - dnu restore
+  - ps: >-
+      (Get-Content src\Mandrill.net\project.json).replace('"version": "1.0.0-*",', '"version": "' + $env:APPVEYOR_BUILD_VERSION + '",') | Set-Content src\Mandrill.net\project.json
 build: off
 build_script:
   - dnu pack src/Mandrill.net --configuration Release --out artifacts
