@@ -5,10 +5,6 @@ environment:
   matrix:
     - runtime: coreclr
     - runtime: clr
-branches:
-  only:
-    - master
-    - develop
 assembly_info:
   patch: true
   file: AssemblyInfo.*
@@ -24,7 +20,8 @@ build_script:
 test: off
 test_script:
   - cd ./tests/Tests
-  - dnx test --labels=All --verbose --where:cat!=exports
+  - if defined APPVEYOR_PULL_REQUEST_NUMBER dnx test --labels=All --verbose --where:cat!=integration
+  - if not defined APPVEYOR_PULL_REQUEST_NUMBER dnx test --labels=All --verbose --where:cat!=exports
 artifacts:
   - path: artifacts\**\*.nupkg
 deploy:
