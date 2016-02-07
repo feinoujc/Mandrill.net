@@ -113,6 +113,8 @@
     <Compile Include="..\Model\WebHook\MandrillMessageEventInfo.cs" />
     <Compile Include="..\Model\WebHook\MandrillSyncAction.cs" />
     <Compile Include="..\Model\WebHook\MandrillSyncEvent.cs" />
+    <Compile Include="..\Model\WebHook\MandrillSyncEventEntry.cs" />
+    <Compile Include="..\Model\WebHook\MandrillSyncEventReject.cs" />
     <Compile Include="..\Model\WebHook\MandrillSyncType.cs" />
     <Compile Include="..\Model\Messages\MandrillMessageInfo.cs" />
     <Compile Include="..\Model\Messages\MandrillMessageInfoRequest.cs" />
