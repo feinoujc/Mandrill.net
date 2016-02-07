@@ -1,5 +1,5 @@
 {
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": ".NET wrapper for the Mandrill API",
   "authors": [ "feinoujc" ],
   "tags": [ "mandrill", "mailchimp", "mail" ],
