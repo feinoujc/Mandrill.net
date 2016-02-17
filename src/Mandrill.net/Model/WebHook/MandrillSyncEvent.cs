@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Mandrill.Serialization;
 using Newtonsoft.Json;
@@ -7,6 +8,8 @@ namespace Mandrill.Model
 {
     public class MandrillSyncEvent
     {
+        public DateTime Ts { get; set; }
+
         public MandrillSyncType Type { get; set; }
         
         public MandrillSyncAction Action { get; set; }
