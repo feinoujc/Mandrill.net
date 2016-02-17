@@ -64,5 +64,8 @@ namespace Mandrill.Model
         public string Diag { get; set; }
 
         public string BounceDescription { get; set; }
+
+        [JsonProperty("bgtools_code")]
+        public int BgToolsCode { get; set; }
     }
 }
