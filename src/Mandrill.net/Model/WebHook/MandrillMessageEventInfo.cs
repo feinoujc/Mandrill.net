@@ -11,7 +11,7 @@ namespace Mandrill.Model
         private List<MandrillOpensDetail> _opens;
         private List<MandrillSmtpEvent> _smtpEvents;
         private List<string> _tags;
-        public DateTime Ts { get; set; }
+        public DateTime? Ts { get; set; }
 
         [JsonProperty("_id")]
         public string Id { get; set; }
