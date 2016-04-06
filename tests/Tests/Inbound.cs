@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
@@ -11,13 +13,19 @@ namespace Tests
     {
         private HashSet<string> _added = new HashSet<string>();
 
-        public override void TearDown()
+        [SetUp]
+        public virtual void SetUp()
+        {
+            _added.Clear();
+        }
+        [TearDown]
+        public virtual void Cleanup()
         {
             foreach (var id in _added)
             {
-                var result = Api.Inbound.DeleteDomainAsync(id).Result;
+               Api.Inbound.DeleteDomainAsync(id).GetAwaiter().GetResult();
+               Debug.WriteLine("inbound domain deleted: " + id);
             }
-            base.TearDown();
         }
 
         [Category("inbound/domains")]
@@ -70,16 +78,26 @@ namespace Tests
         {
             protected Uri WebhookUri { get; set; }
 
+            [TearDown]
+            public override void Cleanup()
+            {
+                var webhook = Api.WebHooks.ListAsync().GetAwaiter().GetResult().Single(x => x.Url == WebhookUri).Id;
+                Api.WebHooks.DeleteAsync(webhook).GetAwaiter().GetResult();
+                base.Cleanup();
+            }
             [SetUp]
             public override void SetUp()
             {
-                base.SetUp();
                 var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_INBOUND_WEBHOOK") ?? "http://devnull-as-a-service.com/dev/null";
 
-                WebhookUri = new Uri(configuredWebHook);
+                WebhookUri = new UriBuilder(configuredWebHook) {Query = "id=" + Guid.NewGuid().ToString("N")}.Uri;
 
                 //configure webhook api at http://requestb.in
+
+                base.SetUp();
             }
+
+            public string SendingDomain { get; set; }
 
             [Test]
             public async Task Can_get_routes()
@@ -100,8 +118,10 @@ namespace Tests
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
+                _added.Add(domain);
 
                 var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri);
+                
                 result.Id.Should().NotBeNull();
                 result.Url.Should().Be(WebhookUri);
             }
@@ -131,6 +151,7 @@ namespace Tests
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
+                _added.Add(domain);
 
                 var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri);
                 result.Id.Should().NotBeNull();

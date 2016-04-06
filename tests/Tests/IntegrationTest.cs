@@ -30,13 +30,13 @@ namespace Tests
         protected MandrillApi Api { get { return LazyApi.Value; } }
 
         [OneTimeSetUp]
-        public virtual void SetUp()
+        public void OneTimeSetup()
         {
             LazyApi = new Lazy<MandrillApi>(() => new MandrillApi(ApiKey));
         }
 
         [OneTimeTearDown]
-        public virtual void TearDown()
+        public void OneTimeTearDown()
         {
             LazyApi = null;
         }

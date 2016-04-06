@@ -5,7 +5,6 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Mandrill;
 using Mandrill.Model;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -15,6 +14,44 @@ namespace Tests
     [Category("messages")]
     internal class Messages : IntegrationTest
     {
+        [SetUp]
+        public virtual void Setup()
+        {
+            FromEmail = "mandrill.net@" +
+                        (Environment.GetEnvironmentVariable("MANDRILL_SENDING_DOMAIN") ?? "test.mandrillapp.com");
+        }
+
+        public string FromEmail { get; set; }
+
+        static void AssertResults(IEnumerable<MandrillSendMessageResponse> result)
+        {
+            foreach (var response in result)
+            {
+                if (response.Status == MandrillSendMessageResponseStatus.Invalid)
+                {
+                    Assert.Fail("invalid email: " + response.RejectReason);
+                }
+                if (response.Status == MandrillSendMessageResponseStatus.Rejected &&
+          response.RejectReason == "unsigned")
+                {
+                    Assert.Inconclusive("unsigned sending domain");
+                }
+                if (response.Status == MandrillSendMessageResponseStatus.Rejected)
+                {
+                    Assert.Fail("rejected email: " + response.RejectReason);
+
+                }
+
+                if (response.Status == MandrillSendMessageResponseStatus.Queued ||
+                    response.Status == MandrillSendMessageResponseStatus.Sent)
+                {
+                    Assert.Pass();
+                }
+
+                Assert.Fail("Unexptected status:" + response.Status);
+            }
+        }
+
         [Category("messages/cancel_scheduled.json")]
         internal class CancelScheduled : Messages
         {
@@ -46,7 +83,9 @@ namespace Tests
 
                 //the api doesn't return results immediately, it may return no results. 
                 //Also, the content may not be around > 24 hrs
-                var found = results.Where(x => x.Ts > DateTime.UtcNow.AddHours(-24)).OrderBy(x => x.Ts).FirstOrDefault();
+                var found = results.Where(x => x.Ts > DateTime.UtcNow.AddHours(-24))
+                        .OrderBy(x => x.Ts)
+                        .FirstOrDefault(x => x.State == MandrillMessageState.Sent);
                 if (found != null)
                 {
                     var result = await Api.Messages.ContentAsync(found.Id);
@@ -126,10 +165,10 @@ namespace Tests
             [Test]
             public async Task Can_parse_raw_message()
             {
-                var rawMessage = "From: sender@example.com\nTo: recipient.email@example.com\nSubject: Some Subject\n\nSome content.";
+                var rawMessage = $"From: {FromEmail}\nTo: recipient.email@example.com\nSubject: Some Subject\n\nSome content.";
                 var result = await Api.Messages.ParseAsync(rawMessage);
                 result.Should().NotBeNull();
-                result.FromEmail.Should().Be("sender@example.com");
+                result.FromEmail.Should().Be(FromEmail);
                 result.To[0].Email.Should().Be("recipient.email@example.com");
                 result.Subject.Should().Be("Some Subject");
                 result.Text.Should().Be("Some content.");
@@ -188,14 +227,15 @@ To: Mr Smith
         [Category("messages/search.json")]
         internal class Search : Messages
         {
+           
             [Test]
             public async Task Can_search_all_params()
             {
                 var results = await Api.Messages.SearchAsync("email:example.com",
                     DateTime.Today.AddDays(-1),
                     DateTime.Today.AddDays(1),
-                    new[] {"mandrill-net"},
-                    new[] {"mandrill.net@example.com"},
+                    new string[0],
+                    new[] {FromEmail},
                     new[] {ApiKey},
                     10);
 
@@ -241,8 +281,8 @@ To: Mr Smith
                 var results = await Api.Messages.SearchTimeSeriesAsync("email:example.com",
                     DateTime.Today.AddDays(-1),
                     DateTime.Today.AddDays(1),
-                    new[] {"mandrill-net"},
-                    new[] {"mandrill.net@example.com"});
+                    new string[0],
+                    new[] {FromEmail});
 
                 foreach (var result in results)
                 {
@@ -280,7 +320,7 @@ To: Mr Smith
             {
                 var message = new MandrillMessage
                 {
-                    FromEmail = "mandrill.net@example.com",
+                    FromEmail = FromEmail,
                     Subject = "test",
                     Tags = new List<string>() {"test-send", "mandrill-net"},
                     To = new List<MandrillMailAddress>()
@@ -301,10 +341,7 @@ To: Mr Smith
                 var result = await Api.Messages.SendAsync(message);
 
                 result.Should().HaveCount(2);
-                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
-                result[0].Id.Should().NotBeEmpty();
-                result[1].Id.Should().NotBeEmpty();
-                result[1].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+                AssertResults(result);
             }
 
             [Test]
@@ -313,7 +350,7 @@ To: Mr Smith
                 var invalidSubaccount = Guid.NewGuid().ToString("N");
                 var message = new MandrillMessage
                 {
-                    FromEmail = "mandrill.net@example.com",
+                    FromEmail = FromEmail,
                     Subject = "test",
                     Tags = new List<string>() {"test-send-invalid"},
                     To = new List<MandrillMailAddress>()
@@ -335,7 +372,7 @@ To: Mr Smith
             {
                 var message = new MandrillMessage
                 {
-                    FromEmail = "mandrill.net@example.com",
+                    FromEmail = FromEmail,
                     Subject = "test",
                     Tags = new List<string> {"test-send", "mandrill-net"},
                     To = new List<MandrillMailAddress>()
@@ -347,9 +384,8 @@ To: Mr Smith
                 var result = await Api.Messages.SendAsync(message, true);
 
                 result.Should().HaveCount(1);
-                result[0].Email.Should().Be("test1@example.com");
-                result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Rejected);
-                result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Invalid);
+                AssertResults(result);
+
             }
 
 #if !DNXCORE50
@@ -358,7 +394,7 @@ To: Mr Smith
             {
                 var message = new MandrillMessage
                 {
-                    FromEmail = "mandrill.net@example.com",
+                    FromEmail = FromEmail,
                     Subject = "test",
                     Tags = new List<string> { "test-send", "mandrill-net" },
                     To = new List<MandrillMailAddress>()
@@ -370,18 +406,16 @@ To: Mr Smith
                 var result = Api.Messages.Send(message, true);
 
                 result.Should().HaveCount(1);
-                result[0].Email.Should().Be("test1@example.com");
-                result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Rejected);
-                result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Invalid);
+                AssertResults(result);
+
             }
 #endif
             [Test]
-            [Ignore("Requires account with $")]
             public async Task Can_send_scheduled()
             {
                 var message = new MandrillMessage
                 {
-                    FromEmail = "mandrill.net@example.com",
+                    FromEmail = FromEmail,
                     Subject = "test",
                     Tags = new List<string>() {"test-send", "mandrill-net"},
                     To = new List<MandrillMailAddress>()
@@ -417,8 +451,8 @@ To: Mr Smith
             [Test]
             public async Task Can_send_raw_message()
             {
-                var rawMessage = "From: sender@example.com\nTo: recipient.email@example.com\nSubject: Some Subject\n\nSome content.";
-                var fromEmail = "sender@example.com";
+                var rawMessage = $"From: {FromEmail}\nTo: recipient.email@example.com\nSubject: Some Subject\n\nSome content.";
+                var fromEmail = FromEmail;
                 var fromName = "From Name";
                 var to = new[] {"recipient.email@example.com"};
                 bool async = false;
@@ -430,9 +464,8 @@ To: Mr Smith
                 var result = await Api.Messages.SendRawAsync(rawMessage, fromEmail, fromName, to, async, ipPool, sendAt, returnPathDomain);
 
                 result.Should().HaveCount(1);
-                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
-                result[0].Email.Should().Be("recipient.email@example.com");
-                result[0].Id.Should().NotBeEmpty();
+                AssertResults(result);
+
             }
         }
 
@@ -441,19 +474,20 @@ To: Mr Smith
         {
             protected string TestTemplateName;
 
-            public override void SetUp()
+            [SetUp]
+            public void Setup()
             {
-                base.SetUp();
                 TestTemplateName = Guid.NewGuid().ToString();
-                var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.Code, TemplateContent.Text, true).Result;
+                var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.Code, TemplateContent.Text, true).GetAwaiter().GetResult();
                 result.Should().NotBeNull();
+                base.Setup();
             }
 
-            public override void TearDown()
+            [TearDown]
+            public void TearDown()
             {
-                var result = Api.Templates.DeleteAsync(TestTemplateName).Result;
+                var result = Api.Templates.DeleteAsync(TestTemplateName).GetAwaiter().GetResult();
                 result.Should().NotBeNull();
-                base.TearDown();
             }
 
             [Test]
@@ -461,7 +495,7 @@ To: Mr Smith
             {
                 var message = new MandrillMessage
                 {
-                    FromEmail = "mandrill.net@example.com",
+                    FromEmail = FromEmail,
                     Subject = "test",
                     Tags = new List<string>() {"test-send-template", "mandrill-net"},
                     To = new List<MandrillMailAddress>()
@@ -478,13 +512,8 @@ To: Mr Smith
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
                 result.Should().HaveCount(2);
-                result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Invalid);
-                result[0].Status.Should().NotBe(MandrillSendMessageResponseStatus.Rejected);
+                AssertResults(result);
 
-                result[0].Id.Should().NotBeEmpty();
-                result[1].Id.Should().NotBeEmpty();
-                result[1].Status.Should().NotBe(MandrillSendMessageResponseStatus.Invalid);
-                result[1].Status.Should().NotBe(MandrillSendMessageResponseStatus.Rejected);
             }
         }
 
@@ -493,19 +522,19 @@ To: Mr Smith
         {
             protected string TestTemplateName;
 
-            public override void SetUp()
+            [SetUp]
+            public void Setup()
             {
-                base.SetUp();
                 TestTemplateName = Guid.NewGuid().ToString();
-                var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.HandleBarCode, null, true).Result;
+                var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.HandleBarCode, null, true).GetAwaiter().GetResult();
                 result.Should().NotBeNull();
             }
 
-            public override void TearDown()
+            [TearDown]
+            public void TearDown()
             {
-                var result = Api.Templates.DeleteAsync(TestTemplateName).Result;
+                var result = Api.Templates.DeleteAsync(TestTemplateName).GetAwaiter().GetResult();
                 result.Should().NotBeNull();
-                base.TearDown();
             }
 
             [Test]
@@ -513,7 +542,7 @@ To: Mr Smith
             {
                 var message = new MandrillMessage
                 {
-                    FromEmail = "mandrill.net@example.com",
+                    FromEmail = FromEmail,
                     Subject = "test",
                     Tags = new List<string>() { "test-send-template", "mandrill-net", "handlebars" },
                     MergeLanguage = MandrillMessageMergeLanguage.Handlebars,
@@ -580,12 +609,7 @@ To: Mr Smith
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
                 result.Should().HaveCount(2);
-                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
-                result[0].Id.Should().NotBeEmpty();
-                result[1].Id.Should().NotBeEmpty();
-                result[1].Status.Should().NotBe(MandrillSendMessageResponseStatus.Rejected);
-                result[1].Status.Should().NotBe(MandrillSendMessageResponseStatus.Invalid);
-
+                AssertResults(result);
             }
 
             [Test]
@@ -593,7 +617,7 @@ To: Mr Smith
             {
                 var message = new MandrillMessage
                 {
-                    FromEmail = "mandrill.net@example.com",
+                    FromEmail = FromEmail,
                     Subject = "test",
                     Tags = new List<string>() { "test-send-template", "mandrill-net", "handlebars" },
                     MergeLanguage = MandrillMessageMergeLanguage.Handlebars,
@@ -660,10 +684,8 @@ To: Mr Smith
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
                 result.Should().HaveCount(2);
-                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
-                result[0].Id.Should().NotBeEmpty();
-                result[1].Id.Should().NotBeEmpty();
-                result[1].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+                AssertResults(result);
+
             }
 
 
@@ -672,7 +694,7 @@ To: Mr Smith
             {
                 var message = new MandrillMessage
                 {
-                    FromEmail = "mandrill.net@example.com",
+                    FromEmail = FromEmail,
                     Subject = "test",
                     Tags = new List<string>() { "test-send-template", "mandrill-net", "handlebars" },
                     MergeLanguage = MandrillMessageMergeLanguage.Handlebars,
@@ -709,10 +731,7 @@ To: Mr Smith
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
                 result.Should().HaveCount(2);
-                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
-                result[0].Id.Should().NotBeEmpty();
-                result[1].Id.Should().NotBeEmpty();
-                result[1].Status.Should().Be(MandrillSendMessageResponseStatus.Sent);
+                AssertResults(result);
             }
         }
     }

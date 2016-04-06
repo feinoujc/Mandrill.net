@@ -12,11 +12,12 @@ namespace Tests
     internal class Webhooks : IntegrationTest
     {
         protected Uri WebhookUri { get; set; }
-        private HashSet<int> _added = new HashSet<int>(); 
+        private HashSet<int> _added = new HashSet<int>();
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            base.SetUp();
+            _added.Clear();
             var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_OUTBOUND_WEBHOOK") ?? "http://devnull-as-a-service.com/dev/null";
 
             WebhookUri = new Uri(configuredWebHook);
@@ -24,13 +25,13 @@ namespace Tests
             //configure webhook api at http://requestb.in
         }
 
-        public override void TearDown()
+        [TearDown]
+        public void TearDown()
         {
             foreach (var id in _added)
             {
-                var result = Api.WebHooks.DeleteAsync(id).Result;
+                var result = Api.WebHooks.DeleteAsync(id).GetAwaiter().GetResult();
             }
-            base.TearDown();
         }
 
         [Test]

@@ -19,27 +19,20 @@ namespace Tests
             return templateName;
         }
 
-        public override void SetUp()
+        [SetUp]
+        public void Setup()
         {
-            base.SetUp();
             TemplatesToCleanup = new HashSet<string>();
         }
 
-        public override void TearDown()
+        [TearDown]
+        public void TearDown()
         {
             foreach (var templateName in TemplatesToCleanup)
             {
-                try 
-                {
-                    var result = Api.Templates.DeleteAsync(templateName).Result;
-                }
-                catch(AggregateException)
-                {
-                    //ignore
-                }
+                var result = Api.Templates.DeleteAsync(templateName).GetAwaiter().GetResult();
             }
             TemplatesToCleanup = null;
-            base.TearDown();
         }
 
         [Category("templates/add.json")]
