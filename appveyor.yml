@@ -12,6 +12,7 @@ assembly_info:
 init:
 - cmd: >-
     choco install dotnetcore -version 1.0.0.001598
+
     set PATH=C:\Program Files\dotnet\bin;%PATH%
 
 before_build:
