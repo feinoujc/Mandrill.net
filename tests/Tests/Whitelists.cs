@@ -11,13 +11,19 @@ namespace Tests
     class Whitelists : IntegrationTest
     {
         private HashSet<string> _added = new HashSet<string>();
-        public override void TearDown()
+
+        [SetUp]
+        public void SetUp()
+        {
+            _added.Clear();
+        }
+        [TearDown]
+        public void TearDown()
         {
             foreach (var email in _added)
             {
-                var result = Api.Whitelists.DeleteAsync(email).Result;
+                var result = Api.Whitelists.DeleteAsync(email).GetAwaiter().GetResult();
             }
-            base.TearDown();
         }
 
         [Category("whitelists/list.json")]

@@ -15,13 +15,19 @@ namespace Tests
     {
         HashSet<string> _added = new HashSet<string>();
 
-        public override void TearDown()
+        [SetUp]
+        public void SetUp()
+        {
+            _added.Clear();
+        }
+
+        [TearDown]
+        public void TearDown()
         {
             foreach (var id in _added)
             {
-                var result = Api.Subaccounts.DeleteAsync(id).Result;
+                var result = Api.Subaccounts.DeleteAsync(id).GetAwaiter().GetResult();
             }
-            base.TearDown();
         }
 
         [Category("subaccounts/add.json")]
