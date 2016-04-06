@@ -13,7 +13,8 @@
         "System.Runtime.Serialization": ""
       }
     },
-    "dnxcore50": {
+    "dotnet54": {
+      "compilationOptions": { "define": [ "DNXCORE50" ] },
       "dependencies": {
         "System.Collections": "4.0.10",
         "System.Collections.Specialized": "4.0.0",
@@ -27,12 +28,12 @@
         "System.Runtime.Serialization.Primitives": "4.0.10",
         "System.Text.RegularExpressions": "4.0.10",
         "System.Threading": "4.0.10",
-        "System.Security.Cryptography.Hashing.Algorithms": "4.0.0-*",
+        "System.Security.Cryptography.Algorithms": "4.0.0-*",
         "System.Reflection.TypeExtensions": "4.0.0"
       }
     }
   },
   "dependencies": {
-    "Newtonsoft.Json": "7.0.1"
+    "Newtonsoft.Json": "8.0.3"
   }
 }

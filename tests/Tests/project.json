@@ -5,10 +5,10 @@
   },
   "frameworks": {
     "net45": {
-      "frameworkAssemblies": {}
+      "frameworkAssemblies": { }
     },
-    "dnx451": {},
-    "dnxcore50": {
+    "dotnet54": {
+      "compilationOptions": { "define": [ "DNXCORE50" ] },
       "dependencies": {
         "System.Dynamic.Runtime": "4.0.0",
         "Microsoft.CSharp": "4.0.0",
@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "FluentAssertions": "4.1.0",
-    "Mandrill.net": "2.0.0-*",
-    "Newtonsoft.Json": "7.0.1",
+    "Mandrill.net": "1.0.0.0",
+    "Newtonsoft.Json": "8.0.3",
     "Nunit": "3.0.1",
     "NUnitLite": "3.0.1"
   },
