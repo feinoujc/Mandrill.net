@@ -24,6 +24,7 @@ namespace Mandrill
         {
             if (apiKey == null) throw new ArgumentNullException(nameof(apiKey));
             _request = new SystemWebMandrillRequest(apiKey);
+            ApiKey = apiKey;
         }
 
         public string ApiKey { get; private set; }
