@@ -17,7 +17,7 @@ namespace Mandrill
         public async Task<string> PingAsync()
         {
             return (await MandrillApi.PostAsync<MandrillUsersRequest, JObject>("users/ping2.json",
-                new MandrillUsersRequest()))["PING"].Value<string>();
+                new MandrillUsersRequest()).ConfigureAwait(false))["PING"].Value<string>();
         }
 
         public Task<IList<MandrillSenderDemographics>> SendersAsync()
