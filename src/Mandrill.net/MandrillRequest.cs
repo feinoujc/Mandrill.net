@@ -82,17 +82,18 @@ namespace Mandrill
                 MandrillSerializer<TRequest>.Serialize(jsonWriter, value);
                 jsonWriter.Flush();
                 inputStream.Seek(0, SeekOrigin.Begin);
-                using (var requestStream = await request.GetRequestStreamAsync())
+                using (var requestStream = await request.GetRequestStreamAsync().ConfigureAwait(false))
                 {
-                    await inputStream.CopyToAsync(requestStream);
+                    await inputStream.CopyToAsync(requestStream).ConfigureAwait(false);
                 }
             }
 
             try
             {
-                using (var response = (HttpWebResponse) await request.GetResponseAsync())
+                using (var response = (HttpWebResponse) await request.GetResponseAsync().ConfigureAwait(false))
                 using (var responseStream = response.GetResponseStream())
-                using (var jsonReader = new JsonTextReader(new StreamReader(responseStream)))
+                using(var responseReader = new StreamReader(responseStream))
+                using (var jsonReader = new JsonTextReader(responseReader))
                 {
                     return MandrillSerializer<TResponse>.Deserialize(jsonReader);
                 }
@@ -113,7 +114,8 @@ namespace Mandrill
                 {
                     using (var response = webResponse)
                     using (var responseStream = response.GetResponseStream())
-                    using (var jsonReader = new JsonTextReader(new StreamReader(responseStream)))
+                    using (var responseReader = new StreamReader(responseStream))
+                    using (var jsonReader = new JsonTextReader(responseReader))
                     {
                         error = MandrillSerializer<MandrillErrorResponse>.Deserialize(jsonReader);
                     }
