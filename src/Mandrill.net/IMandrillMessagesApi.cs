@@ -26,7 +26,7 @@ namespace Mandrill
             DateTime? dateTo = null, IList<string> tags = null,
             IList<string> senders = null);
 
-        Task<MandrillMessageInfo> InfoAync(string id);
+        Task<MandrillMessageInfo> InfoAsync(string id);
         Task<MandrillMessageContent> ContentAsync(string id);
         Task<MandrillMessage> ParseAsync(string rawMessage);
         Task<IList<MandrillMessageScheduleInfo>> ListScheduledAsync(string to = null);
