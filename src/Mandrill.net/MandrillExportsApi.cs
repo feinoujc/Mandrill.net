@@ -16,40 +16,40 @@ namespace Mandrill
         }
         public MandrillApi MandrillApi { get; set; }
 
-        public async Task<IList<MandrillExportInfo>> ListAsync()
+        public Task<IList<MandrillExportInfo>> ListAsync()
         {
-            return await MandrillApi.PostAsync<MandrillExportRequest, IList<MandrillExportInfo>>("exports/list.json",
+            return MandrillApi.PostAsync<MandrillExportRequest, IList<MandrillExportInfo>>("exports/list.json",
                 new MandrillExportRequest());
         }
 
-        public async Task<MandrillExportInfo> InfoAsync(string id)
+        public Task<MandrillExportInfo> InfoAsync(string id)
         {
-            return await MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/info.json",
+            return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/info.json",
                 new MandrillExportRequest
                 {
                     Id = id
                 });
         }
 
-        public async Task<MandrillExportInfo> RejectsAsync(string notifyEmail)
+        public Task<MandrillExportInfo> RejectsAsync(string notifyEmail)
         {
-            return await MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/rejects.json",
+            return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/rejects.json",
                 new MandrillExportRequest
                 {
                     NotifyEmail = notifyEmail
                 });
         }
 
-        public async Task<MandrillExportInfo> WhitelistAsync(string notifyEmail)
+        public Task<MandrillExportInfo> WhitelistAsync(string notifyEmail)
         {
-            return await MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/whitelist.json",
+            return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/whitelist.json",
                 new MandrillExportRequest
                 {
                     NotifyEmail = notifyEmail
                 });
         }
 
-        public async Task<MandrillExportInfo> ActivityAsync(string notifyEmail,
+        public Task<MandrillExportInfo> ActivityAsync(string notifyEmail,
             DateTime? dateFrom = null, 
             DateTime? dateTo = null,
             IList<string> tags = null, 
@@ -57,7 +57,7 @@ namespace Mandrill
             IList<string> states = null,
             IList<string> apiKeys = null)
         {
-            return await MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/activity",
+            return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/activity",
                 new MandrillExportRequest
                 {   
                     NotifyEmail = notifyEmail,
