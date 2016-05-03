@@ -123,7 +123,7 @@ namespace Mandrill
                     });
         }
 
-        public Task<MandrillMessageInfo> InfoAync(string id)
+        public Task<MandrillMessageInfo> InfoAsync(string id)
         {
             return MandrillApi.PostAsync<MandrillMessageInfoRequest, MandrillMessageInfo>("messages/info.json",
                 new MandrillMessageInfoRequest

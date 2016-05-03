@@ -128,7 +128,7 @@ namespace Tests
                 var found = results.OrderBy(x => x.Ts).FirstOrDefault();
                 if (found != null)
                 {
-                    var result = await Api.Messages.InfoAync(found.Id);
+                    var result = await Api.Messages.InfoAsync(found.Id);
 
                     result.Should().NotBeNull();
                     result.Id.Should().Be(found.Id);
@@ -142,7 +142,7 @@ namespace Tests
             [Test]
             public async Task Throws_when_not_found()
             {
-                var mandrillException = await ThrowsAsync<MandrillException>(() => Api.Messages.InfoAync(Guid.NewGuid().ToString("N")));
+                var mandrillException = await ThrowsAsync<MandrillException>(() => Api.Messages.InfoAsync(Guid.NewGuid().ToString("N")));
                 mandrillException.Name.Should().Be("Unknown_Message");
             }
         }
