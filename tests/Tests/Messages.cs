@@ -388,7 +388,7 @@ To: Mr Smith
 
             }
 
-#if !DNXCORE50
+#if !NETCORE
             [Test]
             public void Can_send_sync()
             {

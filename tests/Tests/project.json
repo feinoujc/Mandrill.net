@@ -9,7 +9,7 @@
     },
     "netcoreapp1.0": {
       "imports": "dnxcore50",
-      "buildOptions": { "define": [ "DNXCORE50" ] },
+      "buildOptions": { "define": [ "NETCORE" ] },
        "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
