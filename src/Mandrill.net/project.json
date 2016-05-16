@@ -1,11 +1,13 @@
 {
-  "version": "1.0.0-*",
-  "description": ".NET wrapper for the Mandrill API",
-  "authors": [ "feinoujc" ],
-  "tags": [ "mandrill", "mailchimp", "mail" ],
-  "projectUrl": "https://github.com/feinoujc/Mandrill.net",
-  "licenseUrl": "https://raw.githubusercontent.com/feinoujc/Mandrill.net/master/LICENSE",
-  "iconUrl": "https://raw.githubusercontent.com/feinoujc/Mandrill.net/master/logo.png",
+  "packOptions": {
+    "version": "1.0.0-*",
+    "description": ".NET wrapper for the Mandrill API",
+    "authors": [ "feinoujc" ],
+    "tags": [ "mandrill", "mailchimp", "mail" ],
+    "projectUrl": "https://github.com/feinoujc/Mandrill.net",
+    "licenseUrl": "https://raw.githubusercontent.com/feinoujc/Mandrill.net/master/LICENSE",
+    "iconUrl": "https://raw.githubusercontent.com/feinoujc/Mandrill.net/master/logo.png"
+  },
   "frameworks": {
     "net45": {
       "frameworkAssemblies": {
@@ -13,7 +15,7 @@
         "System.Runtime.Serialization": ""
       }
     },
-    "netstandard1.4": {
+    "netstandard1.3": {
       "buildOptions": { "define": [ "DNXCORE50" ] },
       "dependencies": {
         "System.Collections": "4.0.11-rc2-24027",
