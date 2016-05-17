@@ -31,7 +31,7 @@ namespace Mandrill
         }
     }
 
-#if !NETSTANDARD13
+#if NETFX
     internal partial class MandrillUsersApi
     {
         public string Ping()

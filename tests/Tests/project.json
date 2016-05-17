@@ -5,6 +5,7 @@
   },
   "frameworks": {
     "net45": {
+      "buildOptions": { "define": [ "NETFX" ] },
       "frameworkAssemblies": { }
     },
     "netcoreapp1.0": {

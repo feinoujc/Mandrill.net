@@ -107,7 +107,7 @@ namespace Mandrill
     }
 
 
-#if !NETSTANDARD13
+#if NETFX
     internal partial class MandrillInboundApi
     {
         public IList<MandrillInboundInfo> Domains()

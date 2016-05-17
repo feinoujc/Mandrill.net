@@ -20,7 +20,7 @@ namespace Mandrill
         Task<IList<MandrillMessageTimeSeries>> TimeSeriesAsync(string templateName);
     }
 
-    #if !NETSTANDARD13
+    #if NETFX
 
     public partial interface IMandrillTemplatesApi
     {

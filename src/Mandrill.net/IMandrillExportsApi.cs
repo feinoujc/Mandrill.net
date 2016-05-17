@@ -19,7 +19,7 @@ namespace Mandrill
             IList<string> states = null,
             IList<string> apiKeys = null);
     }
-#if !NETSTANDARD13
+#if NETFX
     public partial interface IMandrillExportsApi
     {
         IList<MandrillExportInfo> List();

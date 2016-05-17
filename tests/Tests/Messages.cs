@@ -388,7 +388,7 @@ To: Mr Smith
 
             }
 
-#if !NETCORE
+#if NETFX
             [Test]
             public void Can_send_sync()
             {

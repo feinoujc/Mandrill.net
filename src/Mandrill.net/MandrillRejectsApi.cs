@@ -49,7 +49,7 @@ namespace Mandrill
         }
     }
 
-#if !NETSTANDARD13
+#if NETFX
     internal partial class MandrillRejectsApi
     {
         public MandrillRejectAddResponse Add(string email, string comment = null, string subaccount = null)

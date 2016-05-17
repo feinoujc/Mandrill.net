@@ -54,7 +54,7 @@ namespace Mandrill
         }
     }
 
-#if !NETSTANDARD13
+#if NETFX
     internal partial class MandrillTagsApi
     {
         public IList<MandrillTagInfo> List()

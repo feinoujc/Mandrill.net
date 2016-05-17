@@ -61,7 +61,7 @@ namespace Mandrill
         }
     }
 
-#if !NETSTANDARD13
+#if NETFX
     internal partial class MandrillWebHooksApi
     {
        
