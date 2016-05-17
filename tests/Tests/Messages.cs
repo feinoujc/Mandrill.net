@@ -475,7 +475,7 @@ To: Mr Smith
             protected string TestTemplateName;
 
             [SetUp]
-            public void Setup()
+            public override void Setup()
             {
                 TestTemplateName = Guid.NewGuid().ToString();
                 var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.Code, TemplateContent.Text, true).GetAwaiter().GetResult();
@@ -523,11 +523,12 @@ To: Mr Smith
             protected string TestTemplateName;
 
             [SetUp]
-            public void Setup()
+            public override void Setup()
             {
                 TestTemplateName = Guid.NewGuid().ToString();
                 var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.HandleBarCode, null, true).GetAwaiter().GetResult();
                 result.Should().NotBeNull();
+                base.Setup();
             }
 
             [TearDown]
