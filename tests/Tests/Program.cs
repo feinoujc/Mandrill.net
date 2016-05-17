@@ -12,8 +12,8 @@ namespace Tests
     {
         public static int Main(string[] args)
         {
-        	var writter = new ExtendedTextWrapper(Console.Out);
-			return new AutoRun(typeof(Program).GetTypeInfo().Assembly).Execute(args, writter, Console.In);
+            var writter = new ExtendedTextWrapper(Console.Out);
+            return new AutoRun(typeof(Program).GetTypeInfo().Assembly).Execute(args, writter, Console.In);
         }
     }
 }
