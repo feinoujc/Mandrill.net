@@ -19,7 +19,7 @@ namespace Mandrill
             IList<string> states = null,
             IList<string> apiKeys = null);
     }
-#if !DNXCORE50
+#if !NETSTANDARD13
     public partial interface IMandrillExportsApi
     {
         IList<MandrillExportInfo> List();

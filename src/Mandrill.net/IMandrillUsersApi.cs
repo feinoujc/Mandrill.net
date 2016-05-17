@@ -10,7 +10,7 @@ namespace Mandrill
         Task<IList<MandrillSenderDemographics>> SendersAsync();
         Task<MandrillUserInfo> InfoAsync();
     }
-#if !DNXCORE50
+#if !NETSTANDARD13
 
     public partial interface IMandrillUsersApi
     {

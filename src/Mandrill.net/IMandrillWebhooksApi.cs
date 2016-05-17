@@ -15,7 +15,7 @@ namespace Mandrill
         Task<MandrillWebHookInfo> UpdateAsync(int id, Uri url, string description = null, IList<MandrillWebHookEventType> events = null);
         Task<MandrillWebHookInfo> DeleteAsync(int id);
     }
-    #if !DNXCORE50
+    #if !NETSTANDARD13
 
     public partial interface IMandrillWebHooksApi
     {

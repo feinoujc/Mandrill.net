@@ -71,7 +71,7 @@ namespace Mandrill
         }
     }
 
-#if !DNXCORE50
+#if !NETSTANDARD13
     internal partial class MandrillSendersApi
     {
         public IList<MandrillSenderInfo> List()

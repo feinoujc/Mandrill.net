@@ -56,7 +56,7 @@ namespace Mandrill
             return _request.PostAsync<TRequest, TResponse>(requestUri, value);
         }
 
-#if !DNXCORE50
+#if !NETSTANDARD13
         internal TResponse Post<TRequest, TResponse>(string requestUri, TRequest value)
             where TRequest : MandrillRequestBase
         {

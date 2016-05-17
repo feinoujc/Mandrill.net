@@ -192,7 +192,7 @@ namespace Mandrill
         }
     }
 
-#if !DNXCORE50
+#if !NETSTANDARD13
 
     internal partial class MandrillMessagesApi
     {

@@ -20,7 +20,7 @@ namespace Mandrill
 
         protected string ApiKey { get; set; }
 
-#if !DNXCORE50
+#if !NETSTANDARD13
         public abstract TResponse Post<TRequest, TResponse>(string requestUri, TRequest value)
             where TRequest : MandrillRequestBase;
 #endif
@@ -38,7 +38,7 @@ namespace Mandrill
         public SystemWebMandrillRequest(string apiKey) : base(apiKey)
         {
         }
-#if !DNXCORE50
+#if !NETSTANDARD13
         public override TResponse Post<TRequest, TResponse>(string requestUri, TRequest value)
         {
             value.Key = ApiKey;
@@ -136,7 +136,7 @@ namespace Mandrill
         protected virtual HttpWebRequest CreateHttpWebRequest(string relativeUri)
         {
             var request = WebRequest.CreateHttp(new Uri(BaseUrl, relativeUri));
-#if !DNXCORE50
+#if !NETSTANDARD13
             request.UserAgent = UserAgent;
 #endif
             request.Accept = "application/json";
