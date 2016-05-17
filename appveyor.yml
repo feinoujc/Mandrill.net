@@ -17,7 +17,7 @@ before_build:
       (Get-Content src\Mandrill.net\project.json).replace('"version": "1.0.0-*",', '"version": "' + $env:APPVEYOR_BUILD_VERSION + '",') | Set-Content src\Mandrill.net\project.json
 build: off
 build_script:
-  - dotnet pack src/Mandrill.net --configuration Release --out artifacts
+  - dotnet pack src/Mandrill.net --configuration Release --output artifacts
 test: off
 test_script:
   - cd ./tests/Tests
