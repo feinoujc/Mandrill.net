@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Mandrill", "src\Mandrill.net\Mandrill.xproj", "{FD390FF7-7C25-4EDB-8C48-7A30CEABB708}"
 EndProject
@@ -12,6 +12,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A359CB29-3E2A-4A41-A897-725C5A0888C6}"
 	ProjectSection(SolutionItems) = preProject
 		.travis.yml = .travis.yml
+		appveyor.yml = appveyor.yml
 		global.json = global.json
 	EndProjectSection
 EndProject

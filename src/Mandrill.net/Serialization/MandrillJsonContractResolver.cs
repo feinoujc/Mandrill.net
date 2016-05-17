@@ -10,7 +10,12 @@ namespace Mandrill.Serialization
 {
     internal class MandrillJsonContractResolver : DefaultContractResolver
     {
+#if NETFX || NETSTANDARD1_3
         private static readonly Regex CamelCaseRegex = new Regex("^[A-Z][a-z]+(?:[A-Z][a-z]+)*$", RegexOptions.Compiled);
+#endif
+#if NETSTANDARD1_1
+        private static readonly Regex CamelCaseRegex = new Regex("^[A-Z][a-z]+(?:[A-Z][a-z]+)*$");
+#endif
 
         protected static string ConvertCamelCasePropertyNamesToLowerCaseUnderscoreStyle(string propertyName)
         {
@@ -38,9 +43,9 @@ namespace Mandrill.Serialization
                 if (member.GetCustomAttribute<RequiredAttribute>() == null)
                 {
                     var t = propertyType.GenericTypeArguments[0];
-                    if (typeof (IList<>).MakeGenericType(t).IsAssignableFrom(propertyType))
+                    if (typeof (IList<>).MakeGenericType(t).GetTypeInfo().IsAssignableFrom(propertyType.GetTypeInfo()))
                     {
-                        var prop = jsonProperty.DeclaringType.GetProperty(member.Name);
+                        var prop = jsonProperty.DeclaringType.GetTypeInfo().GetDeclaredProperty(member.Name);
                         jsonProperty.ShouldSerialize = instance =>
                         {
                             var collection = prop.GetValue(instance) as ICollection;
@@ -52,11 +57,11 @@ namespace Mandrill.Serialization
 
 
             //don't serialize empty dictionaries (unless required)
-            if (typeof (IDictionary<string, string>).IsAssignableFrom(propertyType))
+            if (typeof (IDictionary<string, string>).GetTypeInfo().IsAssignableFrom(propertyType.GetTypeInfo()))
             {
                 if (member.GetCustomAttribute<RequiredAttribute>() == null)
                 {
-                    var prop = jsonProperty.DeclaringType.GetProperty(member.Name);
+                    var prop = jsonProperty.DeclaringType.GetTypeInfo().GetDeclaredProperty(member.Name);
 
                     jsonProperty.ShouldSerialize = instance =>
                     {
@@ -66,11 +71,11 @@ namespace Mandrill.Serialization
                 }
             }
 
-            if (typeof(IDictionary<string, object>).IsAssignableFrom(propertyType))
+            if (typeof(IDictionary<string, object>).GetTypeInfo().IsAssignableFrom(propertyType.GetTypeInfo()))
             {
                 if (member.GetCustomAttribute<RequiredAttribute>() == null)
                 {
-                    var prop = jsonProperty.DeclaringType.GetProperty(member.Name);
+                    var prop = jsonProperty.DeclaringType.GetTypeInfo().GetDeclaredProperty(member.Name);
 
                     jsonProperty.ShouldSerialize = instance =>
                     {
@@ -91,8 +96,8 @@ namespace Mandrill.Serialization
 
         private static bool PropertyIsInDictionary(JsonProperty jsonProperty)
         {
-            return typeof (IDictionary<string, string>).IsAssignableFrom(jsonProperty.DeclaringType) 
-                || typeof (IDictionary<string, object>).IsAssignableFrom(jsonProperty.DeclaringType);
+            return typeof (IDictionary<string, string>).GetTypeInfo().IsAssignableFrom(jsonProperty.DeclaringType.GetTypeInfo()) 
+                || typeof (IDictionary<string, object>).GetTypeInfo().IsAssignableFrom(jsonProperty.DeclaringType.GetTypeInfo());
         }
     }
 }
