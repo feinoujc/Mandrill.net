@@ -24,6 +24,6 @@ install:
   - dotnet restore --source="https://api.nuget.org/v3/index.json" --fallbacksource="https://www.myget.org/F/json-net-public/api/v3/index.json"
 script:
   - cd ./tests/Tests
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then dotnet run --labels=All --where:"cat==integration && cat !=exports" --noresult --verbose; fi'
-  - dotnet run --labels=All --where:cat!=integration --noresult --verbose
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then dotnet run --labels=All --where:"cat==integration && cat !=exports" --verbose; fi'
+  - dotnet run --labels=All --where:cat!=integration --verbose
 
