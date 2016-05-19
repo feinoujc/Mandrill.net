@@ -1,4 +1,4 @@
-﻿#if !DNXCORE50
+﻿#if NETFX
 using System.Net.Mail;
 #endif
 
@@ -13,7 +13,7 @@ namespace Mandrill.Model
         public MandrillMailAddress(string address)
         {
 
-#if !DNXCORE50
+#if NETFX
             var parsed = new MailAddress(address);
             Email = parsed.Address;
             if (!string.IsNullOrEmpty(parsed.DisplayName))
@@ -28,7 +28,7 @@ namespace Mandrill.Model
 
         public MandrillMailAddress(string address, string name)
         {
-#if !DNXCORE50
+#if NETFX
             var parsed = new MailAddress(address, name);
             Email = parsed.Address;
             Name = parsed.DisplayName;

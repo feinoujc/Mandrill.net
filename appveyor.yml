@@ -2,32 +2,29 @@
 os: Visual Studio 2015
 environment:
   VisualStudioVersion: 14.0
-  matrix:
-    - runtime: coreclr
-    - runtime: clr
+  DOTNET_CLI_VERSION: 1.0.0-preview1-002702
 assembly_info:
   patch: true
   file: AssemblyInfo.*
   assembly_version: "{version}"
   assembly_file_version: "{version}"
   assembly_informational_version: "{version}-$(appveyor_repo_commit)"
-cache:
-  - C:\Users\appveyor\.dnx\runtimes
-  - C:\Users\appveyor\.dnx\packages
-install:
-  - dnvm upgrade -r %runtime%
 before_build:
-  - dnu restore
+  - ps: .\lib\dotnet\install.ps1 -Version $env:DOTNET_CLI_VERSION
+  - cmd: >-
+      dotnet restore
   - ps: >-
-      (Get-Content src\Mandrill.net\project.json).replace('"version": "1.0.0-*",', '"version": "' + $env:APPVEYOR_BUILD_VERSION + '",') | Set-Content src\Mandrill.net\project.json
+      (Get-Content src\Mandrill.net\project.json).replace('"version": "1.0.0-*",', '"version": "' + $env:APPVEYOR_BUILD_VERSION + $env:PRERELEASE_TAG +'",') | Set-Content src\Mandrill.net\project.json
 build: off
 build_script:
-  - dnu pack src/Mandrill.net --configuration Release --out artifacts
+  - dotnet pack src/Mandrill.net --configuration Release --output artifacts
 test: off
 test_script:
   - cd ./tests/Tests
-  - if defined APPVEYOR_PULL_REQUEST_NUMBER dnx test --labels=All --verbose --where:cat!=integration
-  - if not defined APPVEYOR_PULL_REQUEST_NUMBER dnx test --labels=All --verbose --where:cat!=exports
+  - if defined APPVEYOR_PULL_REQUEST_NUMBER dotnet run -f net45 --labels=All --verbose --where:cat!=integration
+  - if not defined APPVEYOR_PULL_REQUEST_NUMBER dotnet run -f net45 --labels=All --verbose --where:cat!=exports
+  - if defined APPVEYOR_PULL_REQUEST_NUMBER dotnet run -f netcoreapp1.0 --labels=All --verbose --where:cat!=integration
+  - if not defined APPVEYOR_PULL_REQUEST_NUMBER dotnet run -f netcoreapp1.0 --labels=All --verbose --where:cat!=exports
 artifacts:
   - path: artifacts\**\*.nupkg
 deploy:

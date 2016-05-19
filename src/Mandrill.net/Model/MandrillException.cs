@@ -1,11 +1,11 @@
 ﻿using System;
-#if !DNXCORE50
+#if NETFX
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 #endif
 namespace Mandrill.Model
 {
-#if !DNXCORE50
+#if NETFX
     [Serializable]
 #endif
     public class MandrillException : Exception
@@ -35,7 +35,7 @@ namespace Mandrill.Model
         public string Name { get; private set; }
 
 
-#if !DNXCORE50
+#if NETFX
 
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         protected MandrillException(SerializationInfo info, StreamingContext context)

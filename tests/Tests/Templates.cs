@@ -117,8 +117,8 @@ namespace Tests
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
                 var now = DateTime.UtcNow;
-                var skew = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second, DateTimeKind.Utc).AddSeconds(-2);
-             
+                var skew = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second, DateTimeKind.Utc).AddSeconds(-10);
+
                 var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
                 var result = await Api.Templates.PublishAsync(added.Name);
 

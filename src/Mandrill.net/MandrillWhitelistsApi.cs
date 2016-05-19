@@ -40,7 +40,7 @@ namespace Mandrill
         }
     }
 
-#if !DNXCORE50
+#if NETFX
     internal partial class MandrillWhitelistsApi
     {
         public IList<MandrillWhitelistInfo> List(string email)

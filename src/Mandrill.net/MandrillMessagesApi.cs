@@ -192,7 +192,7 @@ namespace Mandrill
         }
     }
 
-#if !DNXCORE50
+#if NETFX
 
     internal partial class MandrillMessagesApi
     {

@@ -54,7 +54,7 @@ namespace Mandrill
         }
     }
 
-#if !DNXCORE50
+#if NETFX
     internal partial class MandrillTagsApi
     {
         public IList<MandrillTagInfo> List()

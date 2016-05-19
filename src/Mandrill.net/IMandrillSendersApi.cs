@@ -15,7 +15,7 @@ namespace Mandrill
         Task<IList<MandrillSenderTimeSeries>> TimeSeriesAsync(string address);
     }
 
-#if !DNXCORE50
+#if NETFX
     public partial interface IMandrillSendersApi
     {
         IList<MandrillSenderInfo> List();

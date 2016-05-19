@@ -71,7 +71,7 @@ namespace Mandrill
         }
     }
 
-#if !DNXCORE50
+#if NETFX
     internal partial class MandrillSendersApi
     {
         public IList<MandrillSenderInfo> List()

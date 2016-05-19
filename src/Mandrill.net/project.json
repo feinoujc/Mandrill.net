@@ -1,38 +1,54 @@
 {
   "version": "1.0.0-*",
   "description": ".NET wrapper for the Mandrill API",
-  "authors": [ "feinoujc" ],
-  "tags": [ "mandrill", "mailchimp", "mail" ],
-  "projectUrl": "https://github.com/feinoujc/Mandrill.net",
-  "licenseUrl": "https://raw.githubusercontent.com/feinoujc/Mandrill.net/master/LICENSE",
-  "iconUrl": "https://raw.githubusercontent.com/feinoujc/Mandrill.net/master/logo.png",
+  "title": ".NET wrapper for the Mandrill API",
+  "packOptions": {
+    "summary": "add support for .NET Core RC2",
+    "authors": [ "feinoujc" ],
+    "tags": [ "mandrill", "mailchimp", "mail" ],
+    "projectUrl": "https://github.com/feinoujc/Mandrill.net",
+    "licenseUrl": "https://raw.githubusercontent.com/feinoujc/Mandrill.net/master/LICENSE",
+    "iconUrl": "https://raw.githubusercontent.com/feinoujc/Mandrill.net/master/logo.png",
+    "repository": {
+       "type": "git",
+       "url": "https://github.com/feinoujc/Mandrill.net"
+     }
+  },
+  "buildOptions": {
+    "warningsAsErrors": true
+  },
   "frameworks": {
     "net45": {
+      "buildOptions": { "define": [ "NETFX" ] },
       "frameworkAssemblies": {
         "System.ComponentModel.DataAnnotations": "",
         "System.Runtime.Serialization": ""
       }
     },
-    "dnxcore50": {
+    "netstandard1.1": {
+      "buildOptions": { "define": [ "NETSTANDARD1_1" ] },
       "dependencies": {
-        "System.Collections": "4.0.10",
-        "System.Collections.Specialized": "4.0.0",
-        "System.ComponentModel.Annotations": "4.0.10",
-        "System.Linq": "4.0.0",
-        "System.Reflection": "4.0.10",
-        "System.Reflection.Extensions": "4.0.0",
-        "System.Runtime": "4.0.20",
-        "System.Dynamic.Runtime": "4.0.0",
-        "System.Net.Requests": "4.0.10",
-        "System.Runtime.Serialization.Primitives": "4.0.10",
-        "System.Text.RegularExpressions": "4.0.10",
-        "System.Threading": "4.0.10",
-        "System.Security.Cryptography.Hashing.Algorithms": "4.0.0-*",
-        "System.Reflection.TypeExtensions": "4.0.0"
+        "System.Collections": "4.0.11-rc2-24027",
+        "System.ComponentModel.Annotations": "4.1.0-rc2-24027",
+        "System.Linq": "4.1.0-rc2-24027",
+        "System.Net.Requests": "4.0.11-rc2-24027",
+        "System.Text.RegularExpressions": "4.0.12-rc2-24027"
+      }
+    },
+    "netstandard1.3": {
+      "buildOptions": { "define": [ "NETSTANDARD1_3" ] },
+      "dependencies": {
+        "System.Collections": "4.0.11-rc2-24027",
+        "System.Collections.Specialized": "4.0.1-rc2-24027",
+        "System.ComponentModel.Annotations": "4.1.0-rc2-24027",
+        "System.Linq": "4.1.0-rc2-24027",
+        "System.Net.Requests": "4.0.11-rc2-24027",
+        "System.Text.RegularExpressions": "4.0.12-rc2-24027",
+        "System.Security.Cryptography.Algorithms": "4.1.0-rc2-24027"
       }
     }
   },
   "dependencies": {
-    "Newtonsoft.Json": "7.0.1"
+    "Newtonsoft.Json": "8.0.4-*"
   }
 }

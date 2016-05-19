@@ -20,7 +20,7 @@ namespace Mandrill
         Task<IList<MandrillMessageTimeSeries>> TimeSeriesAsync(string templateName);
     }
 
-    #if !DNXCORE50
+    #if NETFX
 
     public partial interface IMandrillTemplatesApi
     {
