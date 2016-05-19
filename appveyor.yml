@@ -12,9 +12,9 @@ assembly_info:
 before_build:
   - ps: .\lib\dotnet\install.ps1 -Version $env:DOTNET_CLI_VERSION
   - cmd: >-
-      dotnet restore --source="https://api.nuget.org/v3/index.json" --fallbacksource="https://www.myget.org/F/json-net-public/api/v3/index.json"
+      dotnet restore
   - ps: >-
-      (Get-Content src\Mandrill.net\project.json).replace('"version": "1.0.0-*",', '"version": "' + $env:APPVEYOR_BUILD_VERSION + '",') | Set-Content src\Mandrill.net\project.json
+      (Get-Content src\Mandrill.net\project.json).replace('"version": "1.0.0-*",', '"version": "' + $env:APPVEYOR_BUILD_VERSION + $env:PRERELEASE_TAG'",') | Set-Content src\Mandrill.net\project.json
 build: off
 build_script:
   - dotnet pack src/Mandrill.net --configuration Release --output artifacts
