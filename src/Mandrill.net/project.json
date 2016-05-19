@@ -1,7 +1,7 @@
 {
   "version": "1.0.0-*",
   "description": ".NET wrapper for the Mandrill API",
-  "title": ".NET wrapper for the Mandrill API",
+  "title": "Mandrill.net",
   "packOptions": {
     "summary": "add support for .NET Core RC2",
     "authors": [ "feinoujc" ],
