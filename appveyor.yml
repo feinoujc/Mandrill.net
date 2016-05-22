@@ -2,7 +2,6 @@
 os: Visual Studio 2015
 environment:
   VisualStudioVersion: 14.0
-  DOTNET_CLI_VERSION: 1.0.0-preview1-002702
 assembly_info:
   patch: true
   file: AssemblyInfo.*
@@ -10,7 +9,6 @@ assembly_info:
   assembly_file_version: "{version}"
   assembly_informational_version: "{version}-$(appveyor_repo_commit)"
 before_build:
-  - ps: .\lib\dotnet\install.ps1 -Version $env:DOTNET_CLI_VERSION
   - cmd: >-
       dotnet restore
   - ps: >-
