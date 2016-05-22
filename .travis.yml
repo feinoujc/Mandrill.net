@@ -19,7 +19,7 @@ os:
   - osx
 osx_image: xcode7.1
 install:
-  - curl -sSL https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.sh | bash /dev/stdin --version 1.0.0-preview1-002702 --install-dir ~/dotnet
+  - curl -sSL https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/dotnet-install.sh | bash /dev/stdin --version latest --install-dir ~/dotnet
   - sudo ln -s ~/dotnet/dotnet /usr/local/bin
   - dotnet restore
 script:
