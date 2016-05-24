@@ -1,5 +1,12 @@
 
 os: Visual Studio 2015
+pull_requests:
+  do_not_increment_build_number: true
+branches:
+  only:
+  - master
+nuget:
+  disable_publish_on_pr: true
 environment:
   VisualStudioVersion: 14.0
 assembly_info:
