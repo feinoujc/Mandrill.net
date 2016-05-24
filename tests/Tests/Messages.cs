@@ -388,7 +388,7 @@ To: Mr Smith
 
             }
 
-#if NETFX
+#if NET45
             [Test]
             public void Can_send_sync()
             {

@@ -34,7 +34,7 @@ namespace Mandrill
         Task<MandrillMessageScheduleInfo> CancelScheduledAsync(string id);
     }
 
-#if NETFX
+#if NET45
     public partial interface IMandrillMessagesApi
     {
         IList<MandrillSendMessageResponse> Send(MandrillMessage message,

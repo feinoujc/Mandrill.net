@@ -15,7 +15,7 @@ namespace Mandrill
         Task<MandrillSubaccountResponse> ResumeAsync(string id);
     }
 
-#if NETFX
+#if NET45
     public partial interface IMandrillSubaccountsApi
     {
         IList<MandrillSubaccountResponse> List(string q = null);

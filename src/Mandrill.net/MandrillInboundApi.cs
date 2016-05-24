@@ -107,7 +107,7 @@ namespace Mandrill
     }
 
 
-#if NETFX
+#if NET45
     internal partial class MandrillInboundApi
     {
         public IList<MandrillInboundInfo> Domains()

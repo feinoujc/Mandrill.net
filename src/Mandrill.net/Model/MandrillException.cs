@@ -1,11 +1,11 @@
 ﻿using System;
-#if NETFX
+#if NET45
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 #endif
 namespace Mandrill.Model
 {
-#if NETFX
+#if NET45
     [Serializable]
 #endif
     public class MandrillException : Exception
@@ -35,7 +35,7 @@ namespace Mandrill.Model
         public string Name { get; private set; }
 
 
-#if NETFX
+#if NET45
 
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         protected MandrillException(SerializationInfo info, StreamingContext context)

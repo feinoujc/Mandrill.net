@@ -13,7 +13,7 @@ namespace Mandrill
         Task<MandrillWhitelistInfo> AddAsync(string email);
         Task<MandrillWhitelistInfo> DeleteAsync(string email);
     }
-#if NETFX
+#if NET45
 
     public partial interface IMandrillWhitelistsApi
     {

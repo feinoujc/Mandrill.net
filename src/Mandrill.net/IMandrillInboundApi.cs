@@ -21,7 +21,7 @@ namespace Mandrill
             string helo = null, string clientAddress = null);
     }
 
-#if NETFX
+#if NET45
     public partial interface IMandrillInboundApi
     {
         IList<MandrillInboundInfo> Domains();

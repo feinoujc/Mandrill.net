@@ -10,7 +10,7 @@ namespace Mandrill.Serialization
 {
     internal class MandrillJsonContractResolver : DefaultContractResolver
     {
-#if NETFX || NETSTANDARD1_3
+#if NET45 || NETSTANDARD1_3
         private static readonly Regex CamelCaseRegex = new Regex("^[A-Z][a-z]+(?:[A-Z][a-z]+)*$", RegexOptions.Compiled);
 #endif
 #if NETSTANDARD1_1

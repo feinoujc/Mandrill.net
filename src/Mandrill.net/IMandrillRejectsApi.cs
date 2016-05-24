@@ -11,7 +11,7 @@ namespace Mandrill
         Task<IList<MandrillRejectInfo>> ListAsync(string email = null, bool? includeExpired = null, string subaccount = null);
     }
 
-#if NETFX
+#if NET45
     public partial interface IMandrillRejectsApi
     {
         MandrillRejectAddResponse Add(string email, string comment = null, string subaccount = null);

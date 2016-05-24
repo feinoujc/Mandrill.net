@@ -1,4 +1,4 @@
-﻿#if NETFX || NETSTANDARD1_3
+﻿#if NET45 || NETSTANDARD1_3
 using System;
 using System.Collections.Specialized;
 using System.Linq;
