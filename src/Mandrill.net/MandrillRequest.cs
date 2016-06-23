@@ -32,8 +32,11 @@ namespace Mandrill
 
     internal class SystemWebMandrillRequest : MandrillRequest
     {
-        private static readonly string UserAgent =
-            $"Mandrill.net/{typeof (MandrillApi).GetTypeInfo().Assembly.GetName().Version.ToString(3)}";
+        private static readonly Lazy<string> UserAgentLazy = new Lazy<string>(()=>
+        {
+            var assemblyVersion = new AssemblyName(typeof(SystemWebMandrillRequest).GetTypeInfo().Assembly.FullName).Version.ToString(3);
+            return $"Mandrill.net/{assemblyVersion}";
+        });
 
         public SystemWebMandrillRequest(string apiKey) : base(apiKey)
         {
@@ -137,7 +140,7 @@ namespace Mandrill
         {
             var request = WebRequest.CreateHttp(new Uri(BaseUrl, relativeUri));
 #if NET45
-            request.UserAgent = UserAgent;
+            request.UserAgent = UserAgentLazy.Value;
 #endif
             request.Accept = "application/json";
             request.ContentType = "application/json";
