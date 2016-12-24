@@ -4,8 +4,8 @@ sudo: required
 script: 
   - dotnet restore 
   - cd ./tests/Tests
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then dotnet run --labels=All --where:"cat==integration && cat !=exports" --verbose; fi'
-  - dotnet run --labels=All --where:cat!=integration --verbose
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then dotnet test --labels=All --where:"cat==integration && cat !=exports"; fi'
+  - dotnet test --labels=All --where:cat!=integration
 
 matrix:
   include:

@@ -24,24 +24,13 @@
         "System.Runtime.Serialization": ""
       }
     },
-    "netstandard1.1": {
-      "dependencies": {
-        "System.Collections": "4.0.11",
-        "System.ComponentModel.Annotations": "4.1.0",
-        "System.Linq": "4.1.0",
-        "System.Net.Requests": "4.0.11",
-        "System.Text.RegularExpressions": "4.1.0"
-      }
-    },
     "netstandard1.3": {
       "dependencies": {
-        "System.Collections": "4.0.11",
-        "System.Collections.Specialized": "4.0.1",
-        "System.ComponentModel.Annotations": "4.1.0",
-        "System.Linq": "4.1.0",
-        "System.Net.Requests": "4.0.11",
-        "System.Text.RegularExpressions": "4.1.0",
-        "System.Security.Cryptography.Algorithms": "4.2.0"
+        "NETStandard.Library": "1.6.0",
+        "System.ComponentModel.Annotations": "4.3.0",
+        "System.Net.Requests": "4.3.0",
+        "System.Collections.Specialized": "4.3.0",
+        "System.Security.Cryptography.Algorithms": "4.3.0"
       }
     }
   },
