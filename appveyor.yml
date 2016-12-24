@@ -27,10 +27,8 @@ build_script:
 test: off
 test_script:
   - cd ./tests/Tests
-  - if defined APPVEYOR_PULL_REQUEST_NUMBER dotnet run -f net45 --labels=All --verbose --where:cat!=integration
-  - if not defined APPVEYOR_PULL_REQUEST_NUMBER dotnet run -f net45 --labels=All --verbose --where:cat!=exports
-  - if defined APPVEYOR_PULL_REQUEST_NUMBER dotnet run -f netcoreapp1.0 --labels=All --verbose --where:cat!=integration
-  - if not defined APPVEYOR_PULL_REQUEST_NUMBER dotnet run -f netcoreapp1.0 --labels=All --verbose --where:cat!=exports
+  - if defined APPVEYOR_PULL_REQUEST_NUMBER dotnet test --labels=All --where:cat!=integration
+  - if not defined APPVEYOR_PULL_REQUEST_NUMBER dotnet test --labels=All --where:cat!=exports
 artifacts:
   - path: artifacts\**\*.nupkg
 deploy:
