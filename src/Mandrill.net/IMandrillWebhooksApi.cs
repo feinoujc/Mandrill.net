@@ -15,15 +15,4 @@ namespace Mandrill
         Task<MandrillWebHookInfo> UpdateAsync(int id, Uri url, string description = null, IList<MandrillWebHookEventType> events = null);
         Task<MandrillWebHookInfo> DeleteAsync(int id);
     }
-    #if NET45
-
-    public partial interface IMandrillWebHooksApi
-    {
-        IList<MandrillWebHookInfo> List();
-        MandrillWebHookInfo Add(Uri url, string description = null, IList<MandrillWebHookEventType> events = null);
-        MandrillWebHookInfo Info(int id);
-        MandrillWebHookInfo Update(int id, Uri url, string description = null, IList<MandrillWebHookEventType> events = null);
-        MandrillWebHookInfo Delete(int id);
-    }
-#endif
 }

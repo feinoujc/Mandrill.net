@@ -53,49 +53,4 @@ namespace Mandrill
                 new MandrillTagRequest());
         }
     }
-
-#if NET45
-    internal partial class MandrillTagsApi
-    {
-        public IList<MandrillTagInfo> List()
-        {
-            return MandrillApi.Post<MandrillTagRequest, IList<MandrillTagInfo>>("tags/list.json",
-                new MandrillTagRequest());
-        }
-
-        public MandrillTagInfo Info(string tag)
-        {
-            return MandrillApi.Post<MandrillTagRequest, MandrillTagInfo>("tags/info.json",
-                new MandrillTagRequest
-                {
-                    Tag = tag
-                });
-        }
-
-        public MandrillTagInfo Delete(string tag)
-        {
-            return MandrillApi.Post<MandrillTagRequest, MandrillTagInfo>("tags/delete.json",
-                new MandrillTagRequest
-                {
-                    Tag = tag
-                });
-        }
-
-        public IList<MandrillTagTimeSeries> TimeSeries(string tag)
-        {
-            return MandrillApi.Post<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/time-series.json",
-                new MandrillTagRequest
-                {
-                    Tag = tag
-                });
-        }
-
-        public IList<MandrillTagTimeSeries> AllTimeSeries()
-        {
-            return MandrillApi.Post<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/all-time-series.json",
-                new MandrillTagRequest());
-        }
-    }
-
-#endif
 }

@@ -21,14 +21,14 @@
     "net45": {
       "frameworkAssemblies": {
         "System.ComponentModel.DataAnnotations": "",
-        "System.Runtime.Serialization": ""
+        "System.Runtime.Serialization": "",
+        "System.Net.Http": ""
       }
     },
     "netstandard1.3": {
       "dependencies": {
         "NETStandard.Library": "1.6.0",
         "System.ComponentModel.Annotations": "4.3.0",
-        "System.Net.Requests": "4.3.0",
         "System.Collections.Specialized": "4.3.0",
         "System.Security.Cryptography.Algorithms": "4.3.0"
       }

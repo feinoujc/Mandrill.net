@@ -10,13 +10,4 @@ namespace Mandrill
         Task<IList<MandrillSenderDemographics>> SendersAsync();
         Task<MandrillUserInfo> InfoAsync();
     }
-#if NET45
-
-    public partial interface IMandrillUsersApi
-    {
-        string Ping();
-        IList<MandrillSenderDemographics> Senders();
-        MandrillUserInfo Info();
-    }
-#endif
 }

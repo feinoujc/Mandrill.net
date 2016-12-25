@@ -387,29 +387,7 @@ To: Mr Smith
                 AssertResults(result);
 
             }
-
-#if NET45
-            [Test]
-            public void Can_send_sync()
-            {
-                var message = new MandrillMessage
-                {
-                    FromEmail = FromEmail,
-                    Subject = "test",
-                    Tags = new List<string> { "test-send", "mandrill-net" },
-                    To = new List<MandrillMailAddress>()
-                    {
-                        new MandrillMailAddress("test1@example.com")
-                    },
-                    Text = "This is a test",
-                };
-                var result = Api.Messages.Send(message, true);
-
-                result.Should().HaveCount(1);
-                AssertResults(result);
-
-            }
-#endif
+            
             [Test]
             public async Task Can_send_scheduled()
             {

@@ -14,17 +14,4 @@ namespace Mandrill
         Task<MandrillSenderInfo> InfoAsync(string address);
         Task<IList<MandrillSenderTimeSeries>> TimeSeriesAsync(string address);
     }
-
-#if NET45
-    public partial interface IMandrillSendersApi
-    {
-        IList<MandrillSenderInfo> List();
-        IList<MandrillSenderDomain> Domains();
-        MandrillSenderDomain AddDomain(string domain);
-        MandrillSenderDomain CheckDomain(string domain);
-        MandrillSenderVerifyDomain VerifyDomain(string domain, string mailbox);
-        MandrillSenderInfo Info(string address);
-        IList<MandrillSenderTimeSeries> TimeSeries(string address);
-    }
-#endif
 }

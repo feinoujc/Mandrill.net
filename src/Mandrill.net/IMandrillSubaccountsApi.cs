@@ -14,17 +14,4 @@ namespace Mandrill
         Task<MandrillSubaccountResponse> PauseAsync(string id);
         Task<MandrillSubaccountResponse> ResumeAsync(string id);
     }
-
-#if NET45
-    public partial interface IMandrillSubaccountsApi
-    {
-        IList<MandrillSubaccountResponse> List(string q = null);
-        MandrillSubaccountResponse Add(string id, string name = null, string notes = null, int? customQuota = null);
-        MandrillSubaccountInfo Info(string id);
-        MandrillSubaccountResponse Update(string id, string name = null, string notes = null, int? customQuota = null);
-        MandrillSubaccountResponse Delete(string id);
-        MandrillSubaccountResponse Pause(string id);
-        MandrillSubaccountResponse Resume(string id);
-    }
-#endif
 }
