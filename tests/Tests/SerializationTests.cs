@@ -377,6 +377,21 @@ namespace Tests
             Debug.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
 
         }
+        
+        [Test]
+         public void Can_serialize_sync_web_hook()
+        {
+            string json = TestData.sample_sync_event;
+
+            var events = MandrillSyncEvent.ParseSyncEvents(json);
+
+            events.Should().NotBeNullOrEmpty();
+            events.Should().HaveCount(1);
+
+            events[0].Action.Should().Be(MandrillSyncAction.Add);
+            events[0].Type.Should().Be(MandrillSyncType.Blacklist);
+        }
+
 
         [Test]
         public void Can_serialize_case_insensitive_header_dictionary()

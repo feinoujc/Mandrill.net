@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Mandrill.Model;
@@ -81,7 +82,7 @@ namespace Tests
             {
                 var results = await Api.Messages.SearchAsync(null, DateTime.Today.AddDays(-1));
 
-                //the api doesn't return results immediately, it may return no results. 
+                //the api doesn't return results immediately, it may return no results.
                 //Also, the content may not be around > 24 hrs
                 var found = results.Where(x => x.Ts > DateTime.UtcNow.AddHours(-24))
                         .OrderBy(x => x.Ts)
@@ -101,16 +102,16 @@ namespace Tests
             }
 
             [Test]
-            public async Task Throws_when_not_found()
+            public void Throws_when_not_found()
             {
-                var mandrillException = await ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
+                var mandrillException = Assert.ThrowsAsync<MandrillException>(async () => await Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
                 mandrillException.Name.Should().Be("Unknown_Message");
             }
 
             [Test]
-            public async Task Throws_when_not_found_sync()
+            public void Throws_when_not_found_sync()
             {
-                var mandrillException = await ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
+                var mandrillException = Assert.ThrowsAsync<MandrillException>(async () => await Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
                 mandrillException.Name.Should().Be("Unknown_Message");
                 Debug.WriteLine(mandrillException);
             }
@@ -140,9 +141,9 @@ namespace Tests
             }
 
             [Test]
-            public async Task Throws_when_not_found()
+            public void Throws_when_not_found()
             {
-                var mandrillException = await ThrowsAsync<MandrillException>(() => Api.Messages.InfoAsync(Guid.NewGuid().ToString("N")));
+                var mandrillException = Assert.ThrowsAsync<MandrillException>(async () => await Api.Messages.InfoAsync(Guid.NewGuid().ToString("N")));
                 mandrillException.Name.Should().Be("Unknown_Message");
             }
         }
@@ -180,13 +181,13 @@ namespace Tests
             {
                 var rawMessage = @"Delivered-To: MrSmith@gmail.com
 Received: by 10.36.81.3 with SMTP id e3cs239nzb; Tue, 29 Mar 2005 15:11:47 -0800 (PST)
-Return-Path: 
+Return-Path:
 Received: from mail.emailprovider.com (mail.emailprovider.com [111.111.11.111]) by mx.gmail.com with SMTP id h19si826631rnb.2005.03.29.15.11.46; Tue, 29 Mar 2005 15:11:47 -0800 (PST)
 Message-ID: <20050329231145.62086.mail@mail.emailprovider.com>
 Reply-To: MrsJohnson@gmail.com
 Received: from [11.11.111.111] by mail.emailprovider.com via HTTP; Tue, 29 Mar 2005 15:11:45 PST
 Date: Tue, 29 Mar 2005 15:11:45 -0800 (PST)
-From: Mr Jones 
+From: Mr Jones
 Subject: Hello
 To: Mr Smith
 ";
@@ -222,12 +223,24 @@ To: Mr Smith
                     Assert.Inconclusive("no scheduled messages found.");
                 }
             }
+
+            [Test]
+             public void Throws_on_missing_args()
+            {
+                Assert.ThrowsAsync<ArgumentNullException>(async () => await Api.Messages.RescheduleAsync(null, DateTime.UtcNow));
+            }
+
+             [Test]
+             public void Throws_on_invalid_date()
+            {
+                Assert.ThrowsAsync<ArgumentException>(async () => await Api.Messages.RescheduleAsync("foo", DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
+            }
         }
 
         [Category("messages/search.json")]
         internal class Search : Messages
         {
-           
+
             [Test]
             public async Task Can_search_all_params()
             {
@@ -335,9 +348,13 @@ To: Mr Smith
 </head>
 <body>
 <p>this is a test</p>
+<img src=""cid:mandrill_logo"">
 </body>
 </html>"
                 };
+                message.Images.Add(new MandrillImage("image/png", "mandrill_logo", TestData.PngImage));
+                message.Attachments.Add(new MandrillAttachment("text/plain", "message.txt", Encoding.UTF8.GetBytes("This is an attachment.\n")));
+                
                 var result = await Api.Messages.SendAsync(message);
 
                 result.Should().HaveCount(2);
@@ -345,7 +362,7 @@ To: Mr Smith
             }
 
             [Test]
-            public async Task Can_throw_errors_when_error_response()
+            public void Can_throw_errors_when_error_response()
             {
                 var invalidSubaccount = Guid.NewGuid().ToString("N");
                 var message = new MandrillMessage
@@ -361,7 +378,7 @@ To: Mr Smith
                     Subaccount = invalidSubaccount
                 };
 
-                var result = await ThrowsAsync<MandrillException>(() => Api.Messages.SendAsync(message));
+                var result = Assert.ThrowsAsync<MandrillException>(async () => await Api.Messages.SendAsync(message));
                 result.Should().NotBeNull();
                 result.Name.Should().Be("Unknown_Subaccount");
                 result.Message.Should().Contain(invalidSubaccount);
@@ -387,7 +404,13 @@ To: Mr Smith
                 AssertResults(result);
 
             }
-            
+
+            [Test]
+            public void Throws_on_missing_args()
+            {
+                Assert.ThrowsAsync<ArgumentNullException>(async () => await Api.Messages.SendAsync(null, true));
+            }
+
             [Test]
             public async Task Can_send_scheduled()
             {
@@ -412,12 +435,12 @@ To: Mr Smith
             }
 
             [Test]
-            public async Task Throws_if_scheduled_is_not_utc()
+            public void Throws_if_scheduled_is_not_utc()
             {
                 var message = new MandrillMessage();
 
                 var sendAtLocal = DateTime.SpecifyKind(DateTime.Now.AddHours(1), DateTimeKind.Local);
-                var result = await ThrowsAsync<ArgumentException>(() => Api.Messages.SendAsync(message, sendAtUtc: sendAtLocal));
+                var result = Assert.ThrowsAsync<ArgumentException>(async () => await Api.Messages.SendAsync(message, sendAtUtc: sendAtLocal));
 
                 result.ParamName.Should().Be("sendAtUtc");
             }
@@ -492,6 +515,25 @@ To: Mr Smith
                 result.Should().HaveCount(2);
                 AssertResults(result);
 
+            }
+
+             [Test]
+            public void Throws_on_missing_args0()
+            {
+                var result = Assert.ThrowsAsync<ArgumentNullException>(async () => await Api.Messages.SendTemplateAsync(null, TestTemplateName));
+            }
+
+
+            [Test]
+            public void Throws_on_missing_args1()
+            {
+                var result = Assert.ThrowsAsync<ArgumentNullException>(async () => await Api.Messages.SendTemplateAsync(new MandrillMessage(), null));
+            }
+
+            [Test]
+            public void Throws_on_invalid_date_type()
+            {
+                var result = Assert.ThrowsAsync<ArgumentException>(async () => await Api.Messages.SendTemplateAsync(new MandrillMessage(), TestTemplateName, sendAtUtc:DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
             }
         }
 

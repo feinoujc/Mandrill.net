@@ -5,20 +5,13 @@ namespace Mandrill.Model
 {
     public class MandrillInboundMessageInfo
     {
-        private List<string> _tags;
-        private List<List<string>> _to;
-        private Dictionary<string, object> _headers;
         public MandrillDkimInfo Dkim { get; set; }
 
         public string Email { get; set; }
 
         public string FromEmail { get; set; }
 
-        public Dictionary<string, object> Headers
-        {
-            get { return _headers ?? (_headers = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)); }
-            set { _headers = value; }
-        }
+        public Dictionary<string, object> Headers { get; set; } = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         public string Html { get; set; }
 
@@ -33,11 +26,7 @@ namespace Mandrill.Model
 
         public string Subject { get; set; }
 
-        public List<string> Tags
-        {
-            get { return _tags ?? (_tags = new List<string>()); }
-            set { _tags = value; }
-        }
+        public List<string> Tags { get; set; } = new List<string>();
 
         public string Template { get; set; }
 
@@ -45,10 +34,6 @@ namespace Mandrill.Model
 
         public bool TextFlowed { get; set; }
 
-        public List<List<string>> To
-        {
-            get { return _to ?? (_to = new List<List<string>>()); }
-            set { _to = value; }
-        }
+        public List<List<string>> To { get; set; } = new List<List<string>>();
     }
 }

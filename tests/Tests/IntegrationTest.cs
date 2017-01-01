@@ -40,19 +40,5 @@ namespace Tests
         {
             LazyApi = null;
         }
-
-        protected async static Task<T> ThrowsAsync<T>(Func<Task> testCode) where T : Exception
-        {
-            try
-            {
-                await testCode();
-                Assert.Throws<T>(() => { });
-            }
-            catch (T exception)
-            {
-                return exception;
-            }
-            return null;
-        }
     }
 }

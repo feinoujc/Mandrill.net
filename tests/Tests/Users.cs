@@ -42,10 +42,10 @@ namespace Tests
             }
 
             [Test]
-            public async Task Throws_when_invalid_key()
+            public void Throws_when_invalid_key()
             {
                 var badApi = new MandrillApi(Guid.NewGuid().ToString("N"));
-                var mandrillExpection = await ThrowsAsync<MandrillException>(() => badApi.Users.PingAsync());
+                var mandrillExpection = Assert.ThrowsAsync<MandrillException>(async () => await badApi.Users.PingAsync());
                 mandrillExpection.Name.Should().Be("Invalid_Key");
             }
         }

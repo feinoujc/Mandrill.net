@@ -4,12 +4,28 @@ using NUnit.Framework;
 using FluentAssertions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Mandrill.Model;
 
 namespace Tests
 {
     [Category("exports")]
     class Exports : IntegrationTest
     {
+        protected async Task<T> HandleExportThrottleError<T>(Task<T> method) {
+            try
+            {
+                return await method;
+            } 
+            catch(MandrillException mex)
+            {
+                if(mex.Code == -99 && mex.Name == "UserError") 
+                {
+                    Assert.Inconclusive(mex.Message);
+                }
+                throw mex;
+            }
+        }
+        
         [Category("exports/list.json")]
         class List : Exports
         {
@@ -60,7 +76,7 @@ namespace Tests
                 // notifyEmail is an optional field that will 
                 // be emailed when the export is done compiling. omitting for test purposes.
                 string notifyEmail = string.Empty;
-                var result = await Api.Exports.RejectsAsync(notifyEmail);
+                var result = await HandleExportThrottleError(Api.Exports.RejectsAsync(notifyEmail));
                 result.Should().NotBeNull();
                 result.Type.Should().Be("reject");
                 result.State.Should().Be("waiting");
@@ -76,7 +92,7 @@ namespace Tests
                 // notifyEmail is an optional field that will 
                 // be emailed when the export is done compiling. omitting for test purposes.
                 string notifyEmail = string.Empty;
-                var result = await Api.Exports.WhitelistAsync(notifyEmail);
+                var result = await HandleExportThrottleError(Api.Exports.WhitelistAsync(notifyEmail));
                 result.Should().NotBeNull();
                 result.Type.Should().Be("whitelist");
                 result.State.Should().Be("waiting");
@@ -89,9 +105,6 @@ namespace Tests
             [Test]
             public async Task Can_export_activity()
             {
-                // all of the activity parameters are optional. unsure of how much test
-                // coverage you'd like here, so stubbed out the parameters to be filled
-                // as desired.
                 string notifyEmail = string.Empty;
                 DateTime? dateFrom = null;
                 DateTime? dateTo = null;
@@ -100,13 +113,13 @@ namespace Tests
                 IList<string> states = null;
                 IList<string> apiKeys = null;
 
-                var result = await Api.Exports.ActivityAsync(notifyEmail,
+                var result = await HandleExportThrottleError(Api.Exports.ActivityAsync(notifyEmail,
                     dateFrom,
                     dateTo,
                     tags,
                     senders,
                     states,
-                    apiKeys);
+                    apiKeys));
                 result.Should().NotBeNull();
                 result.Type.Should().Be("activity");
                 result.State.Should().Be("waiting");

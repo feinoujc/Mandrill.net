@@ -46,9 +46,9 @@ namespace Tests
         }
 
         [Test]
-        public async Task Throws_when_bad_url()
+        public void Throws_when_bad_url()
         {
-            await ThrowsAsync<MandrillException>(() => Api.WebHooks.AddAsync(new Uri("http://www.invalid_url.org")));
+            Assert.ThrowsAsync<MandrillException>(async () => await Api.WebHooks.AddAsync(new Uri("http://www.invalid_url.org")));
         }
 
         [Test]
