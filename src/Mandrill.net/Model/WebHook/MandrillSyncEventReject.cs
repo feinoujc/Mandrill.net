@@ -23,7 +23,7 @@ namespace Mandrill.Model
 
         public string Reason { get; set; }
 
-        public string Sender { get; set; }
+        public MandrillSyncEventSender Sender { get; set; }
 
         public string Subaccount { get; set; }
     }
