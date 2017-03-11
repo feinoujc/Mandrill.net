@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations;
@@ -11,14 +11,14 @@ using Mandrill.Model;
 using Mandrill.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NUnit.Framework;
+using Xunit;
 
 namespace Tests
 {
-    [Category("serialization")]
-    internal class SerializationTests
+    [Trait("Category", "serialization")]
+    public class SerializationTests
     {
-        [Test]
+        [Fact]
         public void Can_serialize_dates_as_unix_ts_by_default()
         {
             var date = DateTime.UtcNow;
@@ -30,7 +30,7 @@ namespace Tests
             json["ts"].Value<long>().Should().Be(expected);
         }
 
-        [Test]
+        [Fact]
         public void Can_serialize_content_as_string()
         {
             var message = new MandrillMessage();
@@ -46,7 +46,7 @@ namespace Tests
             json["global_merge_vars"].First["content"].Value<string>().Should().Be("some content");
         }
 
-        [Test]
+        [Fact]
         public void Can_serialize_content_as_complex_associative_array()
         {
             var message = new MandrillMessage();
@@ -83,7 +83,7 @@ namespace Tests
             result[1]["unit_price"].Should().Be(0.40);
         }
 
-        [Test]
+        [Fact]
         public void Can_set_property_name_by_convention()
         {
             var model = new TestModel {SomePropertyName = "foo"};
@@ -93,7 +93,7 @@ namespace Tests
             json["some_property_name"].Value<string>().Should().Be("foo");
         }
 
-        [Test]
+        [Fact]
         public void Skips_empty_arrays()
         {
             var model = new TestModel {List1 = new string[0]};
@@ -103,7 +103,7 @@ namespace Tests
             json["list1"].Should().BeNull();
         }
 
-        [Test]
+        [Fact]
         public void Includes_non_empty_arrays()
         {
             var model = new TestModel
@@ -122,7 +122,7 @@ namespace Tests
                 .HaveCount(2);
         }
 
-        [Test]
+        [Fact]
         public void Includes_empty_required_arrays()
         {
             var model = new TestModel
@@ -142,7 +142,7 @@ namespace Tests
         }
 
 
-        [Test]
+        [Fact]
         public void Can_covert_guid_in_short_format()
         {
             var model = new TestModel {Id = Guid.NewGuid().ToString("N")};
@@ -153,7 +153,7 @@ namespace Tests
         }
 
 
-        [Test]
+        [Fact]
         public void Skips_null_values()
         {
             var model = new TestModel {Value1 = null};
@@ -163,7 +163,7 @@ namespace Tests
             json["value1"].Should().BeNull();
         }
 
-        [Test]
+        [Fact]
         public void Enums_camel_case()
         {
             var model = new[] {new TestModel {Enum = TestEnum.Reject}, new TestModel {Enum = TestEnum.SoftBounce}};
@@ -175,7 +175,7 @@ namespace Tests
         }
 
 
-        [Test]
+        [Fact]
         public void Skips_empty_dictionary()
         {
             var model = new TestModel {Dictionary = null};
@@ -185,7 +185,7 @@ namespace Tests
             json["dictionary"].Should().BeNull();
         }
 
-        [Test]
+        [Fact]
         public void includes_non_empty_dictionary()
         {
             var model = new TestModel
@@ -201,7 +201,7 @@ namespace Tests
             dictionary["key2"].Should().Be("value2");
         }
 
-        [Test]
+        [Fact]
         public void Can_deserialize_message()
         {
             string json = @"{
@@ -331,7 +331,7 @@ namespace Tests
             Convert.ToBase64String(message.Images[0].Content).Should().Be("bWFuZHJpbGwubmV0");
         }
 
-        [Test]
+        [Fact]
         public void Can_serialize_message_web_hook()
         {
             string json = TestData.mandrill_webhook_example;
@@ -345,7 +345,7 @@ namespace Tests
         }
 
 
-        [Test]
+        [Fact]
         public void Can_serialize_message_web_hook_with_invalid_longitude_latitude()
         {
             string json = TestData.mandrill_webhook_invalid;
@@ -358,7 +358,7 @@ namespace Tests
             Debug.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
         }
 
-        [Test]
+        [Fact]
         public void Can_serialize_inbound_web_hook()
         {
             string json = TestData.mandrill_inbound;
@@ -377,8 +377,8 @@ namespace Tests
             Debug.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
 
         }
-        
-        [Test]
+
+        [Fact]
          public void Can_serialize_sync_web_hook()
         {
             string json = TestData.sample_sync_event;
@@ -393,7 +393,7 @@ namespace Tests
         }
 
 
-        [Test]
+        [Fact]
         public void Can_serialize_case_insensitive_header_dictionary()
         {
             string json = TestData.mandrill_inbound;
@@ -408,17 +408,17 @@ namespace Tests
             events[0].Msg.Headers["Content-Type"].Should().Be(events[0].Msg.Headers["CONTENT-TYPE"]);
         }
 
-        [Test]
+        [Fact]
         public void Can_verify_webhook_signature()
         {
             var formData = new NameValueCollection();
             formData["mandrill_events"] = TestData.sample_webhook;
 
             var result = WebHookSignatureHelper.VerifyWebHookSignature("NnvRYvKo0gA99/YGgRSb2JS4c/Y=", "f7YEknp5hLvZVw6BNSaM6g", new Uri("http://requestb.in/wvhpa9wv"), formData);
-            Assert.IsTrue(result);
+            Assert.True(result);
 
             var badResult = WebHookSignatureHelper.VerifyWebHookSignature("NnvRYvKo0gA99/YGgRSb2JS4c/Y=", "f7YEknp5hLvZVw6BNSaM6g", new Uri("http://requestb.in/wvhpa9wv?oof=1"), formData);
-            Assert.IsFalse(badResult);
+            Assert.False(badResult);
 
         }
 

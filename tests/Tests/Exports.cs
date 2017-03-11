@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using FluentAssertions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,28 +8,38 @@ using Mandrill.Model;
 
 namespace Tests
 {
-    [Category("exports")]
-    class Exports : IntegrationTest
+    [Trait("Category", "exports")]
+    [Collection("exports")]
+    public class Exports : IntegrationTest
     {
-        protected async Task<T> HandleExportThrottleError<T>(Task<T> method) {
+        class ExportThrottledTestException : Exception
+        {
+            public ExportThrottledTestException() {}
+            public ExportThrottledTestException(string message) : base(message) {}
+            public ExportThrottledTestException(string message, Exception inner): base(message, inner) {}
+
+        }
+
+        protected async Task<T> HandleExportThrottleError<T>(Task<T> method)
+        {
             try
             {
                 return await method;
-            } 
+            }
             catch(MandrillException mex)
             {
-                if(mex.Code == -99 && mex.Name == "UserError") 
+                if(mex.Code == -99 && mex.Name == "UserError")
                 {
-                    Assert.Inconclusive(mex.Message);
+                    throw new ExportThrottledTestException(mex.Message, mex);
                 }
                 throw mex;
             }
         }
-        
-        [Category("exports/list.json")]
-        class List : Exports
+
+        [Trait("Category", "exports/list.json")]
+        public class List : Exports
         {
-            [Test]
+            [Fact]
             public async Task Can_list_all()
             {
                 var results = await Api.Exports.ListAsync();
@@ -42,15 +52,15 @@ namespace Tests
                 }
                 else
                 {
-                    Assert.Inconclusive("no exports found.");
+                    Console.Error.WriteLine("no exports found.");
                 }
             }
         }
 
-        [Category("exports/info.json")]
-        class Info : Exports
+        [Trait("Category", "exports/info.json")]
+        public class Info : Exports
         {
-            [Test]
+            [Fact]
             public async Task Can_retrieve_info()
             {
                 var export = (await Api.Exports.ListAsync()).LastOrDefault();
@@ -62,47 +72,59 @@ namespace Tests
                 }
                 else
                 {
-                    Assert.Inconclusive("no exports found");
+                    Console.Error.WriteLine("no exports found");
                 }
             }
         }
 
-        [Category("exports/rejects.json")]
-        class Rejects : Exports
+        [Trait("Category", "exports/rejects.json")]
+        public class Rejects : Exports
         {
-            [Test]
+            [Fact]
             public async Task Can_export_info()
             {
-                // notifyEmail is an optional field that will 
+                // notifyEmail is an optional field that will
                 // be emailed when the export is done compiling. omitting for test purposes.
                 string notifyEmail = string.Empty;
-                var result = await HandleExportThrottleError(Api.Exports.RejectsAsync(notifyEmail));
-                result.Should().NotBeNull();
-                result.Type.Should().Be("reject");
-                result.State.Should().Be("waiting");
+                try
+                {
+                    var result = await HandleExportThrottleError(Api.Exports.RejectsAsync(notifyEmail));
+                    result.Should().NotBeNull();
+                    result.Type.Should().Be("reject");
+                    result.State.Should().Be("waiting");
+                }
+                catch (ExportThrottledTestException)
+                {
+                }
             }
         }
 
-        [Category("exports/whitelist.json")]
-        class Whitelist: Exports
+        [Trait("Category", "exports/whitelist.json")]
+        public class Whitelist: Exports
         {
-            [Test]
+            [Fact]
             public async Task Can_export_info()
             {
-                // notifyEmail is an optional field that will 
+                // notifyEmail is an optional field that will
                 // be emailed when the export is done compiling. omitting for test purposes.
                 string notifyEmail = string.Empty;
-                var result = await HandleExportThrottleError(Api.Exports.WhitelistAsync(notifyEmail));
-                result.Should().NotBeNull();
-                result.Type.Should().Be("whitelist");
-                result.State.Should().Be("waiting");
+                try
+                {
+                    var result = await HandleExportThrottleError(Api.Exports.WhitelistAsync(notifyEmail));
+                    result.Should().NotBeNull();
+                    result.Type.Should().Be("whitelist");
+                    result.State.Should().Be("waiting");
+                }
+                catch (ExportThrottledTestException)
+                {
+                }
             }
         }
 
-        [Category("exports/activity.json")]
-        class Activity : Exports
+        [Trait("Category", "exports/activity.json")]
+        public class Activity : Exports
         {
-            [Test]
+            [Fact]
             public async Task Can_export_activity()
             {
                 string notifyEmail = string.Empty;
@@ -113,16 +135,23 @@ namespace Tests
                 IList<string> states = null;
                 IList<string> apiKeys = null;
 
-                var result = await HandleExportThrottleError(Api.Exports.ActivityAsync(notifyEmail,
-                    dateFrom,
-                    dateTo,
-                    tags,
-                    senders,
-                    states,
-                    apiKeys));
-                result.Should().NotBeNull();
-                result.Type.Should().Be("activity");
-                result.State.Should().Be("waiting");
+                try
+                {
+                    var result = await HandleExportThrottleError(Api.Exports.ActivityAsync(notifyEmail,
+                        dateFrom,
+                        dateTo,
+                        tags,
+                        senders,
+                        states,
+                        apiKeys));
+                    result.Should().NotBeNull();
+                    result.Type.Should().Be("activity");
+                    result.State.Should().Be("waiting");
+                }
+                catch(ExportThrottledTestException)
+                {
+
+                }
             }
         }
 

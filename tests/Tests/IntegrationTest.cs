@@ -1,44 +1,35 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Mandrill;
-using NUnit.Framework;
+using Xunit;
 
 namespace Tests
 {
 
 
-    [Category("integration")]
-    internal abstract class IntegrationTest
+    [Trait("Category", "integration")]
+    public abstract class IntegrationTest: IDisposable
     {
         private static readonly Lazy<string> ApiKeyLazy = new Lazy<string>(() =>
         {
             var apiKey = Environment.GetEnvironmentVariable("MANDRILL_API_KEY");
             if (string.IsNullOrEmpty(apiKey))
             {
-                throw new AssertionException("You must set the user environment variable MANDRILL_API_KEY in order to run these tests. " +
+                Assert.True(false, "You must set the user environment variable MANDRILL_API_KEY in order to run these tests. " +
                                              "Go to https://mandrillapp.com/ to obtain an api key.");
             }
             return apiKey;
         });
 
-        protected string ApiKey
-        {
-            get { return ApiKeyLazy.Value; }
-        }
-        private Lazy<MandrillApi> LazyApi;
+        private static readonly Lazy<MandrillApi> LazyApi = new Lazy<MandrillApi>(() => new MandrillApi(ApiKeyLazy.Value));
 
-        protected MandrillApi Api { get { return LazyApi.Value; } }
+        protected string ApiKey => ApiKeyLazy.Value;
 
-        [OneTimeSetUp]
-        public void OneTimeSetup()
-        {
-            LazyApi = new Lazy<MandrillApi>(() => new MandrillApi(ApiKey));
-        }
+        protected MandrillApi Api => LazyApi.Value;
 
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
+        public virtual void Dispose()
         {
-            LazyApi = null;
+
         }
     }
 }

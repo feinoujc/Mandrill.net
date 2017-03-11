@@ -1,24 +1,19 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace Tests
 {
-    [Category("whitelists")]
-    class Whitelists : IntegrationTest
+    [Trait("Category", "whitelists")]
+    [Collection("whitelists")]
+    public class Whitelists : IntegrationTest
     {
         private HashSet<string> _added = new HashSet<string>();
 
-        [SetUp]
-        public void SetUp()
-        {
-            _added.Clear();
-        }
-        [TearDown]
-        public void TearDown()
+        public override void Dispose()
         {
             foreach (var email in _added)
             {
@@ -26,10 +21,10 @@ namespace Tests
             }
         }
 
-        [Category("whitelists/list.json")]
-        class List : Whitelists
+        [Trait("Category", "whitelists/list.json")]
+        public class List : Whitelists
         {
-            [Test]
+            [Fact]
             public async Task Can_list_all()
             {
                 string email = null;
@@ -43,11 +38,11 @@ namespace Tests
                 }
                 else
                 {
-                    Assert.Inconclusive("no emails found on whitelist.");
+                    Console.Error.WriteLine("no emails found on whitelist.");
                 }
             }
-            
-            [Test]
+
+            [Fact]
             public async Task Can_list_all_filtered()
             {
                 string email = null;
@@ -60,19 +55,19 @@ namespace Tests
                     var result = await Api.Whitelists.ListAsync(found.Email);
                     string whitelistemail = result.FirstOrDefault().Email;
                     whitelistemail.Should().NotBeNullOrEmpty();
-                    whitelistemail.Should().Be(found.Email);                    
+                    whitelistemail.Should().Be(found.Email);
                 }
                 else
                 {
-                    Assert.Inconclusive("no emails on whitelist found.");
+                    Console.Error.WriteLine("no emails on whitelist found.");
                 }
             }
         }
 
-        [Category("whitelists/add.json")]
-        class Add : Whitelists 
+        [Trait("Category", "whitelists/add.json")]
+        public class Add : Whitelists
         {
-            [Test]
+            [Fact]
             public async Task Can_add_whitelist()
             {
                 var email = Guid.NewGuid().ToString("N") + "@example.com";
@@ -82,10 +77,10 @@ namespace Tests
             }
         }
 
-        [Category("whitelists/delete.json")]
-        class Delete : Whitelists
+        [Trait("Category", "whitelists/delete.json")]
+        public class Delete : Whitelists
         {
-            [Test]
+            [Fact]
             public async Task Can_delete_whitelist()
             {
                 var email = Guid.NewGuid().ToString("N") + "@example.com";

@@ -1,17 +1,16 @@
 using System.Linq;
 using FluentAssertions;
 using Mandrill.Model;
-using NUnit.Framework;
+using Xunit;
 
 namespace Tests
 {
-    [Category("model")]
-    [TestFixture]
-    internal class ModelTest
+    [Trait("Category", "model")]
+    public class ModelTest
     {
         public class MandrillMessageTests : ModelTest
         {
-            [Test]
+            [Fact]
             public void Message_ctor_with_html_content()
             {
                 var model = new MandrillMessage("from@example.com", "to@example.com", "test subject", "<body>test</body>");
@@ -24,7 +23,7 @@ namespace Tests
                 model.Html.Should().Be("<body>test</body>");
             }
 
-            [Test]
+            [Fact]
             public void Message_ctor_with_text_content()
             {
                 var model = new MandrillMessage("from@example.com", "to@example.com", "test subject", "test");
@@ -37,7 +36,7 @@ namespace Tests
                 model.Text.Should().Be("test");
             }
 
-            [Test]
+            [Fact]
             public void Message_ctor_to_from_strings()
             {
                 var model = new MandrillMessage("from@example.com", "to@example.com");
@@ -48,7 +47,7 @@ namespace Tests
                 model.To[0].Name.Should().BeNull();
             }
 
-            [Test]
+            [Fact]
             public void Message_ctor_to_from_mail_class()
             {
                 var model = new MandrillMessage(new MandrillMailAddress("from@example.com", "From Name"),
@@ -60,7 +59,7 @@ namespace Tests
                 model.To[0].Name.Should().Be("To Name");
             }
 
-            [Test]
+            [Fact]
             public void Add_recipient_metadata_adds_by_recipient()
             {
                 var model = new MandrillMessage();
@@ -75,7 +74,7 @@ namespace Tests
                 model.RecipientMetadata.Single(m => m.Rcpt == "to2@example.com").Values["my-property"].Should().Be("2");
             }
 
-            [Test]
+            [Fact]
             public void Add_recipient_merge_vars_adds_by_recipient()
             {
                 var model = new MandrillMessage();
@@ -88,12 +87,12 @@ namespace Tests
                 model.AddRcptMergeVars("to1@example.com", "my-property", new {field = 1});
                 model.AddRcptMergeVars("to2@example.com", "my-property", new {field = 2});
 
-                Assert.AreEqual(1, model.MergeVars.Single(m => m.Rcpt == "to1@example.com").Vars.Single(v => v.Name == "my-property").Content.field);
-                Assert.AreEqual(2, model.MergeVars.Single(m => m.Rcpt == "to2@example.com").Vars.Single(v => v.Name == "my-property").Content.field);
-                Assert.IsFalse(model.MergeVars.Any(m => m.Rcpt == "to3@example.com"));
+                Assert.Equal(1, model.MergeVars.Single(m => m.Rcpt == "to1@example.com").Vars.Single(v => v.Name == "my-property").Content.field);
+                Assert.Equal(2, model.MergeVars.Single(m => m.Rcpt == "to2@example.com").Vars.Single(v => v.Name == "my-property").Content.field);
+                Assert.False(model.MergeVars.Any(m => m.Rcpt == "to3@example.com"));
             }
 
-            [Test]
+            [Fact]
             public void Add_metadata()
             {
                 var model = new MandrillMessage();
@@ -102,8 +101,8 @@ namespace Tests
 
                 model.Metadata["META1"].Should().Be("foo");
             }
-            
-            [Test]
+
+            [Fact]
             public void Add_header()
             {
                 var model = new MandrillMessage();
@@ -112,25 +111,25 @@ namespace Tests
 
                 model.Headers["x-my-header"].Should().Be("foo");
             }
-            
-            [Test]
+
+            [Fact]
             public void Add_header_list()
             {
                 var model = new MandrillMessage();
 
-                
+
                 model.AddHeader("X-MY-HEADER", new[] {"foo", "bar"});
 
                 model.Headers["x-my-header"].ShouldBeEquivalentTo(new[] {"foo", "bar"});
             }
-            
-            [Test]
+
+            [Fact]
             public void Reply_to_sets_header()
             {
                 var model = new MandrillMessage();
 
                 model.ReplyTo.Should().BeNull();
-                model.ReplyTo = "reply@example.com";  
+                model.ReplyTo = "reply@example.com";
                 model.ReplyTo.Should().Be("reply@example.com");
                 model.Headers["reply-to"].Should().Be("reply@example.com");
             }

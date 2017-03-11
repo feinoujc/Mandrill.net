@@ -1,19 +1,19 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Mandrill;
 using Mandrill.Model;
-using NUnit.Framework;
+using Xunit;
 
 namespace Tests
 {
-    [Category("users")]
-    internal class Users : IntegrationTest
+    [Trait("Category", "users")]
+    public class Users : IntegrationTest
     {
-        [Category("users/info.json")]
-        internal class Info : Users
+        [Trait("Category", "users/info.json")]
+        public class Info : Users
         {
-            [Test]
+            [Fact]
             public async Task Can_get_info()
             {
                 var result = await Api.Users.InfoAsync();
@@ -31,36 +31,36 @@ namespace Tests
             }
         }
 
-        [Category("users/ping2.json")]
-        internal class Ping : Users
+        [Trait("Category", "users/ping2.json")]
+        public class Ping : Users
         {
-            [Test]
+            [Fact]
             public async Task Can_ping()
             {
                 var ping = await Api.Users.PingAsync();
                 ping.Should().Be("PONG!");
             }
 
-            [Test]
-            public void Throws_when_invalid_key()
+            [Fact]
+            public async Task Throws_when_invalid_key()
             {
                 var badApi = new MandrillApi(Guid.NewGuid().ToString("N"));
-                var mandrillExpection = Assert.ThrowsAsync<MandrillException>(async () => await badApi.Users.PingAsync());
+                var mandrillExpection = await Assert.ThrowsAsync<MandrillException>(() => badApi.Users.PingAsync());
                 mandrillExpection.Name.Should().Be("Invalid_Key");
             }
         }
 
-        [Category("users/senders.json")]
-        internal class Senders : Users
+        [Trait("Category", "users/senders.json")]
+        public class Senders : Users
         {
-            [Test]
+            [Fact]
             public async Task Can_list_senders()
             {
                 var results = await Api.Users.SendersAsync();
 
                 if (results.Count == 0)
                 {
-                    Assert.Inconclusive("No senders returned");
+                    Console.Error.WriteLine("No senders returned");
                 }
 
                 foreach (var sender in results)

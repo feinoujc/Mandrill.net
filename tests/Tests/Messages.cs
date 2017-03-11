@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
@@ -6,19 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Mandrill.Model;
 using Newtonsoft.Json.Linq;
-using NUnit.Framework;
+using Mandrill.Model;
+using Xunit;
 
 namespace Tests
 {
-    [Category("messages")]
-    internal class Messages : IntegrationTest
+    [Trait("Category", "messages")]
+    [Collection("messages")]
+    public class Messages : IntegrationTest
     {
-        [SetUp]
-        public virtual void Setup()
+        public Messages()
         {
-            FromEmail = "mandrill.net@" +
+          FromEmail = "mandrill.net@" +
                         (Environment.GetEnvironmentVariable("MANDRILL_SENDING_DOMAIN") ?? "test.mandrillapp.com");
         }
 
@@ -30,33 +30,34 @@ namespace Tests
             {
                 if (response.Status == MandrillSendMessageResponseStatus.Invalid)
                 {
-                    Assert.Fail("invalid email: " + response.RejectReason);
+                    Assert.True(false, "invalid email: " + response.RejectReason);
                 }
                 if (response.Status == MandrillSendMessageResponseStatus.Rejected &&
           response.RejectReason == "unsigned")
                 {
-                    Assert.Inconclusive("unsigned sending domain");
+                    Console.Error.WriteLine("unsigned sending domain");
+                    break;
                 }
                 if (response.Status == MandrillSendMessageResponseStatus.Rejected)
                 {
-                    Assert.Fail("rejected email: " + response.RejectReason);
+                    Assert.True(false, "rejected email: " + response.RejectReason);
 
                 }
 
                 if (response.Status == MandrillSendMessageResponseStatus.Queued ||
                     response.Status == MandrillSendMessageResponseStatus.Sent)
                 {
-                    Assert.Pass();
+                    break;
                 }
 
-                Assert.Fail("Unexptected status:" + response.Status);
+                Assert.True(false, "Unexptected status:" + response.Status);
             }
         }
 
-        [Category("messages/cancel_scheduled.json")]
-        internal class CancelScheduled : Messages
+        [Trait("Category", "messages/cancel_scheduled.json")]
+        public class CancelScheduled : Messages
         {
-            [Test]
+            [Fact]
             public async Task Can_cancel_scheduled()
             {
                 var list = await Api.Messages.ListScheduledAsync();
@@ -69,15 +70,15 @@ namespace Tests
                 }
                 else
                 {
-                    Assert.Inconclusive("no scheduled results");
+                    Console.Error.WriteLine("no scheduled results");
                 }
             }
         }
 
-        [Category("messages/content.json")]
-        internal class Content : Messages
+        [Trait("Category", "messages/content.json")]
+        public class Content : Messages
         {
-            [Test]
+            [Fact]
             public async Task Can_retrieve_content()
             {
                 var results = await Api.Messages.SearchAsync(null, DateTime.Today.AddDays(-1));
@@ -97,30 +98,30 @@ namespace Tests
                 }
                 else
                 {
-                    Assert.Inconclusive("no results were found yet, try again in a few minutes");
+                    Console.Error.WriteLine("no results were found yet, try again in a few minutes");
                 }
             }
 
-            [Test]
-            public void Throws_when_not_found()
+            [Fact]
+            public async Task Throws_when_not_found()
             {
-                var mandrillException = Assert.ThrowsAsync<MandrillException>(async () => await Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
+                var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
                 mandrillException.Name.Should().Be("Unknown_Message");
             }
 
-            [Test]
-            public void Throws_when_not_found_sync()
+            [Fact]
+            public async Task Throws_when_not_found_sync()
             {
-                var mandrillException = Assert.ThrowsAsync<MandrillException>(async () => await Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
+                var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
                 mandrillException.Name.Should().Be("Unknown_Message");
                 Debug.WriteLine(mandrillException);
             }
         }
 
-        [Category("messages/info.json")]
-        internal class Info : Messages
+        [Trait("Category", "messages/info.json")]
+        public class Info : Messages
         {
-            [Test]
+            [Fact]
             public async Task Can_retrieve_info()
             {
                 var results = await Api.Messages.SearchAsync("email:example.com");
@@ -136,22 +137,22 @@ namespace Tests
                 }
                 else
                 {
-                    Assert.Inconclusive("no results were found yet, try again in a few minutes");
+                    Console.Error.WriteLine("no results were found yet, try again in a few minutes");
                 }
             }
 
-            [Test]
-            public void Throws_when_not_found()
+            [Fact]
+            public async Task Throws_when_not_found()
             {
-                var mandrillException = Assert.ThrowsAsync<MandrillException>(async () => await Api.Messages.InfoAsync(Guid.NewGuid().ToString("N")));
+                var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.InfoAsync(Guid.NewGuid().ToString("N")));
                 mandrillException.Name.Should().Be("Unknown_Message");
             }
         }
 
-        [Category("messages/list_scheduled.json")]
-        internal class ListScheduled : Messages
+        [Trait("Category", "messages/list_scheduled.json")]
+        public class ListScheduled : Messages
         {
-            [Test]
+            [Fact]
             public async Task Can_list_scheduled()
             {
                 var result = await Api.Messages.ListScheduledAsync();
@@ -160,10 +161,10 @@ namespace Tests
             }
         }
 
-        [Category("messages/parse.json")]
-        internal class Parse : Messages
+        [Trait("Category", "messages/parse.json")]
+        public class Parse : Messages
         {
-            [Test]
+            [Fact]
             public async Task Can_parse_raw_message()
             {
                 var rawMessage = $"From: {FromEmail}\nTo: recipient.email@example.com\nSubject: Some Subject\n\nSome content.";
@@ -176,7 +177,7 @@ namespace Tests
             }
 
 
-            [Test]
+            [Fact]
             public async Task Can_parse_full_raw_message_headers()
             {
                 var rawMessage = @"Delivered-To: MrSmith@gmail.com
@@ -202,10 +203,10 @@ To: Mr Smith
             }
         }
 
-        [Category("messages/reschedule.json")]
-        internal class Reschedule : Messages
+        [Trait("Category", "messages/reschedule.json")]
+        public class Reschedule : Messages
         {
-            [Test]
+            [Fact]
             public async Task Can_reschedule()
             {
                 var list = await Api.Messages.ListScheduledAsync();
@@ -220,28 +221,28 @@ To: Mr Smith
                 }
                 else
                 {
-                    Assert.Inconclusive("no scheduled messages found.");
+                    Console.Error.WriteLine("no scheduled messages found.");
                 }
             }
 
-            [Test]
-             public void Throws_on_missing_args()
+            [Fact]
+            public async Task Throws_on_missing_args()
             {
-                Assert.ThrowsAsync<ArgumentNullException>(async () => await Api.Messages.RescheduleAsync(null, DateTime.UtcNow));
+                await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.RescheduleAsync(null, DateTime.UtcNow));
             }
 
-             [Test]
-             public void Throws_on_invalid_date()
+            [Fact]
+            public async Task Throws_on_invalid_date()
             {
-                Assert.ThrowsAsync<ArgumentException>(async () => await Api.Messages.RescheduleAsync("foo", DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
+                await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.RescheduleAsync("foo", DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
             }
         }
 
-        [Category("messages/search.json")]
-        internal class Search : Messages
+        [Trait("Category", "messages/search.json")]
+        public class Search : Messages
         {
 
-            [Test]
+            [Fact]
             public async Task Can_search_all_params()
             {
                 var results = await Api.Messages.SearchAsync("email:example.com",
@@ -262,11 +263,11 @@ To: Mr Smith
 
                 if (results.Count == 0)
                 {
-                    Assert.Inconclusive("no results were found yet, try again in a few minutes");
+                    Console.Error.WriteLine("no results were found yet, try again in a few minutes");
                 }
             }
 
-            [Test]
+            [Fact]
             public async Task Can_search_query()
             {
                 var results = await Api.Messages.SearchAsync("email:example.com", limit: 1);
@@ -280,15 +281,15 @@ To: Mr Smith
                 }
                 if (results.Count == 0)
                 {
-                    Assert.Inconclusive("no results were found yet, try again in a few minutes");
+                    Console.Error.WriteLine("no results were found yet, try again in a few minutes");
                 }
             }
         }
 
-        [Category("messages/search_time_series.json")]
-        internal class SearchTimeSeries : Messages
+        [Trait("Category", "messages/search_time_series.json")]
+        public class SearchTimeSeries : Messages
         {
-            [Test]
+            [Fact]
             public async Task Can_search_all_params()
             {
                 var results = await Api.Messages.SearchTimeSeriesAsync("email:example.com",
@@ -304,11 +305,11 @@ To: Mr Smith
 
                 if (results.Count == 0)
                 {
-                    Assert.Inconclusive("no results were found yet, try again in a few minutes");
+                    Console.Error.WriteLine("no results were found yet, try again in a few minutes");
                 }
             }
 
-            [Test]
+            [Fact]
             public async Task Can_search_open_query()
             {
                 var results = await Api.Messages.SearchTimeSeriesAsync(null);
@@ -320,15 +321,15 @@ To: Mr Smith
 
                 if (results.Count == 0)
                 {
-                    Assert.Inconclusive("no results were found yet, try again in a few minutes");
+                    Console.Error.WriteLine("no results were found yet, try again in a few minutes");
                 }
             }
         }
 
-        [Category("messages/send.json")]
-        internal class Send : Messages
+        [Trait("Category", "messages/send.json")]
+        public class Send : Messages
         {
-            [Test]
+            [Fact]
             public async Task Can_send_message()
             {
                 var message = new MandrillMessage
@@ -354,15 +355,15 @@ To: Mr Smith
                 };
                 message.Images.Add(new MandrillImage("image/png", "mandrill_logo", TestData.PngImage));
                 message.Attachments.Add(new MandrillAttachment("text/plain", "message.txt", Encoding.UTF8.GetBytes("This is an attachment.\n")));
-                
+
                 var result = await Api.Messages.SendAsync(message);
 
                 result.Should().HaveCount(2);
                 AssertResults(result);
             }
 
-            [Test]
-            public void Can_throw_errors_when_error_response()
+            [Fact]
+            public async Task Can_throw_errors_when_error_response()
             {
                 var invalidSubaccount = Guid.NewGuid().ToString("N");
                 var message = new MandrillMessage
@@ -378,13 +379,13 @@ To: Mr Smith
                     Subaccount = invalidSubaccount
                 };
 
-                var result = Assert.ThrowsAsync<MandrillException>(async () => await Api.Messages.SendAsync(message));
+                var result = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.SendAsync(message));
                 result.Should().NotBeNull();
                 result.Name.Should().Be("Unknown_Subaccount");
                 result.Message.Should().Contain(invalidSubaccount);
             }
 
-            [Test]
+            [Fact]
             public async Task Can_send_async()
             {
                 var message = new MandrillMessage
@@ -405,13 +406,13 @@ To: Mr Smith
 
             }
 
-            [Test]
-            public void Throws_on_missing_args()
+            [Fact]
+            public async Task Throws_on_missing_args()
             {
-                Assert.ThrowsAsync<ArgumentNullException>(async () => await Api.Messages.SendAsync(null, true));
+                await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.SendAsync(null, true));
             }
 
-            [Test]
+            [Fact]
             public async Task Can_send_scheduled()
             {
                 var message = new MandrillMessage
@@ -434,22 +435,22 @@ To: Mr Smith
                 result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Scheduled);
             }
 
-            [Test]
-            public void Throws_if_scheduled_is_not_utc()
+            [Fact]
+            public async Task Throws_if_scheduled_is_not_utc()
             {
                 var message = new MandrillMessage();
 
                 var sendAtLocal = DateTime.SpecifyKind(DateTime.Now.AddHours(1), DateTimeKind.Local);
-                var result = Assert.ThrowsAsync<ArgumentException>(async () => await Api.Messages.SendAsync(message, sendAtUtc: sendAtLocal));
+                var result = await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.SendAsync(message, sendAtUtc: sendAtLocal));
 
                 result.ParamName.Should().Be("sendAtUtc");
             }
         }
 
-        [Category("messages/send_raw.json")]
-        internal class SendRaw : Messages
+        [Trait("Category", "messages/send_raw.json")]
+        public class SendRaw : Messages
         {
-            [Test]
+            [Fact]
             public async Task Can_send_raw_message()
             {
                 var rawMessage = $"From: {FromEmail}\nTo: recipient.email@example.com\nSubject: Some Subject\n\nSome content.";
@@ -470,28 +471,25 @@ To: Mr Smith
             }
         }
 
-        [Category("messages/send_template.json")]
-        internal class SendTemplate : Messages
+        [Trait("Category", "messages/send_template.json")]
+        public class SendTemplate : Messages
         {
             protected string TestTemplateName;
 
-            [SetUp]
-            public override void Setup()
+            public SendTemplate()
             {
                 TestTemplateName = Guid.NewGuid().ToString();
                 var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.Code, TemplateContent.Text, true).GetAwaiter().GetResult();
                 result.Should().NotBeNull();
-                base.Setup();
             }
 
-            [TearDown]
-            public void TearDown()
+            public override void Dispose()
             {
                 var result = Api.Templates.DeleteAsync(TestTemplateName).GetAwaiter().GetResult();
                 result.Should().NotBeNull();
             }
 
-            [Test]
+            [Fact]
             public async Task Can_send_template()
             {
                 var message = new MandrillMessage
@@ -517,48 +515,46 @@ To: Mr Smith
 
             }
 
-             [Test]
-            public void Throws_on_missing_args0()
+            [Fact]
+            public async Task Throws_on_missing_args0()
             {
-                var result = Assert.ThrowsAsync<ArgumentNullException>(async () => await Api.Messages.SendTemplateAsync(null, TestTemplateName));
+                var result = await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.SendTemplateAsync(null, TestTemplateName));
             }
 
 
-            [Test]
-            public void Throws_on_missing_args1()
+            [Fact]
+            public async Task Throws_on_missing_args1()
             {
-                var result = Assert.ThrowsAsync<ArgumentNullException>(async () => await Api.Messages.SendTemplateAsync(new MandrillMessage(), null));
+                var result = await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.SendTemplateAsync(new MandrillMessage(), null));
             }
 
-            [Test]
-            public void Throws_on_invalid_date_type()
+            [Fact]
+            public async Task Throws_on_invalid_date_type()
             {
-                var result = Assert.ThrowsAsync<ArgumentException>(async () => await Api.Messages.SendTemplateAsync(new MandrillMessage(), TestTemplateName, sendAtUtc:DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
+                var result = await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.SendTemplateAsync(new MandrillMessage(), TestTemplateName, sendAtUtc:DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
             }
         }
 
-        [Category("messages/send_template.json"), Category("handlebars")]
-        internal class SendTemplate_Handlebars : Messages
+        [Trait("Category", "messages/send_template.json"), Trait("Category", "handlebars")]
+        public class SendTemplate_Handlebars : Messages
         {
             protected string TestTemplateName;
 
-            [SetUp]
-            public override void Setup()
+            public SendTemplate_Handlebars()
             {
                 TestTemplateName = Guid.NewGuid().ToString();
                 var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.HandleBarCode, null, true).GetAwaiter().GetResult();
                 result.Should().NotBeNull();
-                base.Setup();
             }
 
-            [TearDown]
-            public void TearDown()
+            public override void Dispose()
             {
                 var result = Api.Templates.DeleteAsync(TestTemplateName).GetAwaiter().GetResult();
                 result.Should().NotBeNull();
+                base.Dispose();
             }
 
-            [Test]
+            [Fact]
             public async Task Can_send_template_string_dictionary()
             {
                 var message = new MandrillMessage
@@ -633,7 +629,7 @@ To: Mr Smith
                 AssertResults(result);
             }
 
-            [Test]
+            [Fact]
             public async Task Can_send_template_object_list()
             {
                 var message = new MandrillMessage
@@ -710,7 +706,7 @@ To: Mr Smith
             }
 
 
-            [Test]
+            [Fact]
             public async Task Can_send_template_dynamic()
             {
                 var message = new MandrillMessage

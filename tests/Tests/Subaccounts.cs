@@ -1,39 +1,34 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Mandrill.Model;
-using NUnit.Framework;
+using Xunit;
 using Mandrill;
 
 namespace Tests
 {
-    [Category("subaccounts")]
-    internal class Subaccounts : IntegrationTest
+    [Trait("Category", "subaccounts")]
+    [Collection("subaccounts")]
+    public class Subaccounts : IntegrationTest
     {
         HashSet<string> _added = new HashSet<string>();
 
-        [SetUp]
-        public void SetUp()
-        {
-            _added.Clear();
-        }
-
-        [TearDown]
-        public void TearDown()
+        public override void Dispose()
         {
             foreach (var id in _added)
             {
                 var result = Api.Subaccounts.DeleteAsync(id).GetAwaiter().GetResult();
             }
+            base.Dispose();
         }
 
-        [Category("subaccounts/add.json")]
-        private class Add : Subaccounts
+        [Trait("Category", "subaccounts/add.json")]
+        public class Add : Subaccounts
         {
-            [Test]
+            [Fact]
             public async Task Can_add_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
@@ -44,16 +39,16 @@ namespace Tests
             }
         }
 
-        [Category("subaccounts/list.json")]
-        private class List : Subaccounts
+        [Trait("Category", "subaccounts/list.json")]
+        public class List : Subaccounts
         {
-            [Test]
+            [Fact]
             public async Task Can_list_subaccount()
             {
                 var results = await Api.Subaccounts.ListAsync(q:null);
                 results.Count.Should().BeGreaterOrEqualTo(0);
             }
-            [Test]
+            [Fact]
             public async Task Can_filter_subaccount()
             {
                 var results = await Api.Subaccounts.ListAsync(q: Guid.NewGuid().ToString("N"));
@@ -61,10 +56,10 @@ namespace Tests
             }
         }
 
-        [Category("subaccounts/update.json")]
-        private class Update : Subaccounts
+        [Trait("Category", "subaccounts/update.json")]
+        public class Update : Subaccounts
         {
-            [Test]
+            [Fact]
             public async Task Can_update_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
@@ -75,13 +70,13 @@ namespace Tests
                 result.CustomQuota.Should().Be(5000);
                 _added.Add(result.Id);
             }
-          
+
         }
 
-        [Category("subaccounts/pause.json")]
-        private class Pause : Subaccounts
+        [Trait("Category", "subaccounts/pause.json")]
+        public class Pause : Subaccounts
         {
-            [Test]
+            [Fact]
             public async Task Can_pause_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
@@ -95,10 +90,10 @@ namespace Tests
 
         }
 
-        [Category("subaccounts/resume.json")]
-        private class Resume : Subaccounts
+        [Trait("Category", "subaccounts/resume.json")]
+        public class Resume : Subaccounts
         {
-            [Test]
+            [Fact]
             public async Task Can_resume_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
@@ -115,10 +110,10 @@ namespace Tests
 
         }
 
-        [Category("subaccounts/delete.json")]
-        private class Delete : Subaccounts
+        [Trait("Category", "subaccounts/delete.json")]
+        public class Delete : Subaccounts
         {
-            [Test]
+            [Fact]
             public async Task Can_delete_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
@@ -131,10 +126,10 @@ namespace Tests
 
         }
 
-        [Category("subaccounts/info.json")]
-        private class Info : Subaccounts
+        [Trait("Category", "subaccounts/info.json")]
+        public class Info : Subaccounts
         {
-            [Test]
+            [Fact]
             public async Task Can_get_info_subaccount()
             {
                 var id = Guid.NewGuid().ToString("N");
@@ -147,7 +142,7 @@ namespace Tests
                 result.FirstSentAt.Should().Be((DateTime?) null);
 
                 _added.Add(result.Id);
-              
+
 
             }
 

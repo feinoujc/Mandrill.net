@@ -1,24 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace Tests
 {
-    [Category("rejects")]
-    internal class Rejects : IntegrationTest
+    [Trait("Category", "rejects")]
+    [Collection("rejects")]
+    public class Rejects : IntegrationTest
     {
         private HashSet<string> _added = new HashSet<string>();
 
-        [SetUp]
-        public void SetUp()
-        {
-            _added.Clear();
-        }
-
-        [TearDown]
-        public void TearDown()
+        public override void Dispose()
         {
             foreach (var id in _added)
             {
@@ -26,10 +20,10 @@ namespace Tests
             }
         }
 
-        [Category("rejects/add.json")]
-        private class Add : Rejects
+        [Trait("Category", "rejects/add.json")]
+        public class Add : Rejects
         {
-            [Test]
+            [Fact]
             public async Task Can_add_email_to_rejects()
             {
                 var email = Guid.NewGuid().ToString("N") + "@example.com";
@@ -39,10 +33,10 @@ namespace Tests
             }
         }
 
-        [Category("rejects/delete.json")]
-        private class Delete : Rejects
+        [Trait("Category", "rejects/delete.json")]
+        public class Delete : Rejects
         {
-            [Test]
+            [Fact]
             public async Task Can_delete_email_from_rejects()
             {
                 var email = Guid.NewGuid().ToString("N") + "@example.com";
@@ -52,10 +46,10 @@ namespace Tests
             }
         }
 
-        [Category("rejects/list.json")]
-        private class List : Rejects
+        [Trait("Category", "rejects/list.json")]
+        public class List : Rejects
         {
-            [Test]
+            [Fact]
             public async Task Can_list_filter_by_email()
             {
                 var email = Guid.NewGuid().ToString("N") + "@example.com";
@@ -67,7 +61,7 @@ namespace Tests
             }
 
 
-            [Test]
+            [Fact]
             public async Task Can_list_all()
             {
                 var email = Guid.NewGuid().ToString("N") + "@example.com";
