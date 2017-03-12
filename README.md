@@ -18,7 +18,7 @@ https://mandrillapp.com/api/docs/
 Install-Package Mandrill.net
 ```
 
-### Send a new transactional message through Mandrill (async)
+### Send a new transactional message through Mandrill
 
 ```cs
 var api = new MandrillApi("YOUR_API_KEY_GOES_HERE");
