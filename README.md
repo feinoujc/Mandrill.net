@@ -1,7 +1,7 @@
 Mandrill.net
 ============
 
-Mandrill api wrapper for .net
+Simple, cross-platform Mandrill api wrapper for .NET Core and .NET 4.5+
 
 [![Travis](https://travis-ci.org/feinoujc/Mandrill.net.svg?branch=master)](https://travis-ci.org/feinoujc/Mandrill.net)
 [![AppVeyor](https://ci.appveyor.com/api/projects/status/kfgnqdmrvhlc36co/branch/master?svg=true)](https://ci.appveyor.com/project/feinoujc/mandrill-net/branch/master)
@@ -26,18 +26,6 @@ var message = new MandrillMessage("from@example.com", "to@example.com",
                 "hello mandrill!", "...how are you?");
 var result = await api.Messages.SendAsync(message);
 ```
-
-### Send a new transactional message through Mandrill (non-async)
-
-All the api's are available in async or non-async in the .net 4.5 target version of this library. In .NET Core, only async is supported because the underlying api's for web requests in .NET are async only.
-
-```cs
-var api = new MandrillApi("YOUR_API_KEY_GOES_HERE");
-var message = new MandrillMessage("from@example.com", "to@example.com",
-                "hello mandrill!", "...how are you?");
-var result = api.Messages.Send(message);
-```
-
 
 ### Send a new transactional message through Mandrill using a template
 ```cs
