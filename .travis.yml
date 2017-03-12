@@ -9,8 +9,7 @@ env:
 script:
   - dotnet --version
   - dotnet restore
-  - cd ./tests/Tests
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then dotnet test; fi'
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then dotnet test ./tests/Tests; fi'
 
 matrix:
   include:
