@@ -19,20 +19,4 @@ namespace Mandrill
             IList<string> states = null,
             IList<string> apiKeys = null);
     }
-#if NET45
-    public partial interface IMandrillExportsApi
-    {
-        IList<MandrillExportInfo> List();
-        MandrillExportInfo Info(string id);
-        MandrillExportInfo Rejects(string notifyEmail);
-        MandrillExportInfo Whitelist(string notifyEmail);
-        MandrillExportInfo Activity(string notifyEmail,
-            DateTime? dateFrom = null,
-            DateTime? dateTo = null,
-            IList<string> tags = null,
-            IList<string> senders = null,
-            IList<string> states = null,
-            IList<string> apiKeys = null);
-    }
-#endif
 }

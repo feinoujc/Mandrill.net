@@ -6,11 +6,6 @@ namespace Mandrill.Model
 {
     public class MandrillMessageEventInfo
     {
-        private List<MandrillClicksDetail> _clicks;
-        private Dictionary<string, string> _metadata;
-        private List<MandrillOpensDetail> _opens;
-        private List<MandrillSmtpEvent> _smtpEvents;
-        private List<string> _tags;
         public DateTime? Ts { get; set; }
 
         [JsonProperty("_id")]
@@ -27,37 +22,17 @@ namespace Mandrill.Model
 
         public string Email { get; set; }
 
-        public List<string> Tags
-        {
-            get { return _tags ?? (_tags = new List<string>()); }
-            set { _tags = value; }
-        }
+        public List<string> Tags { get; set; } = new List<string>();
 
-        public List<MandrillOpensDetail> Opens
-        {
-            get { return _opens ?? (_opens = new List<MandrillOpensDetail>()); }
-            set { _opens = value; }
-        }
+        public List<MandrillOpensDetail> Opens { get; set; } = new List<MandrillOpensDetail>();
 
-        public List<MandrillClicksDetail> Clicks
-        {
-            get { return _clicks ?? (_clicks = new List<MandrillClicksDetail>()); }
-            set { _clicks = value; }
-        }
+        public List<MandrillClicksDetail> Clicks { get; set; } = new List<MandrillClicksDetail>();
 
         public MandrillMessageState State { get; set; }
 
-        public Dictionary<string, string> Metadata
-        {
-            get { return _metadata ?? (_metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
-            set { _metadata = value; }
-        }
+        public Dictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        public List<MandrillSmtpEvent> SmtpEvents
-        {
-            get { return _smtpEvents ?? (_smtpEvents = new List<MandrillSmtpEvent>()); }
-            set { _smtpEvents = value; }
-        }
+        public List<MandrillSmtpEvent> SmtpEvents { get; set; } = new List<MandrillSmtpEvent>();
 
         public string Subaccount { get; set; }
 

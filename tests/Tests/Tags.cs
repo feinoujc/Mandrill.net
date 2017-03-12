@@ -1,20 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace Tests
 {
-    [Category("tags")]
-    class Tags : IntegrationTest
+    [Trait("Category", "tags")]
+    [Collection("tags")]
+    public class Tags : IntegrationTest
     {
 
-        [Category("tags/list.json")]
-        class List : Tags
+        [Trait("Category", "tags/list.json")]
+        public class List : Tags
         {
-            [Test]
+            [Fact]
             public async Task Can_list_all()
             {
                 var results = await Api.Tags.ListAsync();
@@ -27,15 +28,15 @@ namespace Tests
                 }
                 else
                 {
-                    Assert.Inconclusive("no tags found.");
+                    Console.Error.WriteLine("no tags found.");
                 }
             }
         }
 
-        [Category("tags/info.json")]
-        class Info : Tags
+        [Trait("Category", "tags/info.json")]
+        public class Info : Tags
         {
-            [Test]
+            [Fact]
             public async Task Can_retrieve_info()
             {
                 var tag = (await Api.Tags.ListAsync()).LastOrDefault();
@@ -47,15 +48,15 @@ namespace Tests
                 }
                 else
                 {
-                    Assert.Inconclusive("no tags found");
+                    Console.Error.WriteLine("no tags found");
                 }
             }
         }
 
-        [Category("tags/delete.json")]
-        class Delete : Tags
+        [Trait("Category", "tags/delete.json")]
+        public class Delete : Tags
         {
-            [Test]
+            [Fact]
             public async Task Can_delete_tag()
             {
                 var tag = (await Api.Tags.ListAsync()).LastOrDefault();
@@ -67,15 +68,15 @@ namespace Tests
                 }
                 else
                 {
-                    Assert.Inconclusive("no tags found");
+                    Console.Error.WriteLine("no tags found");
                 }
             }
         }
 
-        [Category("tags/time_series.json")]
-        class TimeSeries : Tags
+        [Trait("Category", "tags/time_series.json")]
+        public class TimeSeries : Tags
         {
-            [Test]
+            [Fact]
             public async Task Can_get_tag_time_series()
             {
                 var tag = (await Api.Tags.ListAsync()).LastOrDefault();
@@ -91,20 +92,20 @@ namespace Tests
                     }
                     else
                     {
-                        Assert.Inconclusive("no time series found.");
+                        Console.Error.WriteLine("no time series found.");
                     }
                 }
                 else
                 {
-                    Assert.Inconclusive("no tags found");
+                    Console.Error.WriteLine("no tags found");
                 }
             }
         }
 
-        [Category("tags/all_time_series.json")]
-        class AllTimeSeries : Tags
+        [Trait("Category", "tags/all_time_series.json")]
+        public class AllTimeSeries : Tags
         {
-            [Test]
+            [Fact]
             public async Task Can_get_tag_all_time_series()
             {
                 var results = await Api.Tags.AllTimeSeriesAsync();
@@ -117,7 +118,7 @@ namespace Tests
                 }
                 else
                 {
-                    Assert.Inconclusive("no time series found.");
+                    Console.Error.WriteLine("no time series found.");
                 }
             }
         }

@@ -15,14 +15,4 @@ namespace Mandrill
         Task<IList<MandrillTagTimeSeries>> TimeSeriesAsync(string tag);
         Task<IList<MandrillTagTimeSeries>> AllTimeSeriesAsync();
     }
-#if NET45
-    public partial interface IMandrillTagsApi
-    {
-        IList<MandrillTagInfo> List();
-        MandrillTagInfo Info(string tag);
-        MandrillTagInfo Delete(string tag);
-        IList<MandrillTagTimeSeries> TimeSeries(string tag);
-        IList<MandrillTagTimeSeries> AllTimeSeries();
-    }
-#endif
 }

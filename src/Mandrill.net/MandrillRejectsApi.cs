@@ -48,44 +48,4 @@ namespace Mandrill
                 });
         }
     }
-
-#if NET45
-    internal partial class MandrillRejectsApi
-    {
-        public MandrillRejectAddResponse Add(string email, string comment = null, string subaccount = null)
-        {
-            if (email == null) throw new ArgumentNullException(nameof(email));
-            return MandrillApi.Post<MandrillRejectRequest, MandrillRejectAddResponse>("rejects/add.json",
-                new MandrillRejectRequest
-                {
-                    Email = email,
-                    Comment = comment,
-                    Subaccount = subaccount
-                });
-        }
-
-
-        public MandrillRejectDeleteResponse Delete(string email, string subaccount = null)
-        {
-            if (email == null) throw new ArgumentNullException(nameof(email));
-            return MandrillApi.Post<MandrillRejectRequest, MandrillRejectDeleteResponse>("rejects/delete.json",
-                new MandrillRejectRequest
-                {
-                    Email = email,
-                    Subaccount = subaccount
-                });
-        }
-
-        public IList<MandrillRejectInfo> List(string email = null, bool? includeExpired = null, string subaccount = null)
-        {
-            return MandrillApi.Post<MandrillRejectRequest, IList<MandrillRejectInfo>>("rejects/list.json",
-                new MandrillRejectRequest
-                {
-                    Email = email,
-                    IncludeExpired = includeExpired,
-                    Subaccount = subaccount
-                });
-        }
-    }
-#endif
 }

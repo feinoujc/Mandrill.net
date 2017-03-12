@@ -33,36 +33,4 @@ namespace Mandrill
         Task<MandrillMessageScheduleInfo> RescheduleAsync(string id, DateTime sendAtUtc);
         Task<MandrillMessageScheduleInfo> CancelScheduledAsync(string id);
     }
-
-#if NET45
-    public partial interface IMandrillMessagesApi
-    {
-        IList<MandrillSendMessageResponse> Send(MandrillMessage message,
-            bool async = false, string ipPool = null, DateTime? sendAtUtc = null);
-
-        IList<MandrillSendMessageResponse> SendTemplate(MandrillMessage message,
-            string templateName, IList<MandrillTemplateContent> templateContent = null, bool async = false,
-            string ipPool = null,
-            DateTime? sendAtUtc = null);
-
-        IList<MandrillSendMessageResponse>
-            SendRaw(string rawMessage,
-                string fromEmail = null, string fromName = null, IList<string> to = null, bool? async = null,
-                string ipPool = null, DateTime? sendAtUtc = null, string returnPathDomain = null);
-
-        IList<MandrillMessageInfo> Search(string query, DateTime? dateFrom = null, DateTime?
-            dateTo = null, IList<string> tags = null, IList<string> senders = null, IList<string> apiKeys = null,
-            int? limit = null);
-
-        IList<MandrillMessageTimeSeries> SearchTimeSeries(string query,
-            DateTime? dateFrom = null, DateTime? dateTo = null, IList<string> tags = null, IList<string> senders = null);
-
-        MandrillMessageInfo Info(string id);
-        MandrillMessageContent Content(string id);
-        MandrillMessage Parse(string rawMessage);
-        IList<MandrillMessageScheduleInfo> ListScheduled(string to = null);
-        MandrillMessageScheduleInfo Reschedule(string id, DateTime sendAtUtc);
-        MandrillMessageScheduleInfo CancelScheduled(string id);
-    }
-#endif
 }

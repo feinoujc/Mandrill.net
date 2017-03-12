@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Mandrill.Model;
 
@@ -7,7 +8,6 @@ namespace Mandrill
     public class MandrillApi
     {
         private readonly MandrillRequest _request;
-
         private MandrillExportsApi _exports;
         private MandrillInboundApi _inbound;
         private MandrillMessagesApi _messages;
@@ -23,11 +23,11 @@ namespace Mandrill
         public MandrillApi(string apiKey)
         {
             if (apiKey == null) throw new ArgumentNullException(nameof(apiKey));
-            _request = new SystemWebMandrillRequest(apiKey);
-            ApiKey = apiKey;
+            _request = new MandrillRequest(apiKey);
         }
 
-        public string ApiKey { get; private set; }
+        public string ApiKey => _request.ApiKey;
+        
         public IMandrillMessagesApi Messages => _messages ?? (_messages = new MandrillMessagesApi(this));
 
         public IMandrillTagsApi Tags => _tags ?? (_tags = new MandrillTagsApi(this));
@@ -55,13 +55,5 @@ namespace Mandrill
         {
             return _request.PostAsync<TRequest, TResponse>(requestUri, value);
         }
-
-#if NET45
-        internal TResponse Post<TRequest, TResponse>(string requestUri, TRequest value)
-            where TRequest : MandrillRequestBase
-        {
-            return _request.Post<TRequest, TResponse>(requestUri, value);
-        }
-#endif
     }
 }

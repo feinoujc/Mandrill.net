@@ -10,13 +10,8 @@ namespace Mandrill.Serialization
 {
     internal class MandrillJsonContractResolver : DefaultContractResolver
     {
-#if NET45 || NETSTANDARD1_3
         private static readonly Regex CamelCaseRegex = new Regex("^[A-Z][a-z]+(?:[A-Z][a-z]+)*$", RegexOptions.Compiled);
-#endif
-#if NETSTANDARD1_1
-        private static readonly Regex CamelCaseRegex = new Regex("^[A-Z][a-z]+(?:[A-Z][a-z]+)*$");
-#endif
-
+        
         protected static string ConvertCamelCasePropertyNamesToLowerCaseUnderscoreStyle(string propertyName)
         {
             if (CamelCaseRegex.IsMatch(propertyName))

@@ -1,21 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Mandrill;
 using Mandrill.Model;
-using NUnit.Framework;
+using Xunit;
 
 namespace Tests
 {
-    [Category("webhooks")]
-    internal class Webhooks : IntegrationTest
+    [Trait("Category", "webhooks")]
+    [Collection("webhooks")]
+    public class Webhooks : IntegrationTest
     {
         protected Uri WebhookUri { get; set; }
         private HashSet<int> _added = new HashSet<int>();
 
-        [SetUp]
-        public void SetUp()
+        public Webhooks()
         {
             _added.Clear();
             var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_OUTBOUND_WEBHOOK") ?? "http://devnull-as-a-service.com/dev/null";
@@ -25,16 +25,16 @@ namespace Tests
             //configure webhook api at http://requestb.in
         }
 
-        [TearDown]
-        public void TearDown()
+        public override void Dispose()
         {
             foreach (var id in _added)
             {
                 var result = Api.WebHooks.DeleteAsync(id).GetAwaiter().GetResult();
             }
+            base.Dispose();
         }
 
-        [Test]
+        [Fact]
         public async Task Can_add()
         {
             var result = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] {MandrillWebHookEventType.Unsub,});
@@ -45,20 +45,20 @@ namespace Tests
             result.Events[0].Should().Be(MandrillWebHookEventType.Unsub);
         }
 
-        [Test]
+        [Fact]
         public async Task Throws_when_bad_url()
         {
-            await ThrowsAsync<MandrillException>(() => Api.WebHooks.AddAsync(new Uri("http://www.invalid_url.org")));
+            await Assert.ThrowsAsync<MandrillException>(() => Api.WebHooks.AddAsync(new Uri("http://www.invalid_url.org")));
         }
 
-        [Test]
+        [Fact]
         public async Task Can_list()
         {
             var result = await Api.WebHooks.ListAsync();
             result.Count.Should().BeGreaterOrEqualTo(0);
         }
 
-        [Test]
+        [Fact]
         public async Task Can_delete()
         {
             var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] {MandrillWebHookEventType.Unsub,});
@@ -69,7 +69,7 @@ namespace Tests
             _added.Remove(result.Id);
         }
 
-        [Test]
+        [Fact]
         public async Task Can_get()
         {
             var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] {MandrillWebHookEventType.Unsub,});
@@ -79,7 +79,7 @@ namespace Tests
             result.Id.Should().Be(added.Id);
         }
 
-        [Test]
+        [Fact]
         public async Task Can_update()
         {
             var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] {MandrillWebHookEventType.Unsub,});

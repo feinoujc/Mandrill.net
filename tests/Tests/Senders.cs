@@ -1,19 +1,20 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace Tests
 {
-    [Category("senders")]
-    class Senders : IntegrationTest
+    [Trait("Category", "senders")]
+    [Collection("senders")]
+    public class Senders : IntegrationTest
     {
-        [Category("senders/list.json")]
-        class List : Senders
+        [Trait("Category", "senders/list.json")]
+        public class List : Senders
         {
-            [Test]
+            [Fact]
             public async Task Can_list_all()
             {
                 var results = await Api.Senders.ListAsync();
@@ -26,15 +27,15 @@ namespace Tests
                 }
                 else
                 {
-                    Assert.Inconclusive("no senders found.");
+                    Console.Error.WriteLine("no senders found.");
                 }
             }
         }
 
-        [Category("senders/domains.json")]
-        class Domains : Senders
+        [Trait("Category", "senders/domains.json")]
+        public class Domains : Senders
         {
-            [Test]
+            [Fact]
             public async Task Can_list_sender_domains()
             {
                 var results = await Api.Senders.DomainsAsync();
@@ -47,15 +48,15 @@ namespace Tests
                 }
                 else
                 {
-                    Assert.Inconclusive("no sender domains found.");
+                    Console.Error.WriteLine("no sender domains found.");
                 }
             }
         }
 
-        [Category("senders/add_domain.json")]
-        class Add : Senders
+        [Trait("Category", "senders/add_domain.json")]
+        public class Add : Senders
         {
-            [Test]
+            [Fact]
             public async Task Can_add_domain()
             {
                 var domain = Guid.NewGuid().ToString("N") + "example.com";
@@ -64,10 +65,10 @@ namespace Tests
             }
         }
 
-        [Category("senders/check_domain.json")]
-        class Check : Senders
+        [Trait("Category", "senders/check_domain.json")]
+        public class Check : Senders
         {
-            [Test]
+            [Fact]
             public async Task Can_check_domain()
             {
                 var domain = Guid.NewGuid().ToString("N") + "example.com";
@@ -77,15 +78,15 @@ namespace Tests
             }
         }
 
-        [Category("senders/verify_domain.json")]
-        class Verify : Senders
+        [Trait("Category", "senders/verify_domain.json")]
+        public class Verify : Senders
         {
-            [Test]
+            [Fact]
             public async Task Can_verify_domain()
             {
                 var domain = Guid.NewGuid().ToString("N") + "example.com";
                 // Not sure the best way to stub a mailbox here. This call
-                // sends a verification email to `mailbox`. Tested with a 
+                // sends a verification email to `mailbox`. Tested with a
                 // valid mailbox to ensure it works.
                 var mailbox = "testmailbox";
                 await Api.Senders.AddDomainAsync(domain);
@@ -94,10 +95,10 @@ namespace Tests
             }
         }
 
-        [Category("senders/info.json")]
-        class Info : Senders
+        [Trait("Category", "senders/info.json")]
+        public class Info : Senders
         {
-            [Test]
+            [Fact]
             public async Task Can_retrieve_info()
             {
                 var address = (await Api.Senders.ListAsync()).LastOrDefault();
@@ -109,15 +110,15 @@ namespace Tests
                 }
                 else
                 {
-                    Assert.Inconclusive("no address found");
+                    Console.Error.WriteLine("no address found");
                 }
             }
         }
 
-        [Category("senders/time_series.json")]
-        class TimeSeries : Senders
+        [Trait("Category", "senders/time_series.json")]
+        public class TimeSeries : Senders
         {
-            [Test]
+            [Fact]
             public async Task Can_get_sender_time_series()
             {
                 var address = (await Api.Senders.ListAsync()).LastOrDefault();
@@ -133,12 +134,12 @@ namespace Tests
                     }
                     else
                     {
-                        Assert.Inconclusive("no time series found.");
+                        Console.Error.WriteLine("no time series found.");
                     }
                 }
                 else
                 {
-                    Assert.Inconclusive("no address found");
+                    Console.Error.WriteLine("no address found");
                 }
             }
         }

@@ -13,13 +13,4 @@ namespace Mandrill
         Task<MandrillWhitelistInfo> AddAsync(string email);
         Task<MandrillWhitelistInfo> DeleteAsync(string email);
     }
-#if NET45
-
-    public partial interface IMandrillWhitelistsApi
-    {
-        IList<MandrillWhitelistInfo> List(string email);
-        MandrillWhitelistInfo Add(string email);
-        MandrillWhitelistInfo Delete(string email);
-    }
-#endif
 }

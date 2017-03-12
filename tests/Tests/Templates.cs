@@ -4,12 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Mandrill.Model;
-using NUnit.Framework;
+using Xunit;
 
 namespace Tests
 {
-    [Category("templates")]
-    internal class Templates : IntegrationTest
+    [Trait("Category", "templates")]
+    [Collection("templates")]
+    public class Templates : IntegrationTest
     {
         protected HashSet<string> TemplatesToCleanup;
 
@@ -19,26 +20,25 @@ namespace Tests
             return templateName;
         }
 
-        [SetUp]
-        public void Setup()
+        public Templates()
         {
             TemplatesToCleanup = new HashSet<string>();
         }
 
-        [TearDown]
-        public void TearDown()
+        public override void Dispose()
         {
             foreach (var templateName in TemplatesToCleanup)
             {
                 var result = Api.Templates.DeleteAsync(templateName).GetAwaiter().GetResult();
             }
             TemplatesToCleanup = null;
+            base.Dispose();
         }
 
-        [Category("templates/add.json")]
-        internal class Add : Templates
+        [Trait("Category", "templates/add.json")]
+        public class Add : Templates
         {
-            [Test]
+            [Fact]
             public async Task Can_add_template()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
@@ -51,10 +51,10 @@ namespace Tests
             }
         }
 
-        [Category("templates/add.json")]
-        internal class Info : Templates
+        [Trait("Category", "templates/add.json")]
+        public class Info : Templates
         {
-            [Test]
+            [Fact]
             public async Task Can_get_template_info()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
@@ -68,10 +68,10 @@ namespace Tests
             }
         }
 
-        [Category("templates/list.json")]
-        internal class List : Templates
+        [Trait("Category", "templates/list.json")]
+        public class List : Templates
         {
-            [Test]
+            [Fact]
             public async Task Can_list_all_templates()
             {
                 var testLabel = Guid.NewGuid().ToString("N");
@@ -87,7 +87,7 @@ namespace Tests
                 results.Where(info => templates.Contains(info.Name)).Should().HaveCount(10);
             }
 
-            [Test]
+            [Fact]
             public async Task Can_list_templates()
             {
                 var testLabel = Guid.NewGuid().ToString("N");
@@ -109,15 +109,15 @@ namespace Tests
             }
         }
 
-        [Category("templates/add.json")]
-        internal class Publish : Templates
+        [Trait("Category", "templates/add.json")]
+        public class Publish : Templates
         {
-            [Test]
+            [Fact]
             public async Task Can_publish_template()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
                 var now = DateTime.UtcNow;
-                var skew = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second, DateTimeKind.Utc).AddSeconds(-10);
+                var skew = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second, DateTimeKind.Utc).AddSeconds(-60);
 
                 var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
                 var result = await Api.Templates.PublishAsync(added.Name);
@@ -126,10 +126,10 @@ namespace Tests
             }
         }
 
-        [Category("templates/render.json")]
-        internal class Render : Templates
+        [Trait("Category", "templates/render.json")]
+        public class Render : Templates
         {
-            [Test]
+            [Fact]
             public async Task Can_render()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
@@ -154,10 +154,10 @@ namespace Tests
             }
         }
 
-        [Category("templates/time_series.json")]
-        internal class TimeSeries : Templates
+        [Trait("Category", "templates/time_series.json")]
+        public class TimeSeries : Templates
         {
-            [Test]
+            [Fact]
             public async Task Can_get_time_series()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
@@ -166,15 +166,15 @@ namespace Tests
 
                 if (result.Count == 0)
                 {
-                    Assert.Inconclusive("time-series couldn't run for a new template");
+                    Console.Error.WriteLine("time-series couldn't run for a new template");
                 }
             }
         }
 
-        [Category("templates/update.json")]
-        internal class Update : Templates
+        [Trait("Category", "templates/update.json")]
+        public class Update : Templates
         {
-            [Test]
+            [Fact]
             public async Task Can_update()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());

@@ -1,16 +1,21 @@
 language: csharp
 sudo: required
 
-script: 
-  - dotnet restore 
+env:
+  global:
+    - DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+    - DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+script:
+  - dotnet --version
+  - dotnet restore
   - cd ./tests/Tests
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then dotnet test --labels=All --where:"cat==integration && cat !=exports"; fi'
-  - dotnet test --labels=All --where:cat!=integration
+  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then dotnet test; fi'
 
 matrix:
   include:
   - os: linux
     dist: trusty
     sudo: required
-    dotnet: 1.0.0-preview2-1-003177
+    dotnet: 1.0.1
     mono: none

@@ -1,6 +1,4 @@
-﻿#if NET45
-using System.Net.Mail;
-#endif
+﻿
 
 namespace Mandrill.Model
 {
@@ -12,30 +10,15 @@ namespace Mandrill.Model
 
         public MandrillMailAddress(string address)
         {
-
-#if NET45
-            var parsed = new MailAddress(address);
-            Email = parsed.Address;
-            if (!string.IsNullOrEmpty(parsed.DisplayName))
-            {
-                Name = parsed.DisplayName;
-            }
-#else
             Email = address;
-#endif
 
         }
 
         public MandrillMailAddress(string address, string name)
         {
-#if NET45
-            var parsed = new MailAddress(address, name);
-            Email = parsed.Address;
-            Name = parsed.DisplayName;
-#else
+
             Email = address;
             Name = name;
-#endif
         }
 
 

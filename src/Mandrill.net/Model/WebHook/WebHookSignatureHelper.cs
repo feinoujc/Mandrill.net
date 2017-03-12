@@ -1,5 +1,4 @@
-﻿#if NET45 || NETSTANDARD1_3
-using System;
+﻿using System;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Security.Cryptography;
@@ -35,4 +34,3 @@ namespace Mandrill.Model
         }
     }
 }
-#endif

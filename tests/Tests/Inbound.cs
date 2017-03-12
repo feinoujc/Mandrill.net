@@ -1,45 +1,41 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using NUnit.Framework;
+using Xunit;
 
 namespace Tests
 {
-    [Category("inbound")]
-    internal class Inbound : IntegrationTest
+    [Trait("Category", "inbound")]
+    [Collection("inbound")]
+    public class Inbound : IntegrationTest
     {
         private HashSet<string> _added = new HashSet<string>();
 
-        [SetUp]
-        public virtual void SetUp()
-        {
-            _added.Clear();
-        }
-        [TearDown]
-        public virtual void Cleanup()
+        public override void Dispose()
         {
             foreach (var id in _added)
             {
                Api.Inbound.DeleteDomainAsync(id).GetAwaiter().GetResult();
                Debug.WriteLine("inbound domain deleted: " + id);
             }
+            base.Dispose();
         }
 
-        [Category("inbound/domains")]
-        private class Domains : Inbound
+        [Trait("Category", "inbound/domains")]
+        public class Domains : Inbound
         {
-            [Test]
+            [Fact]
             public async Task Can_get_domains()
             {
                 var results = await Api.Inbound.DomainsAsync();
                 results.Count.Should().BeGreaterOrEqualTo(0);
             }
-            
 
-            [Test]
+
+            [Fact]
             public async Task Can_add_domain()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
@@ -49,7 +45,7 @@ namespace Tests
                 results.Domain.Should().Be(domain);
             }
 
-            [Test]
+            [Fact]
             public async Task Can_check_domain()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
@@ -62,7 +58,7 @@ namespace Tests
 
             }
 
-            [Test]
+            [Fact]
             public async Task Can_delete_domain()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
@@ -73,33 +69,29 @@ namespace Tests
             }
         }
 
-        [Category("inbound/routes")]
-        private class Routes : Inbound
+        [Trait("Category", "inbound/routes")]
+        public class Routes : Inbound
         {
             protected Uri WebhookUri { get; set; }
 
-            [TearDown]
-            public override void Cleanup()
-            {
-                var webhook = Api.WebHooks.ListAsync().GetAwaiter().GetResult().Single(x => x.Url == WebhookUri).Id;
-                Api.WebHooks.DeleteAsync(webhook).GetAwaiter().GetResult();
-                base.Cleanup();
-            }
-            [SetUp]
-            public override void SetUp()
+            public Routes()
             {
                 var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_INBOUND_WEBHOOK") ?? "http://devnull-as-a-service.com/dev/null";
 
                 WebhookUri = new UriBuilder(configuredWebHook) {Query = "id=" + Guid.NewGuid().ToString("N")}.Uri;
 
                 //configure webhook api at http://requestb.in
-
-                base.SetUp();
+            }
+            public override void Dispose()
+            {
+                var webhook = Api.WebHooks.ListAsync().GetAwaiter().GetResult().Single(x => x.Url == WebhookUri).Id;
+                Api.WebHooks.DeleteAsync(webhook).GetAwaiter().GetResult();
+                base.Dispose();
             }
 
             public string SendingDomain { get; set; }
 
-            [Test]
+            [Fact]
             public async Task Can_get_routes()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
@@ -113,7 +105,7 @@ namespace Tests
                 results[0].Id.Should().Be(route.Id);
             }
 
-            [Test]
+            [Fact]
             public async Task Can_add_route()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
@@ -121,12 +113,12 @@ namespace Tests
                 _added.Add(domain);
 
                 var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri);
-                
+
                 result.Id.Should().NotBeNull();
                 result.Url.Should().Be(WebhookUri);
             }
 
-            [Test]
+            [Fact]
             public async Task Can_update_route()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
@@ -146,7 +138,7 @@ namespace Tests
             }
 
 
-            [Test]
+            [Fact]
             public async Task Can_delete_route()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
@@ -163,7 +155,7 @@ namespace Tests
                 result.Id.Should().Be(id);
             }
 
-            [Test]
+            [Fact]
             public async Task Can_send_raw()
             {
                 var domain = string.Format("{0:N}.example.com", Guid.NewGuid());

@@ -7,16 +7,11 @@ namespace Mandrill.Model
 {
     public class MandrillTemplateInfo
     {
-        private List<string> _labels;
         public string Slug { get; set; }
 
         public string Name { get; set; }
 
-        public List<string> Labels
-        {
-            get { return _labels ?? (_labels = new List<string>()); }
-            set { _labels = value; }
-        }
+        public List<string> Labels { get; set; } = new List<string>();
 
         public string Code { get; set; }
 
