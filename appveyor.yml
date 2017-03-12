@@ -23,7 +23,7 @@ test_script:
   # - if defined MANDRILL_API_KEY ..\..\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -filter:"+[*]Mandrill* -[Tests]*" -target:"C:\\Program Files\\dotnet\\dotnet.exe" -targetargs:"test tests/Tests/Tests.csproj" -skipautoprops -output:coverage.xml
   # - if defined MANDRILL_API_KEY  ..\..\packages\coveralls.io.1.3.4\tools\coveralls.net.exe --opencover coverage.xml
 artifacts:
-  - path: artifacts\**\*.nupkg
+  - path: '**\*.nupkg'
 deploy:
   provider: NuGet
   on:
