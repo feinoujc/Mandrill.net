@@ -70,7 +70,7 @@ public IHttpActionResult MyWebApiControllerMethod(FormDataCollection value)
     {
       return Forbidden();
     }
-    
+
     var events = MandrillMessageEvent.ParseMandrillEvents(value.Get("mandrill_events"));
     foreach (var messageEvent in events)
     {
@@ -88,7 +88,7 @@ private bool ValidateRequest(FormDataCollection value)
    }
    var signature = headers.Single();
    var key = "MANDRILL_WEBHOOK_KEY_HERE";
-   
+
    return WebHookSignatureHelper.VerifyWebHookSignature(signature, key, Request.RequestUri, value.ReadAsNameValueCollection());
 }
 ```
@@ -102,4 +102,3 @@ private bool ValidateRequest(FormDataCollection value)
 
 
 See [this issue](https://github.com/feinoujc/Mandrill.net/issues/1) to track progress of api implementation
-

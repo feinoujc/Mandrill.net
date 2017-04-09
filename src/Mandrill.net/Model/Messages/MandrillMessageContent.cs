@@ -23,7 +23,7 @@ namespace Mandrill.Model
         public List<string> Tags { get; set; } = new List<string>();
 
         public Dictionary<string, object> Headers { get; set; } = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-        
+
         public string Text { get; set; }
 
         public string Html { get; set; }

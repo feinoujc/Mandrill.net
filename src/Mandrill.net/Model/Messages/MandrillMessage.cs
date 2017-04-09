@@ -50,7 +50,7 @@ namespace Mandrill.Model
         public string FromName { get; set; }
 
         public List<MandrillMailAddress> To { get; set; } = new List<MandrillMailAddress>();
-      
+
         public Dictionary<string, object> Headers { get; set; } = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         public bool? Important { get; set; }
@@ -84,21 +84,21 @@ namespace Mandrill.Model
         public MandrillMessageMergeLanguage? MergeLanguage { get; set; }
 
         public List<MandrillMergeVar> GlobalMergeVars { get; set; } = new List<MandrillMergeVar>();
-        
+
         public List<MandrillRcptMergeVar> MergeVars { get; set; } = new List<MandrillRcptMergeVar>();
 
         public List<string> Tags  { get; set; } = new List<string>();
 
         public string Subaccount { get; set; }
 
-        public List<string> GoogleAnalyticsDomains { get; set; } = new List<string>(); 
+        public List<string> GoogleAnalyticsDomains { get; set; } = new List<string>();
 
         public string GoogleAnalyticsCampaign { get; set; }
 
         public Dictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
- 
+
         public List<MandrillRcptMetadata> RecipientMetadata { get; set; } = new List<MandrillRcptMetadata>();
- 
+
         public List<MandrillAttachment> Attachments { get; set; } = new List<MandrillAttachment>();
 
         public List<MandrillImage> Images { get; set; } = new List<MandrillImage>();
@@ -146,7 +146,7 @@ namespace Mandrill.Model
                 Content = content
             });
         }
-        
+
         public void AddRcptMergeVars(string rcptEmail, string name, string content)
         {
             var mergeVar = MergeVars.FirstOrDefault(x => x.Rcpt == rcptEmail);

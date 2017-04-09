@@ -11,7 +11,7 @@ namespace Mandrill.Model
         public string FromName { get; set; }
 
         public List<string> To { get; set; } = new List<string>();
-        
+
         public bool? Async { get; set; }
         public string IpPool { get; set; }
         public string SendAt { get; set; }

@@ -4,7 +4,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Mandrill.Serialization
 {
-    
+
     internal class UnixDateTimeConverter : DateTimeConverterBase
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)

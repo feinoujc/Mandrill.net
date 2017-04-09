@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace Mandrill.Model
 {
@@ -7,14 +6,14 @@ namespace Mandrill.Model
     {
         private List<MandrillTemplateContent> _templateContent;
 
-        [Required]
         public string TemplateName { get; set; }
 
-        [Required]
         public List<MandrillTemplateContent> TemplateContent
         {
             get { return _templateContent ?? (_templateContent = new List<MandrillTemplateContent>()); }
             set { _templateContent = value; }
         }
+
+        public bool ShouldSerializeTemplateContent() => true;
     }
 }

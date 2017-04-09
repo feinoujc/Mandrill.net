@@ -9,7 +9,7 @@ namespace Mandrill.Model
         Spam,
         Unsub,
         Bounced,
-        [EnumMember(Value = "soft-bounced")] 
+        [EnumMember(Value = "soft-bounced")]
         SoftBounced,
         Deferred,
         Inbound
