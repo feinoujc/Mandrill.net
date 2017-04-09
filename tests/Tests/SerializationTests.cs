@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -440,8 +439,9 @@ namespace Tests
             public IList<TestSubModel> List2 { get; set; }
             public IDictionary<string, string> Dictionary { get; set; }
 
-            [Required]
             public IList<string> RequiredList { get; set; }
+
+            public bool ShouldSerializeRequiredList() => true;
 
             public TestEnum Enum { get; set; }
         }

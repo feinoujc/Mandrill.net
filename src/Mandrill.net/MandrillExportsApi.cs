@@ -50,16 +50,16 @@ namespace Mandrill
         }
 
         public Task<MandrillExportInfo> ActivityAsync(string notifyEmail,
-            DateTime? dateFrom = null, 
+            DateTime? dateFrom = null,
             DateTime? dateTo = null,
-            IList<string> tags = null, 
+            IList<string> tags = null,
             IList<string> senders = null,
             IList<string> states = null,
             IList<string> apiKeys = null)
         {
             return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/activity",
                 new MandrillExportRequest
-                {   
+                {
                     NotifyEmail = notifyEmail,
                     DateFrom = dateFrom?.ToString(ActivityDateFormat),
                     DateTo = dateTo?.ToString(ActivityDateFormat),

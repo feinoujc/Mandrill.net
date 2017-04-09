@@ -7,7 +7,7 @@ namespace Tests
 	<title>a test</title>
 </head>
 <body>
-	
+
 	<p>Dear *|FNAME|*,</p>
    <p>Thank you for your purchase on *|ORDERDATE|* from ABC Widget Company. <br>
 We appreciate your business and have included a copy of your invoice below. <br>
@@ -23,7 +23,7 @@ Please let us know if you have further questions.
 </body>
 </html>";
         public const string Text = @"Dear *|FNAME|*,
-   Thank you for your purchase on *|ORDERDATE|* from ABC Widget Company. 
+   Thank you for your purchase on *|ORDERDATE|* from ABC Widget Company.
 We appreciate your business and have included a copy of your invoice below.
 
 *|INVOICEDETAILS|*
@@ -37,7 +37,7 @@ Please let us know if you have further questions.
 	<title>a test</title>
 </head>
 <body>
-	
+
 	<p>Dear{{fname}},</p>
    <p>Thank you for your purchase on {{orderdate}} from ABC Widget Company. <br>
 We appreciate your business and have included a copy of your invoice below. <br>
@@ -83,6 +83,6 @@ Please let us know if you have further questions.
     </tr>
     {{/each}}
 <!-- // END PRODUCT LOOP -->
-     
+
      */
 }

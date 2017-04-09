@@ -11,7 +11,7 @@ namespace Mandrill.Model
         public DateTime Ts { get; set; }
 
         public MandrillSyncType Type { get; set; }
-        
+
         public MandrillSyncAction Action { get; set; }
 
         public MandrillSyncEventReject Reject { get; set; }
