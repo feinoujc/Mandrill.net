@@ -1,7 +1,6 @@
 
-os: Visual Studio 2017
+image: Visual Studio 2017
 environment:
-  VisualStudioVersion: 15.0
   COVERALLS_REPO_TOKEN:
     secure: JD6RZJ00/a4C5TBIzQSE6SHQun3o04wdgSyz4+uu6QFGtoWFcQuqag21+IUzY95f
 pull_requests:
