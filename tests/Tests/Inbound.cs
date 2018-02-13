@@ -18,8 +18,8 @@ namespace Tests
         {
             foreach (var id in _added)
             {
-               Api.Inbound.DeleteDomainAsync(id).GetAwaiter().GetResult();
-               Debug.WriteLine("inbound domain deleted: " + id);
+                Api.Inbound.DeleteDomainAsync(id).GetAwaiter().GetResult();
+                Debug.WriteLine("inbound domain deleted: " + id);
             }
             base.Dispose();
         }
@@ -76,9 +76,9 @@ namespace Tests
 
             public Routes()
             {
-                var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_INBOUND_WEBHOOK") ?? "http://devnull-as-a-service.com/dev/null";
+                var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_INBOUND_WEBHOOK") ?? "https://reqres.in/api/mandrill-webhook-test";
 
-                WebhookUri = new UriBuilder(configuredWebHook) {Query = "id=" + Guid.NewGuid().ToString("N")}.Uri;
+                WebhookUri = new UriBuilder(configuredWebHook) { Query = "id=" + Guid.NewGuid().ToString("N") }.Uri;
 
                 //configure webhook api at http://requestb.in
             }
@@ -172,7 +172,7 @@ namespace Tests
                 var email = string.Format(id + "-@" + domain);
                 var raw = string.Format(@"From: sender@example.com\nTo: {0}\nSubject: Some Subject\n\nSome content.", email);
 
-                var responses = await Api.Inbound.SendRawAsync(raw, new[] {email});
+                var responses = await Api.Inbound.SendRawAsync(raw, new[] { email });
 
                 responses.Should().NotBeEmpty();
                 responses[0].Email.Should().EndWith(domain);
