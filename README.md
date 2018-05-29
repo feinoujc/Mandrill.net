@@ -5,7 +5,7 @@ Simple, cross-platform Mandrill api wrapper for .NET Core and .NET 4.5+
 
 [![Travis](https://travis-ci.org/feinoujc/Mandrill.net.svg?branch=master)](https://travis-ci.org/feinoujc/Mandrill.net)
 [![AppVeyor](https://ci.appveyor.com/api/projects/status/kfgnqdmrvhlc36co/branch/master?svg=true)](https://ci.appveyor.com/project/feinoujc/mandrill-net/branch/master)
-[![Coverage Status](https://coveralls.io/repos/github/feinoujc/Mandrill.net/badge.svg?branch=v4)](https://coveralls.io/github/feinoujc/Mandrill.net?branch=v4)
+[![Coverage Status](https://coveralls.io/repos/github/feinoujc/Mandrill.net/badge.svg)](https://coveralls.io/github/feinoujc/Mandrill.net)
 <a href="http://www.nuget.org/packages/Mandrill.net/"><img src="https://img.shields.io/nuget/v/Mandrill.net.svg" title="NuGet Status"></a>
 
 ## API Docs
