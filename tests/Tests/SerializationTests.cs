@@ -22,7 +22,7 @@ namespace Tests
         {
             var date = DateTime.UtcNow;
             var expected = ToUnixTime(date);
-            var model = new TestModel {Ts = date};
+            var model = new TestModel { Ts = date };
 
             var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
@@ -85,7 +85,7 @@ namespace Tests
         [Fact]
         public void Can_set_property_name_by_convention()
         {
-            var model = new TestModel {SomePropertyName = "foo"};
+            var model = new TestModel { SomePropertyName = "foo" };
 
             var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
@@ -95,7 +95,7 @@ namespace Tests
         [Fact]
         public void Skips_empty_arrays()
         {
-            var model = new TestModel {List1 = new string[0]};
+            var model = new TestModel { List1 = new string[0] };
 
             var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
@@ -144,7 +144,7 @@ namespace Tests
         [Fact]
         public void Can_covert_guid_in_short_format()
         {
-            var model = new TestModel {Id = Guid.NewGuid().ToString("N")};
+            var model = new TestModel { Id = Guid.NewGuid().ToString("N") };
 
             var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
@@ -155,7 +155,7 @@ namespace Tests
         [Fact]
         public void Skips_null_values()
         {
-            var model = new TestModel {Value1 = null};
+            var model = new TestModel { Value1 = null };
 
             var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
@@ -165,7 +165,7 @@ namespace Tests
         [Fact]
         public void Enums_camel_case()
         {
-            var model = new[] {new TestModel {Enum = TestEnum.Reject}, new TestModel {Enum = TestEnum.SoftBounce}};
+            var model = new[] { new TestModel { Enum = TestEnum.Reject }, new TestModel { Enum = TestEnum.SoftBounce } };
 
             var json = JArray.FromObject(model, MandrillSerializer.Instance);
 
@@ -177,7 +177,7 @@ namespace Tests
         [Fact]
         public void Skips_empty_dictionary()
         {
-            var model = new TestModel {Dictionary = null};
+            var model = new TestModel { Dictionary = null };
 
             var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
@@ -189,7 +189,7 @@ namespace Tests
         {
             var model = new TestModel
             {
-                Dictionary = new Dictionary<string, string> {{"key1", "value1"}, {"key2", "value2"}}
+                Dictionary = new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" } }
             };
 
             var json = JObject.FromObject(model, MandrillSerializer.Instance);
@@ -378,7 +378,7 @@ namespace Tests
         }
 
         [Fact]
-         public void Can_serialize_sync_web_hook()
+        public void Can_serialize_sync_web_hook()
         {
             string json = TestData.sample_sync_event;
 
@@ -432,7 +432,7 @@ namespace Tests
             [JsonProperty("_id")]
             public string Id { get; set; }
 
-            public DateTime Ts { get; set; }
+            public DateTime? Ts { get; set; }
             public string SomePropertyName { get; set; }
             public string Value1 { get; set; }
             public IList<string> List1 { get; set; }

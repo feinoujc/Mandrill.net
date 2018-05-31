@@ -18,6 +18,25 @@ https://mandrillapp.com/api/docs/
 Install-Package Mandrill.net
 ```
 
+## Building
+```sh
+dotnet build src/Mandrill.net
+# if on mac/linux, you cannot build against the .net45 target:
+# dotnet build src/Mandrill.net -f netstandard1.3
+```
+
+## Testing
+
+**You must set the user environment variable MANDRILL_API_KEY in order to run these tests. Go to https://mandrillapp.com/ to obtain an api key.**
+
+**In order for the email from address to match your allowed sending domains, you can set MANDRILL_SENDING_DOMAIN to match your account.**
+
+```sh
+# include MANDRILL_API_KEY and MANDRILL_SENDING_DOMAIN in your env. For example:
+# MANDRILL_API_KEY=xxxxxxxxx MANDRILL_SENDING_DOMAIN=acme.com dotnet test tests/Tests
+dotnet test tests/Tests
+```
+
 ### Send a new transactional message through Mandrill
 
 ```cs
@@ -93,12 +112,6 @@ private bool ValidateRequest(FormDataCollection value)
 }
 ```
 
-## Integrations
-
-* [NServiceBus.Mandrill](https://github.com/feinoujc/NServiceBus.Mandrill) - Integrates NServiceBus messaging framework and mandrill, for more reliable mail processing
-
 ## API coverage
-
-
 
 See [this issue](https://github.com/feinoujc/Mandrill.net/issues/1) to track progress of api implementation
