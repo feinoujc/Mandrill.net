@@ -84,12 +84,12 @@ namespace Tests
                 model.AddTo("to3@example.com");
 
 
-                model.AddRcptMergeVars("to1@example.com", "my-property", new {field = 1});
-                model.AddRcptMergeVars("to2@example.com", "my-property", new {field = 2});
+                model.AddRcptMergeVars("to1@example.com", "my-property", new { field = 1 });
+                model.AddRcptMergeVars("to2@example.com", "my-property", new { field = 2 });
 
                 Assert.Equal(1, model.MergeVars.Single(m => m.Rcpt == "to1@example.com").Vars.Single(v => v.Name == "my-property").Content.field);
                 Assert.Equal(2, model.MergeVars.Single(m => m.Rcpt == "to2@example.com").Vars.Single(v => v.Name == "my-property").Content.field);
-                Assert.False(model.MergeVars.Any(m => m.Rcpt == "to3@example.com"));
+                Assert.DoesNotContain(model.MergeVars, m => m.Rcpt == "to3@example.com");
             }
 
             [Fact]
@@ -118,9 +118,9 @@ namespace Tests
                 var model = new MandrillMessage();
 
 
-                model.AddHeader("X-MY-HEADER", new[] {"foo", "bar"});
+                model.AddHeader("X-MY-HEADER", new[] { "foo", "bar" });
 
-                model.Headers["x-my-header"].ShouldBeEquivalentTo(new[] {"foo", "bar"});
+                model.Headers["x-my-header"].Should().BeEquivalentTo(new[] { "foo", "bar" });
             }
 
             [Fact]
