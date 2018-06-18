@@ -22,7 +22,7 @@ Install-Package Mandrill.net
 ```sh
 dotnet build src/Mandrill.net
 # if on mac/linux, you cannot build against the .net45 target:
-# dotnet build src/Mandrill.net -f netstandard1.3
+# dotnet build src/Mandrill.net -f netstandard2.0
 ```
 
 ## Testing
