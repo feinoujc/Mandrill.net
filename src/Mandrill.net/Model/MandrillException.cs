@@ -1,13 +1,10 @@
 ﻿using System;
-#if NET45
 using System.Runtime.Serialization;
 using System.Security.Permissions;
-#endif
+
 namespace Mandrill.Model
 {
-#if NET45
     [Serializable]
-#endif
     public class MandrillException : Exception
     {
         public MandrillException()
@@ -35,8 +32,6 @@ namespace Mandrill.Model
         public string Name { get; private set; }
 
 
-#if NET45
-
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         protected MandrillException(SerializationInfo info, StreamingContext context)
             : base(info, context)
@@ -62,6 +57,5 @@ namespace Mandrill.Model
             // MUST call through to the base class to let it save its own state
             base.GetObjectData(info, context);
         }
-#endif
     }
 }
