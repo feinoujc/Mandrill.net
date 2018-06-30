@@ -12,7 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EF1B7483-88D5-4E7B-A194-E7375C9E1227}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "tests\Tests\Tests.csproj", "{46BA8A52-1F53-4099-9F62-540D149F287D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "tests\Tests.csproj", "{46BA8A52-1F53-4099-9F62-540D149F287D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mandrill.net", "src\Mandrill.net\Mandrill.net.csproj", "{29C93DA7-379F-40CA-9BF3-0F6AA006E28E}"
 EndProject

@@ -33,8 +33,8 @@ dotnet build src/Mandrill.net
 
 ```sh
 # include MANDRILL_API_KEY and MANDRILL_SENDING_DOMAIN in your env. For example:
-# MANDRILL_API_KEY=xxxxxxxxx MANDRILL_SENDING_DOMAIN=acme.com dotnet test tests/Tests
-dotnet test tests/Tests
+# MANDRILL_API_KEY=xxxxxxxxx MANDRILL_SENDING_DOMAIN=acme.com dotnet test tests
+dotnet test tests
 ```
 
 ### Send a new transactional message through Mandrill
