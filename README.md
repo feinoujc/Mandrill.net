@@ -77,6 +77,15 @@ var result = await api.Messages.SendTemplateAsync(message, "customer-invoice");
 
 ```
 
+### Service Registration
+
+It is recommended that you do not create an instance of the `MandrillApi` for every request, to effectively pool connections to mandrill, and prevent socket exhaustion in your app. For example, an ASP.NET Core service registration that registers the API Interfaces as singletons:
+
+```cs
+var api = new MandrillApi("YOUR_API_KEY_GOES_HERE");
+services.AddSingleton<IMandrillMessagesApi>(api.Messages);
+```
+
 ### Processing a web hook batch
 
 ```cs
