@@ -1,7 +1,7 @@
 Mandrill.net
 ============
 
-Simple, cross-platform Mandrill api wrapper for .NET Core and .NET 4.5+
+Simple, cross-platform Mandrill api wrapper for .NET Core and .NET 4.6+
 
 [![Travis](https://travis-ci.org/feinoujc/Mandrill.net.svg?branch=master)](https://travis-ci.org/feinoujc/Mandrill.net)
 [![AppVeyor](https://ci.appveyor.com/api/projects/status/kfgnqdmrvhlc36co/branch/master?svg=true)](https://ci.appveyor.com/project/feinoujc/mandrill-net/branch/master)
@@ -21,7 +21,7 @@ Install-Package Mandrill.net
 ## Building
 ```sh
 dotnet build src/Mandrill.net
-# if on mac/linux, you cannot build against the .net45 target:
+# if on mac/linux, you cannot build against the .net461 target:
 # dotnet build src/Mandrill.net -f netstandard2.0
 ```
 
