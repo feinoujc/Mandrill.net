@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Mandrill.Model;
@@ -13,16 +12,14 @@ namespace Mandrill
 {
     internal class MandrillRequest
     {
-        public HttpClient HttpClient { get; } = new HttpClient();
+        public HttpClient HttpClient { get; }
         public string ApiKey { get; }
-        private static readonly Lazy<Version> UserAgentVersionLazy = new Lazy<Version>(() => new AssemblyName(typeof(MandrillRequest).GetTypeInfo().Assembly.FullName).Version);
-        private static readonly Uri BaseUrl = new Uri("https://mandrillapp.com/api/1.0/");
-        public MandrillRequest(string apiKey)
+        public MandrillRequest(string apiKey, HttpClient httpClient)
         {
+            if (apiKey == null) throw new ArgumentNullException(nameof(apiKey));
+
             ApiKey = apiKey;
-            HttpClient.BaseAddress = BaseUrl;
-            HttpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Mandrill.net", UserAgentVersionLazy.Value.ToString(3)));
-            HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            this.HttpClient = httpClient;
         }
 
         public async Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value) where TRequest : MandrillRequestBase

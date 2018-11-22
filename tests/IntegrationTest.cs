@@ -8,7 +8,7 @@ namespace Tests
 
 
     [Trait("Category", "integration")]
-    public abstract class IntegrationTest: IDisposable
+    public abstract class IntegrationTest : IDisposable
     {
         private static readonly Lazy<string> ApiKeyLazy = new Lazy<string>(() =>
         {
