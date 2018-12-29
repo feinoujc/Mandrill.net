@@ -6,8 +6,8 @@ namespace Mandrill.Model
     {
         Send,
         Deferral,
-        [EnumMember(Value = "hard_bounce")] HardBounce,
-        [EnumMember(Value = "soft_bounce")] SoftBounce,
+        HardBounce,
+        SoftBounce,
         Open,
         Click,
         Spam,

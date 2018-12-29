@@ -449,7 +449,7 @@ namespace Tests
         private enum TestEnum
         {
             Reject,
-            [EnumMember(Value = "soft_bounce")] SoftBounce
+            SoftBounce
         }
 
         private class TestSubModel

@@ -5,7 +5,7 @@ using Mandrill.Model;
 
 namespace Mandrill
 {
-    public class MandrillApi
+    public class MandrillApi : IDisposable
     {
         private readonly MandrillRequest _request;
         private MandrillExportsApi _exports;
@@ -20,10 +20,19 @@ namespace Mandrill
         private MandrillWebHooksApi _webhooks;
         private MandrillWhitelistsApi _whitelists;
 
-        public MandrillApi(string apiKey)
+        public HttpClient HttpClient => _request.HttpClient;
+
+        public MandrillApi(string apiKey) : this(new MandrillRequest(apiKey, DefaultHttpClient.CreateDefault()))
         {
-            if (apiKey == null) throw new ArgumentNullException(nameof(apiKey));
-            _request = new MandrillRequest(apiKey);
+        }
+
+        public MandrillApi(string apiKey, HttpClient client) : this(new MandrillRequest(apiKey, DefaultHttpClient.ApplyDefaults(client)))
+        {
+        }
+
+        private MandrillApi(MandrillRequest request)
+        {
+            _request = request;
         }
 
         public string ApiKey => _request.ApiKey;
@@ -49,6 +58,14 @@ namespace Mandrill
         public IMandrillWebHooksApi WebHooks => _webhooks ?? (_webhooks = new MandrillWebHooksApi(this));
 
         public IMandrillExportsApi Exports => _exports ?? (_exports = new MandrillExportsApi(this));
+
+        public void Dispose()
+        {
+            if (HttpClient is DefaultHttpClient)
+            {
+                HttpClient.Dispose();
+            }
+        }
 
         internal Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value)
             where TRequest : MandrillRequestBase

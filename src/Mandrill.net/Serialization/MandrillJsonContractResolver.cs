@@ -9,21 +9,10 @@ namespace Mandrill.Serialization
 {
     internal class MandrillJsonContractResolver : DefaultContractResolver
     {
-        private static readonly Regex CamelCaseRegex = new Regex("^[A-Z][a-z]+(?:[A-Z][a-z]+)*$", RegexOptions.Compiled);
-
-        protected static string ConvertCamelCasePropertyNamesToLowerCaseUnderscoreStyle(string propertyName)
+        public MandrillJsonContractResolver()
         {
-            if (CamelCaseRegex.IsMatch(propertyName))
-            {
-                return Regex.Replace(
-                    Regex.Replace(
-                        Regex.Replace(propertyName, @"([A-Z]+)([A-Z][a-z])", "$1_$2"), @"([a-z\d])([A-Z])",
-                        "$1_$2"), @"[-\s]", "_").ToLower();
-
-            }
-            return (propertyName).ToLower();
+            NamingStrategy = new SnakeCaseNamingStrategy(false, false);
         }
-
 
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
@@ -37,7 +26,7 @@ namespace Mandrill.Serialization
                 if (propertyType.GetTypeInfo().IsGenericType && propertyType.GenericTypeArguments.Length == 1)
                 {
                     var t = propertyType.GenericTypeArguments[0];
-                    if (typeof (IList<>).MakeGenericType(t).GetTypeInfo().IsAssignableFrom(propertyType.GetTypeInfo()))
+                    if (typeof(IList<>).MakeGenericType(t).GetTypeInfo().IsAssignableFrom(propertyType.GetTypeInfo()))
                     {
                         var prop = jsonProperty.DeclaringType.GetTypeInfo().GetDeclaredProperty(member.Name);
                         jsonProperty.ShouldSerialize = instance =>
@@ -48,7 +37,7 @@ namespace Mandrill.Serialization
                     }
                 }
 
-                if (typeof (IDictionary<string, string>).GetTypeInfo().IsAssignableFrom(propertyType.GetTypeInfo()))
+                if (typeof(IDictionary<string, string>).GetTypeInfo().IsAssignableFrom(propertyType.GetTypeInfo()))
                 {
                     var prop = jsonProperty.DeclaringType.GetTypeInfo().GetDeclaredProperty(member.Name);
 
@@ -72,19 +61,7 @@ namespace Mandrill.Serialization
                 }
             }
 
-            //leave the keys of a dictionary alone, otherwise convert to lowercase underscore
-            if (!PropertyIsInDictionary(jsonProperty))
-            {
-                jsonProperty.PropertyName = ConvertCamelCasePropertyNamesToLowerCaseUnderscoreStyle(jsonProperty.PropertyName);
-            }
-
             return jsonProperty;
-        }
-
-        private static bool PropertyIsInDictionary(JsonProperty jsonProperty)
-        {
-            return typeof (IDictionary<string, string>).GetTypeInfo().IsAssignableFrom(jsonProperty.DeclaringType.GetTypeInfo())
-                || typeof (IDictionary<string, object>).GetTypeInfo().IsAssignableFrom(jsonProperty.DeclaringType.GetTypeInfo());
         }
     }
 }
