@@ -33,7 +33,7 @@ namespace Mandrill
         }
 
         public Task<MandrillTemplateInfo> UpdateAsync(string templateName, string code, string text, bool publish, string fromEmail = null,
-          string fromName = null, string subject = null, string[] labels = null)
+        string fromName = null, string subject = null, string[] labels = null)
         {
             return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/update.json", new MandrillTemplateRequest
             {

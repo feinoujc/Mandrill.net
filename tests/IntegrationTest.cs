@@ -16,7 +16,7 @@ namespace Tests
             if (string.IsNullOrEmpty(apiKey))
             {
                 Assert.True(false, "You must set the user environment variable MANDRILL_API_KEY in order to run these tests. " +
-                                             "Go to https://mandrillapp.com/ to obtain an api key.");
+                                            "Go to https://mandrillapp.com/ to obtain an api key.");
             }
             return apiKey;
         });

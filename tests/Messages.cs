@@ -18,7 +18,7 @@ namespace Tests
     {
         public Messages()
         {
-          FromEmail = "mandrill.net@" +
+        FromEmail = "mandrill.net@" +
                         (Environment.GetEnvironmentVariable("MANDRILL_SENDING_DOMAIN") ?? "test.mandrillapp.com");
         }
 
@@ -33,7 +33,7 @@ namespace Tests
                     Assert.True(false, "invalid email: " + response.RejectReason);
                 }
                 if (response.Status == MandrillSendMessageResponseStatus.Rejected &&
-          response.RejectReason == "unsigned")
+        response.RejectReason == "unsigned")
                 {
                     Console.Error.WriteLine("unsigned sending domain");
                     break;
@@ -345,7 +345,7 @@ To: Mr Smith
                     Text = "This is a test",
                     Html = @"<html>
 <head>
-	<title>a test</title>
+    <title>a test</title>
 </head>
 <body>
 <p>this is a test</p>

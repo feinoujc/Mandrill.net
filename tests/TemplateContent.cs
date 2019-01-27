@@ -4,12 +4,12 @@ namespace Tests
     {
         public const string Code = @"<html>
 <head>
-	<title>a test</title>
+    <title>a test</title>
 </head>
 <body>
 
-	<p>Dear *|FNAME|*,</p>
-   <p>Thank you for your purchase on *|ORDERDATE|* from ABC Widget Company. <br>
+    <p>Dear *|FNAME|*,</p>
+    <p>Thank you for your purchase on *|ORDERDATE|* from ABC Widget Company. <br>
 We appreciate your business and have included a copy of your invoice below. <br>
 <br>
 *|INVOICEDETAILS|*
@@ -17,33 +17,33 @@ We appreciate your business and have included a copy of your invoice below. <br>
 Please let us know if you have further questions.
 
 
-     -- ABC Widget Co.</p>
+    -- ABC Widget Co.</p>
 
-     <div mc:edit=""footer"">footer</div>
+    <div mc:edit=""footer"">footer</div>
 </body>
 </html>";
         public const string Text = @"Dear *|FNAME|*,
-   Thank you for your purchase on *|ORDERDATE|* from ABC Widget Company.
+    Thank you for your purchase on *|ORDERDATE|* from ABC Widget Company.
 We appreciate your business and have included a copy of your invoice below.
 
 *|INVOICEDETAILS|*
 
 Please let us know if you have further questions.
 
-     -- ABC Widget Co.";
+    -- ABC Widget Co.";
 
         public const string HandleBarCode = @"<html>
 <head>
-	<title>a test</title>
+    <title>a test</title>
 </head>
 <body>
 
-	<p>Dear{{fname}},</p>
-   <p>Thank you for your purchase on {{orderdate}} from ABC Widget Company. <br>
+    <p>Dear{{fname}},</p>
+    <p>Thank you for your purchase on {{orderdate}} from ABC Widget Company. <br>
 We appreciate your business and have included a copy of your invoice below. <br>
-   <!-- BEGIN PRODUCT LOOP // -->
-   {{#each products}}
-   <tr class=""item"">
+    <!-- BEGIN PRODUCT LOOP // -->
+    {{#each products}}
+    <tr class=""item"">
         <td valign=""top"" class=""textContent"">
             <h4 class=""itemName"">{{name}}</h4>
             <span class=""contentSecondary"">Qty: {{qty}} x ${{price}}/each</span><br />
@@ -59,17 +59,17 @@ We appreciate your business and have included a copy of your invoice below. <br>
 Please let us know if you have further questions.
 
 
-     -- ABC Widget Co.</p>
+    -- ABC Widget Co.</p>
 
-     <div mc:edit=""footer"">footer</div>
+    <div mc:edit=""footer"">footer</div>
 </body>
 </html>";
     }
 
     /*
-     <!-- BEGIN PRODUCT LOOP // -->
-   {{#each products}}
-   <tr class="item">
+    <!-- BEGIN PRODUCT LOOP // -->
+    {{#each products}}
+    <tr class="item">
         <td valign="top" class="textContent">
             <img src="{{img}}" width="50" height="75" class="itemImage" />
             <h4 class="itemName">{{name}}</h4>
@@ -84,5 +84,5 @@ Please let us know if you have further questions.
     {{/each}}
 <!-- // END PRODUCT LOOP -->
 
-     */
+    */
 }

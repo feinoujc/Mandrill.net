@@ -1,4 +1,4 @@
-﻿namespace Mandrill.Model
+namespace Mandrill.Model
 {
     internal class MandrillUsersRequest : MandrillRequestBase
     {

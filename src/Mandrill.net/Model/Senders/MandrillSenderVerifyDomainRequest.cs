@@ -1,4 +1,4 @@
-﻿
+
 namespace Mandrill.Model
 {
     internal class MandrillSenderVerifyDomainRequest : MandrillRequestBase

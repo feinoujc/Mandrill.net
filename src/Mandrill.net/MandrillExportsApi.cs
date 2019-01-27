@@ -1,4 +1,4 @@
-﻿using Mandrill.Model;
+using Mandrill.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;

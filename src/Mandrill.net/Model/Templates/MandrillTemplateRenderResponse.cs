@@ -1,4 +1,4 @@
-﻿namespace Mandrill.Model
+namespace Mandrill.Model
 {
     public class MandrillTemplateRenderResponse
     {
