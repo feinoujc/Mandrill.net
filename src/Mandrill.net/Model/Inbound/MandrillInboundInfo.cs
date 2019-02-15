@@ -8,7 +8,7 @@ namespace Mandrill.Model
     {
         public string Domain { get; set; }
 
-        [JsonConverter(typeof (IsoDateTimeConverter))]
+        [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime CreatedAt { get; set; }
 
         public bool ValidMx { get; set; }

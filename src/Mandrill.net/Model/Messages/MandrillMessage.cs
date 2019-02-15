@@ -87,7 +87,7 @@ namespace Mandrill.Model
 
         public List<MandrillRcptMergeVar> MergeVars { get; set; } = new List<MandrillRcptMergeVar>();
 
-        public List<string> Tags  { get; set; } = new List<string>();
+        public List<string> Tags { get; set; } = new List<string>();
 
         public string Subaccount { get; set; }
 
@@ -130,12 +130,12 @@ namespace Mandrill.Model
 
         public void AddTo(string email, string name, MandrillMailAddressType? type)
         {
-            To.Add(new MandrillMailAddress(email, name) {Type = type});
+            To.Add(new MandrillMailAddress(email, name) { Type = type });
         }
 
         public void AddGlobalMergeVars(string name, string content)
         {
-            GlobalMergeVars.Add(new MandrillMergeVar {Name = name, Content = content});
+            GlobalMergeVars.Add(new MandrillMergeVar { Name = name, Content = content });
         }
 
         public void AddGlobalMergeVars(string name, dynamic content)
@@ -152,7 +152,7 @@ namespace Mandrill.Model
             var mergeVar = MergeVars.FirstOrDefault(x => x.Rcpt == rcptEmail);
             if (mergeVar == null)
             {
-                MergeVars.Add(mergeVar = new MandrillRcptMergeVar {Rcpt = rcptEmail});
+                MergeVars.Add(mergeVar = new MandrillRcptMergeVar { Rcpt = rcptEmail });
             }
             mergeVar.Vars.Add(new MandrillMergeVar
             {
@@ -166,7 +166,7 @@ namespace Mandrill.Model
             var mergeVar = MergeVars.FirstOrDefault(x => x.Rcpt == rcptEmail);
             if (mergeVar == null)
             {
-                MergeVars.Add(mergeVar = new MandrillRcptMergeVar {Rcpt = rcptEmail});
+                MergeVars.Add(mergeVar = new MandrillRcptMergeVar { Rcpt = rcptEmail });
             }
             mergeVar.Vars.Add(new MandrillMergeVar
             {
@@ -185,7 +185,7 @@ namespace Mandrill.Model
             var metadata = RecipientMetadata.FirstOrDefault(x => x.Rcpt == rcptEmail);
             if (metadata == null)
             {
-                RecipientMetadata.Add(metadata = new MandrillRcptMetadata {Rcpt = rcptEmail});
+                RecipientMetadata.Add(metadata = new MandrillRcptMetadata { Rcpt = rcptEmail });
             }
             metadata.Values[key] = value;
         }

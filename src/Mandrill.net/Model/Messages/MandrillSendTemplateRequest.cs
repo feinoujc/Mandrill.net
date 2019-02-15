@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Mandrill.Model
 {
-    class MandrillSendTemplateRequest:MandrillSendMessageRequest
+    class MandrillSendTemplateRequest : MandrillSendMessageRequest
     {
         private List<MandrillTemplateContent> _templateContent;
 

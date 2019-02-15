@@ -78,7 +78,7 @@ namespace Tests
                 var templates = Enumerable.Range(1, 10).Select(i => AddToBeDeleted(Guid.NewGuid().ToString())).ToArray();
                 foreach (var template in templates)
                 {
-                    await Api.Templates.AddAsync(template, TemplateContent.Code, TemplateContent.Text, false, labels: new[] {testLabel});
+                    await Api.Templates.AddAsync(template, TemplateContent.Code, TemplateContent.Text, false, labels: new[] { testLabel });
                 }
 
                 var results = await Api.Templates.ListAsync(testLabel);
@@ -94,7 +94,7 @@ namespace Tests
                 var templates = Enumerable.Range(1, 10).Select(i => AddToBeDeleted(Guid.NewGuid().ToString())).ToArray();
                 foreach (var template in templates)
                 {
-                    await Api.Templates.AddAsync(template, TemplateContent.Code, TemplateContent.Text, false, labels: new[] {testLabel});
+                    await Api.Templates.AddAsync(template, TemplateContent.Code, TemplateContent.Text, false, labels: new[] { testLabel });
                 }
 
                 var results = await Api.Templates.ListAsync(testLabel);

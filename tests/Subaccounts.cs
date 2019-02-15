@@ -45,7 +45,7 @@ namespace Tests
             [Fact]
             public async Task Can_list_subaccount()
             {
-                var results = await Api.Subaccounts.ListAsync(q:null);
+                var results = await Api.Subaccounts.ListAsync(q: null);
                 results.Count.Should().BeGreaterOrEqualTo(0);
             }
             [Fact]
@@ -139,7 +139,7 @@ namespace Tests
                 var result = await Api.Subaccounts.InfoAsync(id);
                 result.Id.Should().Be(id);
                 result.Last30Days.Clicks.Should().Be(0);
-                result.FirstSentAt.Should().Be((DateTime?) null);
+                result.FirstSentAt.Should().Be((DateTime?)null);
 
                 _added.Add(result.Id);
 

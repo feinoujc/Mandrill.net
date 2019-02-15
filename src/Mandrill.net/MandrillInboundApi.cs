@@ -25,21 +25,21 @@ namespace Mandrill
         {
             if (domain == null) throw new ArgumentNullException(nameof(domain));
             return MandrillApi.PostAsync<MandrillInboundRequest, MandrillInboundInfo>("inbound/add-domain.json",
-                new MandrillInboundRequest() {Domain = domain});
+                new MandrillInboundRequest() { Domain = domain });
         }
 
         public Task<MandrillInboundInfo> CheckDomainAsync(string domain)
         {
             if (domain == null) throw new ArgumentNullException(nameof(domain));
             return MandrillApi.PostAsync<MandrillInboundRequest, MandrillInboundInfo>("inbound/check-domain.json",
-                new MandrillInboundRequest() {Domain = domain});
+                new MandrillInboundRequest() { Domain = domain });
         }
 
         public Task<MandrillInboundInfo> DeleteDomainAsync(string domain)
         {
             if (domain == null) throw new ArgumentNullException(nameof(domain));
             return MandrillApi.PostAsync<MandrillInboundRequest, MandrillInboundInfo>("inbound/delete-domain.json",
-                new MandrillInboundRequest() {Domain = domain});
+                new MandrillInboundRequest() { Domain = domain });
         }
 
         public Task<IList<MandrillInboundRoute>> RoutesAsync(string domain)
@@ -47,7 +47,7 @@ namespace Mandrill
             if (domain == null) throw new ArgumentNullException(nameof(domain));
             return MandrillApi.PostAsync<MandrillInboundRouteRequest, IList<MandrillInboundRoute>>(
                 "inbound/routes.json",
-                new MandrillInboundRouteRequest() {Domain = domain});
+                new MandrillInboundRouteRequest() { Domain = domain });
         }
 
         public Task<MandrillInboundRoute> AddRouteAsync(string domain, string pattern, Uri url)

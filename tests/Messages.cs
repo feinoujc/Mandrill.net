@@ -18,8 +18,8 @@ namespace Tests
     {
         public Messages()
         {
-        FromEmail = "mandrill.net@" +
-                        (Environment.GetEnvironmentVariable("MANDRILL_SENDING_DOMAIN") ?? "test.mandrillapp.com");
+            FromEmail = "mandrill.net@" +
+                            (Environment.GetEnvironmentVariable("MANDRILL_SENDING_DOMAIN") ?? "test.mandrillapp.com");
         }
 
         public string FromEmail { get; set; }
@@ -196,7 +196,7 @@ To: Mr Smith
 
                 result.Should().NotBeNull();
                 result.Headers["Received"].Should().BeOfType<JArray>();
-                ((JArray) result.Headers["Received"]).Count.Should().Be(3);
+                ((JArray)result.Headers["Received"]).Count.Should().Be(3);
                 result.Headers["Delivered-To"].Should().BeOfType<string>();
                 result.Headers["Delivered-To"].Should().Be("MrSmith@gmail.com");
                 result.ReplyTo.Should().Be("MrsJohnson@gmail.com");
@@ -249,8 +249,8 @@ To: Mr Smith
                     DateTime.Today.AddDays(-1),
                     DateTime.Today.AddDays(1),
                     new string[0],
-                    new[] {FromEmail},
-                    new[] {ApiKey},
+                    new[] { FromEmail },
+                    new[] { ApiKey },
                     10);
 
                 //the api doesn't return results immediately, it may return no results
@@ -296,7 +296,7 @@ To: Mr Smith
                     DateTime.Today.AddDays(-1),
                     DateTime.Today.AddDays(1),
                     new string[0],
-                    new[] {FromEmail});
+                    new[] { FromEmail });
 
                 foreach (var result in results)
                 {
@@ -336,7 +336,7 @@ To: Mr Smith
                 {
                     FromEmail = FromEmail,
                     Subject = "test",
-                    Tags = new List<string>() {"test-send", "mandrill-net"},
+                    Tags = new List<string>() { "test-send", "mandrill-net" },
                     To = new List<MandrillMailAddress>()
                     {
                         new MandrillMailAddress("test1@example.com"),
@@ -370,7 +370,7 @@ To: Mr Smith
                 {
                     FromEmail = FromEmail,
                     Subject = "test",
-                    Tags = new List<string>() {"test-send-invalid"},
+                    Tags = new List<string>() { "test-send-invalid" },
                     To = new List<MandrillMailAddress>()
                     {
                         new MandrillMailAddress("test1@example.com")
@@ -392,7 +392,7 @@ To: Mr Smith
                 {
                     FromEmail = FromEmail,
                     Subject = "test",
-                    Tags = new List<string> {"test-send", "mandrill-net"},
+                    Tags = new List<string> { "test-send", "mandrill-net" },
                     To = new List<MandrillMailAddress>()
                     {
                         new MandrillMailAddress("test1@example.com")
@@ -419,7 +419,7 @@ To: Mr Smith
                 {
                     FromEmail = FromEmail,
                     Subject = "test",
-                    Tags = new List<string>() {"test-send", "mandrill-net"},
+                    Tags = new List<string>() { "test-send", "mandrill-net" },
                     To = new List<MandrillMailAddress>()
                     {
                         new MandrillMailAddress("test1@example.com")
@@ -456,7 +456,7 @@ To: Mr Smith
                 var rawMessage = $"From: {FromEmail}\nTo: recipient.email@example.com\nSubject: Some Subject\n\nSome content.";
                 var fromEmail = FromEmail;
                 var fromName = "From Name";
-                var to = new[] {"recipient.email@example.com"};
+                var to = new[] { "recipient.email@example.com" };
                 bool async = false;
                 string ipPool = "Main Pool";
                 DateTime? sendAt = null;
@@ -496,7 +496,7 @@ To: Mr Smith
                 {
                     FromEmail = FromEmail,
                     Subject = "test",
-                    Tags = new List<string>() {"test-send-template", "mandrill-net"},
+                    Tags = new List<string>() { "test-send-template", "mandrill-net" },
                     To = new List<MandrillMailAddress>()
                     {
                         new MandrillMailAddress("test1@example.com", "Test1 User"),
@@ -531,7 +531,7 @@ To: Mr Smith
             [Fact]
             public async Task Throws_on_invalid_date_type()
             {
-                var result = await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.SendTemplateAsync(new MandrillMessage(), TestTemplateName, sendAtUtc:DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
+                var result = await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.SendTemplateAsync(new MandrillMessage(), TestTemplateName, sendAtUtc: DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
             }
         }
 
@@ -696,7 +696,7 @@ To: Mr Smith
 
                 message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToString("d"));
                 message.AddRcptMergeVars("test1@example.com", "PRODUCTS", data1);
-                message.AddRcptMergeVars("test2@example.com", "PRODUCTS",  data2);
+                message.AddRcptMergeVars("test2@example.com", "PRODUCTS", data2);
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
@@ -729,7 +729,7 @@ To: Mr Smith
                 item1.price = 0.22;
                 item1.qty = 9;
                 item1.ordPrice = 1.98;
-                item1.tags = new {id = "tag1", enabled = true};
+                item1.tags = new { id = "tag1", enabled = true };
 
 
                 dynamic item2 = new ExpandoObject();
@@ -743,7 +743,7 @@ To: Mr Smith
 
 
                 message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToString("d"));
-                message.AddGlobalMergeVars("PRODUCTS", new [] { item1, item2 });
+                message.AddGlobalMergeVars("PRODUCTS", new[] { item1, item2 });
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 

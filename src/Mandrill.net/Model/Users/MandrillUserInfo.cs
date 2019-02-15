@@ -8,7 +8,7 @@ namespace Mandrill.Model
     {
         public string Username { get; set; }
 
-        [JsonConverter(typeof (IsoDateTimeConverter))]
+        [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime CreatedAt { get; set; }
 
         public string PublicId { get; set; }

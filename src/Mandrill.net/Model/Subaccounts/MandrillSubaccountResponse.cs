@@ -16,10 +16,10 @@ namespace Mandrill.Model
 
         public int Reputation { get; set; }
 
-        [JsonConverter(typeof (IsoDateTimeConverter))]
+        [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime CreatedAt { get; set; }
 
-        [JsonConverter(typeof (IsoDateTimeConverter))]
+        [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime? FirstSentAt { get; set; }
 
         public int SentWeekly { get; set; }

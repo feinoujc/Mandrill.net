@@ -6,7 +6,7 @@ namespace Mandrill.Model
 {
     public class MandrillMessageTimeSeries : MandrillAggregateStatisticsBase
     {
-        [JsonConverter(typeof (IsoDateTimeConverter))]
+        [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime Time { get; set; }
     }
 }

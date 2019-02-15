@@ -17,11 +17,11 @@ namespace Mandrill.Model
 
         public List<MandrillWebHookEventType> Events { get; set; }
 
-        [JsonConverter(typeof (IsoDateTimeConverter))]
+        [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime CreatedAt { get; set; }
 
 
-        [JsonConverter(typeof (IsoDateTimeConverter))]
+        [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime? LastSentAt { get; set; }
 
         public int BatchesSent { get; set; }

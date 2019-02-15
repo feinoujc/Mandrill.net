@@ -37,7 +37,7 @@ namespace Mandrill.Model
             : base(info, context)
         {
             Status = info.GetString("Status");
-            Code = (int?) info.GetValue("Code", typeof (int?));
+            Code = (int?)info.GetValue("Code", typeof(int?));
             Name = info.GetString("Name");
         }
 
@@ -52,7 +52,7 @@ namespace Mandrill.Model
             info.AddValue("Status", Status);
 
             info.AddValue("Name", Name);
-            info.AddValue("Code", Code, typeof (int?));
+            info.AddValue("Code", Code, typeof(int?));
 
             // MUST call through to the base class to let it save its own state
             base.GetObjectData(info, context);

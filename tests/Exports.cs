@@ -14,9 +14,9 @@ namespace Tests
     {
         class ExportThrottledTestException : Exception
         {
-            public ExportThrottledTestException() {}
-            public ExportThrottledTestException(string message) : base(message) {}
-            public ExportThrottledTestException(string message, Exception inner): base(message, inner) {}
+            public ExportThrottledTestException() { }
+            public ExportThrottledTestException(string message) : base(message) { }
+            public ExportThrottledTestException(string message, Exception inner) : base(message, inner) { }
 
         }
 
@@ -26,9 +26,9 @@ namespace Tests
             {
                 return await method;
             }
-            catch(MandrillException mex)
+            catch (MandrillException mex)
             {
-                if(mex.Code == -99 && mex.Name == "UserError")
+                if (mex.Code == -99 && mex.Name == "UserError")
                 {
                     throw new ExportThrottledTestException(mex.Message, mex);
                 }
@@ -100,7 +100,7 @@ namespace Tests
         }
 
         [Trait("Category", "exports/whitelist.json")]
-        public class Whitelist: Exports
+        public class Whitelist : Exports
         {
             [Fact]
             public async Task Can_export_info()
@@ -148,7 +148,7 @@ namespace Tests
                     result.Type.Should().Be("activity");
                     result.State.Should().Be("waiting");
                 }
-                catch(ExportThrottledTestException)
+                catch (ExportThrottledTestException)
                 {
 
                 }

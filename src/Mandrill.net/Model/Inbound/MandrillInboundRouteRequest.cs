@@ -2,7 +2,7 @@ using System;
 
 namespace Mandrill.Model
 {
-    internal class MandrillInboundRouteRequest :MandrillRequestBase
+    internal class MandrillInboundRouteRequest : MandrillRequestBase
     {
         public string Domain { get; set; }
         public string Pattern { get; set; }

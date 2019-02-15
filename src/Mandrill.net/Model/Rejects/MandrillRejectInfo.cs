@@ -12,13 +12,13 @@ namespace Mandrill.Model
 
         public string Detail { get; set; }
 
-        [JsonConverter(typeof (IsoDateTimeConverter))]
+        [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime CreatedAt { get; set; }
 
-        [JsonConverter(typeof (IsoDateTimeConverter))]
+        [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime LastEventAt { get; set; }
 
-        [JsonConverter(typeof (IsoDateTimeConverter))]
+        [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime? ExpiresAt { get; set; }
 
         public bool Expired { get; set; }

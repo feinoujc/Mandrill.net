@@ -8,7 +8,7 @@ namespace Mandrill.Model
     {
         public string Address { get; set; }
 
-        [JsonConverter(typeof (IsoDateTimeConverter))]
+        [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime CreatedAt { get; set; }
     }
 }
