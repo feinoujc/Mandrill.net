@@ -373,6 +373,11 @@ namespace Tests
 
             events[0].Msg.To[0][0].Should().Be("test@inbound.example.com");
 
+            events[1].Msg.Attachments.Count.Should().Be(1);
+            events[1].Msg.Attachments.First().Value.Content.Should().NotBeEmpty();
+            events[1].Msg.Images.Count.Should().Be(1);
+            events[1].Msg.Images.First().Value.Content.Length.Should().BeGreaterThan(0);
+
             Debug.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
 
         }

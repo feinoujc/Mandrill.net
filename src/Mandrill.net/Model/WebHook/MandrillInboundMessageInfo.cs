@@ -21,9 +21,9 @@ namespace Mandrill.Model
 
         public MandrillInboundSpamReport SpamReport { get; set; }
 
-        public List<MandrillInboundAttachment> Attachments { get; set; } = new List<MandrillInboundAttachment>();
+        public Dictionary<string, MandrillInboundAttachment> Attachments { get; set; } = new Dictionary<string, MandrillInboundAttachment>();
 
-        public List<MandrillInboundImage> Images { get; set; } = new List<MandrillInboundImage>();
+        public Dictionary<string, MandrillInboundImage> Images { get; set; } = new Dictionary<string, MandrillInboundImage>();
 
         public MandrillInboundSpfInfo Spf { get; set; }
 
