@@ -12,6 +12,7 @@ namespace Mandrill.Model
         Spam,
         Unsub,
         Reject,
+        Deferral,
         Blacklist,
         Whitelist
     }
