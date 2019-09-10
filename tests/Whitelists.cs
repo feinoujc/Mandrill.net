@@ -70,7 +70,7 @@ namespace Tests
             [Fact]
             public async Task Can_add_whitelist()
             {
-                var email = Guid.NewGuid().ToString("N") + "@example.com";
+                var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 var result = await Api.Whitelists.AddAsync(email);
                 result.Added.Should().BeTrue();
                 _added.Add(result.Email);
@@ -83,7 +83,7 @@ namespace Tests
             [Fact]
             public async Task Can_delete_whitelist()
             {
-                var email = Guid.NewGuid().ToString("N") + "@example.com";
+                var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 await Api.Whitelists.AddAsync(email);
 
                 var result = await Api.Whitelists.DeleteAsync(email);

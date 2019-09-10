@@ -1048,7 +1048,7 @@ namespace Tests
         #endregion
 
         #region sample sync event
-        public const string sample_sync_event = @"[{""type"":""blacklist"",""action"":""add"",""reject"":{""reason"":""custom"",""detail"":null,""last_event_at"":""2017-01-01 16:56:20"",""email"":""blacklist@example.com"",""created_at"":""2017-01-01 16:56:20"",""expires_at"":null,""expired"":false,""subaccount"":null,""sender"":null},""ts"":1483289780}]";
+        public const string sample_sync_event = @"[{""type"":""blacklist"",""action"":""add"",""reject"":{""reason"":""custom"",""detail"":null,""last_event_at"":""2017-01-01 16:56:20"",""email"":""blacklist@mandrilldotnet.org"",""created_at"":""2017-01-01 16:56:20"",""expires_at"":null,""expired"":false,""subaccount"":null,""sender"":null},""ts"":1483289780}]";
 
         #endregion
 

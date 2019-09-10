@@ -180,11 +180,11 @@ namespace Tests
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
                 await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
                 var result = await Api.Templates.UpdateAsync(name, TemplateContent.Code.Replace("footer", "booger"), null, false,
-                    "update@example.com");
+                    "update@mandrilldotnet.org");
                 result.Name.Should().Be(name);
                 result.Code.Should().Contain("booger");
                 result.Slug.Should().Be(name);
-                result.FromEmail.Should().Be("update@example.com");
+                result.FromEmail.Should().Be("update@mandrilldotnet.org");
             }
         }
     }

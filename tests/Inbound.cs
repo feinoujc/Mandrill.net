@@ -170,7 +170,7 @@ namespace Tests
 
 
                 var email = string.Format(id + "-@" + domain);
-                var raw = string.Format(@"From: sender@example.com\nTo: {0}\nSubject: Some Subject\n\nSome content.", email);
+                var raw = string.Format(@"From: sender@mandrilldotnet.org\nTo: {0}\nSubject: Some Subject\n\nSome content.", email);
 
                 var responses = await Api.Inbound.SendRawAsync(raw, new[] { email });
 

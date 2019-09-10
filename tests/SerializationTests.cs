@@ -207,17 +207,17 @@ namespace Tests
         ""html"": ""<p>Example HTML content</p>"",
         ""text"": ""Example text content"",
         ""subject"": ""example subject"",
-        ""from_email"": ""message.from_email@example.com"",
+        ""from_email"": ""message.from_email@mandrilldotnet.org"",
         ""from_name"": ""Example Name"",
         ""to"": [
             {
-                ""email"": ""recipient.email@example.com"",
+                ""email"": ""recipient.email@mandrilldotnet.org"",
                 ""name"": ""Recipient Name"",
                 ""type"": ""to""
             }
         ],
         ""headers"": {
-            ""Reply-To"": ""message.reply@example.com""
+            ""Reply-To"": ""message.reply@mandrilldotnet.org""
         },
         ""important"": false,
         ""track_opens"": null,
@@ -228,7 +228,7 @@ namespace Tests
         ""url_strip_qs"": null,
         ""preserve_recipients"": null,
         ""view_content_link"": null,
-        ""bcc_address"": ""message.bcc_address@example.com"",
+        ""bcc_address"": ""message.bcc_address@mandrilldotnet.org"",
         ""tracking_domain"": null,
         ""signing_domain"": null,
         ""return_path_domain"": null,
@@ -242,7 +242,7 @@ namespace Tests
         ],
         ""merge_vars"": [
             {
-                ""rcpt"": ""recipient.email@example.com"",
+                ""rcpt"": ""recipient.email@mandrilldotnet.org"",
                 ""vars"": [
                     {
                         ""name"": ""merge2"",
@@ -258,13 +258,13 @@ namespace Tests
         ""google_analytics_domains"": [
             ""example.com""
         ],
-        ""google_analytics_campaign"": ""message.from_email@example.com"",
+        ""google_analytics_campaign"": ""message.from_email@mandrilldotnet.org"",
         ""metadata"": {
             ""website"": ""www.example.com""
         },
         ""recipient_metadata"": [
             {
-                ""rcpt"": ""recipient.email@example.com"",
+                ""rcpt"": ""recipient.email@mandrilldotnet.org"",
                 ""values"": {
                     ""user_id"": 123456
                 }
@@ -294,23 +294,23 @@ namespace Tests
             message.Html.Should().Be("<p>Example HTML content</p>");
             message.Text.Should().Be("Example text content");
             message.Subject.Should().Be("example subject");
-            message.FromEmail.Should().Be("message.from_email@example.com");
+            message.FromEmail.Should().Be("message.from_email@mandrilldotnet.org");
             message.FromName.Should().Be("Example Name");
             message.To.Should().HaveCount(1);
-            message.To[0].Email.Should().Be("recipient.email@example.com");
+            message.To[0].Email.Should().Be("recipient.email@mandrilldotnet.org");
             message.To[0].Name.Should().Be("Recipient Name");
             message.To[0].Type.Should().Be(MandrillMailAddressType.To);
             message.Headers.Should().HaveCount(1);
-            message.Headers["Reply-To"].Should().Be("message.reply@example.com");
+            message.Headers["Reply-To"].Should().Be("message.reply@mandrilldotnet.org");
             message.Important.Should().BeFalse();
-            message.BccAddress.Should().Be("message.bcc_address@example.com");
+            message.BccAddress.Should().Be("message.bcc_address@mandrilldotnet.org");
             message.Merge.Should().BeTrue();
             message.MergeLanguage.Should().Be(MandrillMessageMergeLanguage.Mailchimp);
             message.GlobalMergeVars.Should().HaveCount(1);
             message.GlobalMergeVars[0].Name.Should().Be("merge1");
             ((string)message.GlobalMergeVars[0].Content).Should().Be("merge1 content");
             message.RecipientMetadata.Should().HaveCount(1);
-            message.RecipientMetadata[0].Rcpt.Should().Be("recipient.email@example.com");
+            message.RecipientMetadata[0].Rcpt.Should().Be("recipient.email@mandrilldotnet.org");
             message.RecipientMetadata[0].Values.Should().HaveCount(1);
             message.RecipientMetadata[0].Values["user_id"] = "123456";
             message.Tags.Should().HaveCount(1);

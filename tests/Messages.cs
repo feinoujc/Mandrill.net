@@ -167,11 +167,11 @@ namespace Tests
             [Fact]
             public async Task Can_parse_raw_message()
             {
-                var rawMessage = $"From: {FromEmail}\nTo: recipient.email@example.com\nSubject: Some Subject\n\nSome content.";
+                var rawMessage = $"From: {FromEmail}\nTo: recipient.email@mandrilldotnet.org\nSubject: Some Subject\n\nSome content.";
                 var result = await Api.Messages.ParseAsync(rawMessage);
                 result.Should().NotBeNull();
                 result.FromEmail.Should().Be(FromEmail);
-                result.To[0].Email.Should().Be("recipient.email@example.com");
+                result.To[0].Email.Should().Be("recipient.email@mandrilldotnet.org");
                 result.Subject.Should().Be("Some Subject");
                 result.Text.Should().Be("Some content.");
             }
@@ -339,8 +339,8 @@ To: Mr Smith
                     Tags = new List<string>() { "test-send", "mandrill-net" },
                     To = new List<MandrillMailAddress>()
                     {
-                        new MandrillMailAddress("test1@example.com"),
-                        new MandrillMailAddress("test2@example.com", "A test")
+                        new MandrillMailAddress("test1@mandrilldotnet.org"),
+                        new MandrillMailAddress("test2@mandrilldotnet.org", "A test")
                     },
                     Text = "This is a test",
                     Html = @"<html>
@@ -373,7 +373,7 @@ To: Mr Smith
                     Tags = new List<string>() { "test-send-invalid" },
                     To = new List<MandrillMailAddress>()
                     {
-                        new MandrillMailAddress("test1@example.com")
+                        new MandrillMailAddress("test1@mandrilldotnet.org")
                     },
                     Text = "This is a test",
                     Subaccount = invalidSubaccount
@@ -395,7 +395,7 @@ To: Mr Smith
                     Tags = new List<string> { "test-send", "mandrill-net" },
                     To = new List<MandrillMailAddress>()
                     {
-                        new MandrillMailAddress("test1@example.com")
+                        new MandrillMailAddress("test1@mandrilldotnet.org")
                     },
                     Text = "This is a test",
                 };
@@ -422,7 +422,7 @@ To: Mr Smith
                     Tags = new List<string>() { "test-send", "mandrill-net" },
                     To = new List<MandrillMailAddress>()
                     {
-                        new MandrillMailAddress("test1@example.com")
+                        new MandrillMailAddress("test1@mandrilldotnet.org")
                     },
                     Text = "This is a test",
                 };
@@ -431,7 +431,7 @@ To: Mr Smith
                 var result = await Api.Messages.SendAsync(message, sendAtUtc: sendAtUtc);
 
                 result.Should().HaveCount(1);
-                result[0].Email.Should().Be("test1@example.com");
+                result[0].Email.Should().Be("test1@mandrilldotnet.org");
                 result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Scheduled);
             }
 
@@ -453,10 +453,10 @@ To: Mr Smith
             [Fact]
             public async Task Can_send_raw_message()
             {
-                var rawMessage = $"From: {FromEmail}\nTo: recipient.email@example.com\nSubject: Some Subject\n\nSome content.";
+                var rawMessage = $"From: {FromEmail}\nTo: recipient.email@mandrilldotnet.org\nSubject: Some Subject\n\nSome content.";
                 var fromEmail = FromEmail;
                 var fromName = "From Name";
-                var to = new[] { "recipient.email@example.com" };
+                var to = new[] { "recipient.email@mandrilldotnet.org" };
                 bool async = false;
                 string ipPool = "Main Pool";
                 DateTime? sendAt = null;
@@ -499,14 +499,14 @@ To: Mr Smith
                     Tags = new List<string>() { "test-send-template", "mandrill-net" },
                     To = new List<MandrillMailAddress>()
                     {
-                        new MandrillMailAddress("test1@example.com", "Test1 User"),
-                        new MandrillMailAddress("test2@example.com", "Test2 User")
+                        new MandrillMailAddress("test1@mandrilldotnet.org", "Test1 User"),
+                        new MandrillMailAddress("test2@mandrilldotnet.org", "Test2 User")
                     },
                 };
 
                 message.AddGlobalMergeVars("ORDERDATE", string.Format("{0:d}", DateTime.UtcNow));
-                message.AddRcptMergeVars("test1@example.com", "INVOICEDETAILS", "invoice for test1@example.com");
-                message.AddRcptMergeVars("test2@example.com", "INVOICEDETAILS", "invoice for test2@example.com");
+                message.AddRcptMergeVars("test1@mandrilldotnet.org", "INVOICEDETAILS", "invoice for test1@mandrilldotnet.org");
+                message.AddRcptMergeVars("test2@mandrilldotnet.org", "INVOICEDETAILS", "invoice for test2@mandrilldotnet.org");
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
@@ -565,8 +565,8 @@ To: Mr Smith
                     MergeLanguage = MandrillMessageMergeLanguage.Handlebars,
                     To = new List<MandrillMailAddress>()
                     {
-                        new MandrillMailAddress("test1@example.com", "Test1 User"),
-                        new MandrillMailAddress("test2@example.com", "Test2 User")
+                        new MandrillMailAddress("test1@mandrilldotnet.org", "Test1 User"),
+                        new MandrillMailAddress("test2@mandrilldotnet.org", "Test2 User")
                     },
                 };
 
@@ -620,8 +620,8 @@ To: Mr Smith
                 };
 
                 message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToString("d"));
-                message.AddRcptMergeVars("test1@example.com", "PRODUCTS", data1);
-                message.AddRcptMergeVars("test2@example.com", "PRODUCTS", data2);
+                message.AddRcptMergeVars("test1@mandrilldotnet.org", "PRODUCTS", data1);
+                message.AddRcptMergeVars("test2@mandrilldotnet.org", "PRODUCTS", data2);
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
@@ -640,8 +640,8 @@ To: Mr Smith
                     MergeLanguage = MandrillMessageMergeLanguage.Handlebars,
                     To = new List<MandrillMailAddress>()
                     {
-                        new MandrillMailAddress("test1@example.com", "Test1 User"),
-                        new MandrillMailAddress("test2@example.com", "Test2 User")
+                        new MandrillMailAddress("test1@mandrilldotnet.org", "Test1 User"),
+                        new MandrillMailAddress("test2@mandrilldotnet.org", "Test2 User")
                     },
                 };
 
@@ -695,8 +695,8 @@ To: Mr Smith
                 };
 
                 message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToString("d"));
-                message.AddRcptMergeVars("test1@example.com", "PRODUCTS", data1);
-                message.AddRcptMergeVars("test2@example.com", "PRODUCTS", data2);
+                message.AddRcptMergeVars("test1@mandrilldotnet.org", "PRODUCTS", data1);
+                message.AddRcptMergeVars("test2@mandrilldotnet.org", "PRODUCTS", data2);
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
@@ -717,8 +717,8 @@ To: Mr Smith
                     MergeLanguage = MandrillMessageMergeLanguage.Handlebars,
                     To = new List<MandrillMailAddress>()
                     {
-                        new MandrillMailAddress("test1@example.com", "Test1 User"),
-                        new MandrillMailAddress("test2@example.com", "Test2 User")
+                        new MandrillMailAddress("test1@mandrilldotnet.org", "Test1 User"),
+                        new MandrillMailAddress("test2@mandrilldotnet.org", "Test2 User")
                     },
                 };
 
