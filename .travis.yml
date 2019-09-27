@@ -1,20 +1,8 @@
 language: csharp
+dist: xenial
+mono: none
 sudo: required
-
-env:
-  global:
-    - DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-    - DOTNET_CLI_TELEMETRY_OPTOUT: 1
-
+services:
+  - docker
 script:
-  - dotnet --version
-  - dotnet restore
-  - 'if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then dotnet test tests; fi'
-
-matrix:
-  include:
-  - os: linux
-    dist: trusty
-    sudo: required
-    dotnet: 2.1
-    mono: none
+  - docker run --rm -it -w /src -v $(pwd):/src -e DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true -e MANDRILL_API_KEY -e TRAVIS_PULL_REQUEST mcr.microsoft.com/dotnet/core/sdk:3.0  bash -c "dotnet --version && dotnet test tests"
