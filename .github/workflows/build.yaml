@@ -1,0 +1,30 @@
+name: Build and test
+
+on: [push]
+
+jobs:
+  test:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.0.100
+    - run: dotnet --version
+    - run: dotnet restore
+    - name: test
+      run: dotnet test tests /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./coverage.lcov
+      env:
+        MANDRILL_API_KEY: ${{ secrets.MANDRILL_API_KEY }}
+    - name: Push coverage result
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        path-to-lcov: ./tests/coverage.lcov

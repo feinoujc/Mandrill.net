@@ -1,8 +1,0 @@
-language: csharp
-dist: xenial
-mono: none
-sudo: required
-services:
-  - docker
-script:
-  - docker run --rm -it -w /src -v $(pwd):/src -e DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true -e MANDRILL_API_KEY -e TRAVIS_PULL_REQUEST mcr.microsoft.com/dotnet/core/sdk:3.0  bash -c "dotnet --version && dotnet test tests"
