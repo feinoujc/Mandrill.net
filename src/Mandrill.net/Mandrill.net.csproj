@@ -15,12 +15,18 @@
     <AssemblyOriginatorKeyFile>..\..\Mandrill.net.snk</AssemblyOriginatorKeyFile>
     <PackageId>Mandrill.net</PackageId>
     <PackageTags>mandrill;mailchimp;mail</PackageTags>
+    <PackageIcon>logo.png</PackageIcon>
     <PackageIconUrl>https://raw.githubusercontent.com/feinoujc/Mandrill.net/master/logo.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/feinoujc/Mandrill.net</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/feinoujc/Mandrill.net/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/feinoujc/Mandrill.net</RepositoryUrl>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="logo.png" Pack="true" PackagePath=""/>
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="[12.0.1,)" />

@@ -15,8 +15,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 3.0.100
       - run: dotnet restore
       - name: test
         env:
@@ -37,8 +35,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 3.0.100
 
       - name: Extract tag version
         run: |
@@ -47,7 +43,9 @@ jobs:
           Write-Host "::set-env name=VERSION_TAG::$versionTag"
 
       - name: pack
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}        
         run: dotnet pack src/Mandrill.net --configuration Release -p:PackageVersion=$env:VERSION_TAG -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --output artifacts
-      - run: dotnet nuget push artifacts\*.nupkg -k $env:NUGET_API_KEY -s https://api.nuget.org/v3/index.json
+        
+      - name: push
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: dotnet nuget push artifacts\*.nupkg -k $env:NUGET_API_KEY -s https://api.nuget.org/v3/index.json
