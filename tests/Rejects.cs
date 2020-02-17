@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -11,6 +12,10 @@ namespace Tests
     public class Rejects : IntegrationTest
     {
         private HashSet<string> _added = new HashSet<string>();
+
+        public Rejects(ITestOutputHelper output) : base(output)
+        {
+        }
 
         public override void Dispose()
         {
@@ -23,6 +28,10 @@ namespace Tests
         [Trait("Category", "rejects/add.json")]
         public class Add : Rejects
         {
+            public Add(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_add_email_to_rejects()
             {
@@ -36,6 +45,10 @@ namespace Tests
         [Trait("Category", "rejects/delete.json")]
         public class Delete : Rejects
         {
+            public Delete(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_delete_email_from_rejects()
             {
@@ -49,6 +62,10 @@ namespace Tests
         [Trait("Category", "rejects/list.json")]
         public class List : Rejects
         {
+            public List(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_list_filter_by_email()
             {

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Mandrill.Model;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -20,7 +21,7 @@ namespace Tests
             return templateName;
         }
 
-        public Templates()
+        public Templates(ITestOutputHelper output) : base(output)
         {
             TemplatesToCleanup = new HashSet<string>();
         }
@@ -38,6 +39,10 @@ namespace Tests
         [Trait("Category", "templates/add.json")]
         public class Add : Templates
         {
+            public Add(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_add_template()
             {
@@ -54,6 +59,10 @@ namespace Tests
         [Trait("Category", "templates/add.json")]
         public class Info : Templates
         {
+            public Info(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_get_template_info()
             {
@@ -71,6 +80,10 @@ namespace Tests
         [Trait("Category", "templates/list.json")]
         public class List : Templates
         {
+            public List(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_list_all_templates()
             {
@@ -112,6 +125,10 @@ namespace Tests
         [Trait("Category", "templates/add.json")]
         public class Publish : Templates
         {
+            public Publish(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_publish_template()
             {
@@ -129,6 +146,10 @@ namespace Tests
         [Trait("Category", "templates/render.json")]
         public class Render : Templates
         {
+            public Render(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_render()
             {
@@ -157,6 +178,10 @@ namespace Tests
         [Trait("Category", "templates/time_series.json")]
         public class TimeSeries : Templates
         {
+            public TimeSeries(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_get_time_series()
             {
@@ -166,7 +191,7 @@ namespace Tests
 
                 if (result.Count == 0)
                 {
-                    Console.Error.WriteLine("time-series couldn't run for a new template");
+                    Output.WriteLine("time-series couldn't run for a new template");
                 }
             }
         }
@@ -174,6 +199,10 @@ namespace Tests
         [Trait("Category", "templates/update.json")]
         public class Update : Templates
         {
+            public Update(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_update()
             {

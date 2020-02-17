@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Mandrill.Model;
 using Xunit;
-using Mandrill;
+using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -15,6 +13,10 @@ namespace Tests
     public class Subaccounts : IntegrationTest
     {
         HashSet<string> _added = new HashSet<string>();
+
+        public Subaccounts(ITestOutputHelper output) : base(output)
+        {
+        }
 
         public override void Dispose()
         {
@@ -28,6 +30,10 @@ namespace Tests
         [Trait("Category", "subaccounts/add.json")]
         public class Add : Subaccounts
         {
+            public Add(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_add_subaccount()
             {
@@ -42,6 +48,10 @@ namespace Tests
         [Trait("Category", "subaccounts/list.json")]
         public class List : Subaccounts
         {
+            public List(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_list_subaccount()
             {
@@ -59,6 +69,10 @@ namespace Tests
         [Trait("Category", "subaccounts/update.json")]
         public class Update : Subaccounts
         {
+            public Update(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_update_subaccount()
             {
@@ -76,6 +90,10 @@ namespace Tests
         [Trait("Category", "subaccounts/pause.json")]
         public class Pause : Subaccounts
         {
+            public Pause(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_pause_subaccount()
             {
@@ -93,6 +111,10 @@ namespace Tests
         [Trait("Category", "subaccounts/resume.json")]
         public class Resume : Subaccounts
         {
+            public Resume(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_resume_subaccount()
             {
@@ -113,6 +135,10 @@ namespace Tests
         [Trait("Category", "subaccounts/delete.json")]
         public class Delete : Subaccounts
         {
+            public Delete(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_delete_subaccount()
             {
@@ -129,6 +155,10 @@ namespace Tests
         [Trait("Category", "subaccounts/info.json")]
         public class Info : Subaccounts
         {
+            public Info(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_get_info_subaccount()
             {
@@ -142,11 +172,7 @@ namespace Tests
                 result.FirstSentAt.Should().Be((DateTime?)null);
 
                 _added.Add(result.Id);
-
-
             }
-
-
         }
     }
 }

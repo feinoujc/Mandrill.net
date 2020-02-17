@@ -1,7 +1,7 @@
 using System;
-using System.Threading.Tasks;
 using Mandrill;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -10,6 +10,12 @@ namespace Tests
     [Trait("Category", "integration")]
     public abstract class IntegrationTest : IDisposable
     {
+        protected ITestOutputHelper Output { get; }
+
+        protected IntegrationTest(ITestOutputHelper output)
+        {
+            Output = output;
+        }
         private static readonly Lazy<string> ApiKeyLazy = new Lazy<string>(() =>
         {
             var apiKey = Environment.GetEnvironmentVariable("MANDRILL_API_KEY");

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Mandrill;
 using Mandrill.Model;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -15,7 +15,7 @@ namespace Tests
         protected Uri WebhookUri { get; set; }
         private HashSet<int> _added = new HashSet<int>();
 
-        public Webhooks()
+        public Webhooks(ITestOutputHelper output) : base(output)
         {
             _added.Clear();
             var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_OUTBOUND_WEBHOOK") ?? "https://reqres.in/api/mandrill-webhook-test";
