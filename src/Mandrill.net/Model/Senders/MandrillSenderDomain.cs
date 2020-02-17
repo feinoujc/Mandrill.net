@@ -14,6 +14,7 @@ namespace Mandrill.Model
         public DateTime LastTestedAt { get; set; }
         public MandrillSenderValidDetails SPF { get; set; }
         public MandrillSenderValidDetails DKIM { get; set; }
+        [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime VerifiedAt { get; set; }
         public bool ValidSigning { get; set; }
         public MandrillSenderVerifyDomain Verified { get; set; }
