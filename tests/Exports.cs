@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Xunit;
+using Xunit.Abstractions;
 using FluentAssertions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,6 +13,10 @@ namespace Tests
     [Collection("exports")]
     public class Exports : IntegrationTest
     {
+        public Exports(ITestOutputHelper output) : base(output)
+        {
+        }
+
         class ExportThrottledTestException : Exception
         {
             public ExportThrottledTestException() { }
@@ -39,6 +44,10 @@ namespace Tests
         [Trait("Category", "exports/list.json")]
         public class List : Exports
         {
+            public List(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_list_all()
             {
@@ -52,7 +61,7 @@ namespace Tests
                 }
                 else
                 {
-                    Console.Error.WriteLine("no exports found.");
+                    Output.WriteLine("no exports found.");
                 }
             }
         }
@@ -60,6 +69,10 @@ namespace Tests
         [Trait("Category", "exports/info.json")]
         public class Info : Exports
         {
+            public Info(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_retrieve_info()
             {
@@ -72,7 +85,7 @@ namespace Tests
                 }
                 else
                 {
-                    Console.Error.WriteLine("no exports found");
+                    Output.WriteLine("no exports found");
                 }
             }
         }
@@ -80,6 +93,10 @@ namespace Tests
         [Trait("Category", "exports/rejects.json")]
         public class Rejects : Exports
         {
+            public Rejects(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_export_info()
             {
@@ -102,6 +119,10 @@ namespace Tests
         [Trait("Category", "exports/whitelist.json")]
         public class Whitelist : Exports
         {
+            public Whitelist(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_export_info()
             {
@@ -124,6 +145,10 @@ namespace Tests
         [Trait("Category", "exports/activity.json")]
         public class Activity : Exports
         {
+            public Activity(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_export_activity()
             {

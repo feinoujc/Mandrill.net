@@ -4,15 +4,24 @@ using FluentAssertions;
 using Mandrill;
 using Mandrill.Model;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Tests
 {
     [Trait("Category", "users")]
     public class Users : IntegrationTest
     {
+        public Users(ITestOutputHelper output) : base(output)
+        {
+        }
+
         [Trait("Category", "users/info.json")]
         public class Info : Users
         {
+            public Info(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_get_info()
             {
@@ -34,6 +43,10 @@ namespace Tests
         [Trait("Category", "users/ping2.json")]
         public class Ping : Users
         {
+            public Ping(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_ping()
             {
@@ -53,6 +66,10 @@ namespace Tests
         [Trait("Category", "users/senders.json")]
         public class Senders : Users
         {
+            public Senders(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_list_senders()
             {
@@ -60,7 +77,7 @@ namespace Tests
 
                 if (results.Count == 0)
                 {
-                    Console.Error.WriteLine("No senders returned");
+                    Output.WriteLine("No senders returned");
                 }
 
                 foreach (var sender in results)

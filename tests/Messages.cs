@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
@@ -9,6 +8,7 @@ using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using Mandrill.Model;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -16,15 +16,15 @@ namespace Tests
     [Collection("messages")]
     public class Messages : IntegrationTest
     {
-        public Messages()
-        {
-            FromEmail = "mandrill.net@" +
+
+        public string FromEmail => "mandrill.net@" +
                             (Environment.GetEnvironmentVariable("MANDRILL_SENDING_DOMAIN") ?? "test.mandrillapp.com");
+
+        public Messages(ITestOutputHelper output) : base(output)
+        {
         }
 
-        public string FromEmail { get; set; }
-
-        static void AssertResults(IEnumerable<MandrillSendMessageResponse> result)
+        void AssertResults(IEnumerable<MandrillSendMessageResponse> result)
         {
             foreach (var response in result)
             {
@@ -35,7 +35,7 @@ namespace Tests
                 if (response.Status == MandrillSendMessageResponseStatus.Rejected &&
         response.RejectReason == "unsigned")
                 {
-                    Console.Error.WriteLine("unsigned sending domain");
+                    Output.WriteLine("unsigned sending domain");
                     break;
                 }
                 if (response.Status == MandrillSendMessageResponseStatus.Rejected)
@@ -57,6 +57,10 @@ namespace Tests
         [Trait("Category", "messages/cancel_scheduled.json")]
         public class CancelScheduled : Messages
         {
+            public CancelScheduled(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_cancel_scheduled()
             {
@@ -70,7 +74,7 @@ namespace Tests
                 }
                 else
                 {
-                    Console.Error.WriteLine("no scheduled results");
+                    Output.WriteLine("no scheduled results");
                 }
             }
         }
@@ -78,6 +82,10 @@ namespace Tests
         [Trait("Category", "messages/content.json")]
         public class Content : Messages
         {
+            public Content(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_retrieve_content()
             {
@@ -98,7 +106,7 @@ namespace Tests
                 }
                 else
                 {
-                    Console.Error.WriteLine("no results were found yet, try again in a few minutes");
+                    Output.WriteLine("no results were found yet, try again in a few minutes");
                 }
             }
 
@@ -114,17 +122,21 @@ namespace Tests
             {
                 var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
                 mandrillException.Name.Should().Be("Unknown_Message");
-                Debug.WriteLine(mandrillException);
+                Output.WriteLine(mandrillException.ToString());
             }
         }
 
         [Trait("Category", "messages/info.json")]
         public class Info : Messages
         {
+            public Info(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_retrieve_info()
             {
-                var results = await Api.Messages.SearchAsync("email:example.com");
+                var results = await Api.Messages.SearchAsync("email:mandrilldotnet.org");
 
                 //the api doesn't return results immediately, it may return no results
                 var found = results.OrderBy(x => x.Ts).FirstOrDefault();
@@ -137,7 +149,7 @@ namespace Tests
                 }
                 else
                 {
-                    Console.Error.WriteLine("no results were found yet, try again in a few minutes");
+                    Output.WriteLine("no results were found yet, try again in a few minutes");
                 }
             }
 
@@ -152,6 +164,10 @@ namespace Tests
         [Trait("Category", "messages/list_scheduled.json")]
         public class ListScheduled : Messages
         {
+            public ListScheduled(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_list_scheduled()
             {
@@ -164,6 +180,10 @@ namespace Tests
         [Trait("Category", "messages/parse.json")]
         public class Parse : Messages
         {
+            public Parse(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_parse_raw_message()
             {
@@ -206,6 +226,10 @@ To: Mr Smith
         [Trait("Category", "messages/reschedule.json")]
         public class Reschedule : Messages
         {
+            public Reschedule(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_reschedule()
             {
@@ -221,7 +245,7 @@ To: Mr Smith
                 }
                 else
                 {
-                    Console.Error.WriteLine("no scheduled messages found.");
+                    Output.WriteLine("no scheduled messages found.");
                 }
             }
 
@@ -241,11 +265,14 @@ To: Mr Smith
         [Trait("Category", "messages/search.json")]
         public class Search : Messages
         {
+            public Search(ITestOutputHelper output) : base(output)
+            {
+            }
 
             [Fact]
             public async Task Can_search_all_params()
             {
-                var results = await Api.Messages.SearchAsync("email:example.com",
+                var results = await Api.Messages.SearchAsync("email:mandrilldotnet.org",
                     DateTime.Today.AddDays(-1),
                     DateTime.Today.AddDays(1),
                     new string[0],
@@ -263,14 +290,14 @@ To: Mr Smith
 
                 if (results.Count == 0)
                 {
-                    Console.Error.WriteLine("no results were found yet, try again in a few minutes");
+                    Output.WriteLine("no results were found yet, try again in a few minutes");
                 }
             }
 
             [Fact]
             public async Task Can_search_query()
             {
-                var results = await Api.Messages.SearchAsync("email:example.com", limit: 1);
+                var results = await Api.Messages.SearchAsync("email:mandrilldotnet.org", limit: 1);
 
                 //the api doesn't return results immediately, it may return no results
                 results.Count.Should().BeLessOrEqualTo(1);
@@ -281,7 +308,7 @@ To: Mr Smith
                 }
                 if (results.Count == 0)
                 {
-                    Console.Error.WriteLine("no results were found yet, try again in a few minutes");
+                    Output.WriteLine("no results were found yet, try again in a few minutes");
                 }
             }
         }
@@ -289,10 +316,14 @@ To: Mr Smith
         [Trait("Category", "messages/search_time_series.json")]
         public class SearchTimeSeries : Messages
         {
+            public SearchTimeSeries(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_search_all_params()
             {
-                var results = await Api.Messages.SearchTimeSeriesAsync("email:example.com",
+                var results = await Api.Messages.SearchTimeSeriesAsync("email:mandrilldotnet.org",
                     DateTime.Today.AddDays(-1),
                     DateTime.Today.AddDays(1),
                     new string[0],
@@ -305,7 +336,7 @@ To: Mr Smith
 
                 if (results.Count == 0)
                 {
-                    Console.Error.WriteLine("no results were found yet, try again in a few minutes");
+                    Output.WriteLine("no results were found yet, try again in a few minutes");
                 }
             }
 
@@ -321,7 +352,7 @@ To: Mr Smith
 
                 if (results.Count == 0)
                 {
-                    Console.Error.WriteLine("no results were found yet, try again in a few minutes");
+                    Output.WriteLine("no results were found yet, try again in a few minutes");
                 }
             }
         }
@@ -329,6 +360,10 @@ To: Mr Smith
         [Trait("Category", "messages/send.json")]
         public class Send : Messages
         {
+            public Send(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_send_message()
             {
@@ -450,6 +485,10 @@ To: Mr Smith
         [Trait("Category", "messages/send_raw.json")]
         public class SendRaw : Messages
         {
+            public SendRaw(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_send_raw_message()
             {
@@ -476,7 +515,7 @@ To: Mr Smith
         {
             protected string TestTemplateName;
 
-            public SendTemplate()
+            public SendTemplate(ITestOutputHelper output) : base(output)
             {
                 TestTemplateName = Guid.NewGuid().ToString();
                 var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.Code, TemplateContent.Text, true).GetAwaiter().GetResult();
@@ -540,7 +579,7 @@ To: Mr Smith
         {
             protected string TestTemplateName;
 
-            public SendTemplate_Handlebars()
+            public SendTemplate_Handlebars(ITestOutputHelper output) : base(output)
             {
                 TestTemplateName = Guid.NewGuid().ToString();
                 var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.HandleBarCode, null, true).GetAwaiter().GetResult();

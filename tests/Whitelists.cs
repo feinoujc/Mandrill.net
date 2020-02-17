@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -12,6 +13,10 @@ namespace Tests
     public class Whitelists : IntegrationTest
     {
         private HashSet<string> _added = new HashSet<string>();
+
+        public Whitelists(ITestOutputHelper output) : base(output)
+        {
+        }
 
         public override void Dispose()
         {
@@ -24,6 +29,10 @@ namespace Tests
         [Trait("Category", "whitelists/list.json")]
         public class List : Whitelists
         {
+            public List(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_list_all()
             {
@@ -38,7 +47,7 @@ namespace Tests
                 }
                 else
                 {
-                    Console.Error.WriteLine("no emails found on whitelist.");
+                    Output.WriteLine("no emails found on whitelist.");
                 }
             }
 
@@ -59,7 +68,7 @@ namespace Tests
                 }
                 else
                 {
-                    Console.Error.WriteLine("no emails on whitelist found.");
+                    Output.WriteLine("no emails on whitelist found.");
                 }
             }
         }
@@ -67,6 +76,10 @@ namespace Tests
         [Trait("Category", "whitelists/add.json")]
         public class Add : Whitelists
         {
+            public Add(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_add_whitelist()
             {
@@ -80,6 +93,10 @@ namespace Tests
         [Trait("Category", "whitelists/delete.json")]
         public class Delete : Whitelists
         {
+            public Delete(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_delete_whitelist()
             {

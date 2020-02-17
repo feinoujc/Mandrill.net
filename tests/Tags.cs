@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -11,10 +10,17 @@ namespace Tests
     [Collection("tags")]
     public class Tags : IntegrationTest
     {
+        public Tags(ITestOutputHelper output) : base(output)
+        {
+        }
 
         [Trait("Category", "tags/list.json")]
         public class List : Tags
         {
+            public List(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_list_all()
             {
@@ -28,7 +34,7 @@ namespace Tests
                 }
                 else
                 {
-                    Console.Error.WriteLine("no tags found.");
+                    Output.WriteLine("no tags found.");
                 }
             }
         }
@@ -36,6 +42,10 @@ namespace Tests
         [Trait("Category", "tags/info.json")]
         public class Info : Tags
         {
+            public Info(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_retrieve_info()
             {
@@ -48,7 +58,7 @@ namespace Tests
                 }
                 else
                 {
-                    Console.Error.WriteLine("no tags found");
+                    Output.WriteLine("no tags found");
                 }
             }
         }
@@ -56,6 +66,10 @@ namespace Tests
         [Trait("Category", "tags/delete.json")]
         public class Delete : Tags
         {
+            public Delete(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_delete_tag()
             {
@@ -68,7 +82,7 @@ namespace Tests
                 }
                 else
                 {
-                    Console.Error.WriteLine("no tags found");
+                    Output.WriteLine("no tags found");
                 }
             }
         }
@@ -76,6 +90,10 @@ namespace Tests
         [Trait("Category", "tags/time_series.json")]
         public class TimeSeries : Tags
         {
+            public TimeSeries(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_get_tag_time_series()
             {
@@ -92,12 +110,12 @@ namespace Tests
                     }
                     else
                     {
-                        Console.Error.WriteLine("no time series found.");
+                        Output.WriteLine("no time series found.");
                     }
                 }
                 else
                 {
-                    Console.Error.WriteLine("no tags found");
+                    Output.WriteLine("no tags found");
                 }
             }
         }
@@ -105,6 +123,10 @@ namespace Tests
         [Trait("Category", "tags/all_time_series.json")]
         public class AllTimeSeries : Tags
         {
+            public AllTimeSeries(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_get_tag_all_time_series()
             {
@@ -118,7 +140,7 @@ namespace Tests
                 }
                 else
                 {
-                    Console.Error.WriteLine("no time series found.");
+                    Output.WriteLine("no time series found.");
                 }
             }
         }

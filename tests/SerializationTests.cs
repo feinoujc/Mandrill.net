@@ -1,22 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using FluentAssertions;
 using Mandrill.Model;
 using Mandrill.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Tests
 {
     [Trait("Category", "serialization")]
     public class SerializationTests
     {
+        public ITestOutputHelper Output { get; }
+
+        public SerializationTests(ITestOutputHelper output)
+        {
+            Output = output;
+        }
         [Fact]
         public void Can_serialize_dates_as_unix_ts_by_default()
         {
@@ -340,7 +345,7 @@ namespace Tests
             events.Should().NotBeNullOrEmpty();
             events.Should().HaveCount(14);
 
-            Debug.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
+            Output.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
         }
 
 
@@ -354,7 +359,7 @@ namespace Tests
             events.Should().NotBeNullOrEmpty();
             events.Should().HaveCount(14);
 
-            Debug.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
+            Output.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
         }
 
         [Fact]
@@ -378,7 +383,7 @@ namespace Tests
             events[1].Msg.Images.Count.Should().Be(1);
             events[1].Msg.Images.First().Value.Content.Length.Should().BeGreaterThan(0);
 
-            Debug.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
+            Output.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
 
         }
 

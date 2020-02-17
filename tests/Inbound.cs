@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -14,12 +14,16 @@ namespace Tests
     {
         private HashSet<string> _added = new HashSet<string>();
 
+        public Inbound(ITestOutputHelper output) : base(output)
+        {
+        }
+
         public override void Dispose()
         {
             foreach (var id in _added)
             {
                 Api.Inbound.DeleteDomainAsync(id).GetAwaiter().GetResult();
-                Debug.WriteLine("inbound domain deleted: " + id);
+                Output.WriteLine("inbound domain deleted: " + id);
             }
             base.Dispose();
         }
@@ -27,6 +31,10 @@ namespace Tests
         [Trait("Category", "inbound/domains")]
         public class Domains : Inbound
         {
+            public Domains(ITestOutputHelper output) : base(output)
+            {
+            }
+
             [Fact]
             public async Task Can_get_domains()
             {
@@ -38,7 +46,7 @@ namespace Tests
             [Fact]
             public async Task Can_add_domain()
             {
-                var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
+                var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
                 var results = await Api.Inbound.AddDomainAsync(domain);
                 _added.Add(results.Domain);
 
@@ -48,7 +56,7 @@ namespace Tests
             [Fact]
             public async Task Can_check_domain()
             {
-                var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
+                var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
                 _added.Add(domain);
 
@@ -61,7 +69,7 @@ namespace Tests
             [Fact]
             public async Task Can_delete_domain()
             {
-                var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
+                var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
 
                 var results = await Api.Inbound.DeleteDomainAsync(domain);
@@ -74,7 +82,7 @@ namespace Tests
         {
             protected Uri WebhookUri { get; set; }
 
-            public Routes()
+            public Routes(ITestOutputHelper output) : base(output)
             {
                 var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_INBOUND_WEBHOOK") ?? "https://reqres.in/api/mandrill-webhook-test";
 
@@ -94,7 +102,7 @@ namespace Tests
             [Fact]
             public async Task Can_get_routes()
             {
-                var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
+                var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
                 _added.Add(domain);
 
@@ -108,7 +116,7 @@ namespace Tests
             [Fact]
             public async Task Can_add_route()
             {
-                var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
+                var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
                 _added.Add(domain);
 
@@ -121,7 +129,7 @@ namespace Tests
             [Fact]
             public async Task Can_update_route()
             {
-                var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
+                var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
                 _added.Add(domain);
 
@@ -141,7 +149,7 @@ namespace Tests
             [Fact]
             public async Task Can_delete_route()
             {
-                var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
+                var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
                 _added.Add(domain);
 
@@ -158,7 +166,7 @@ namespace Tests
             [Fact]
             public async Task Can_send_raw()
             {
-                var domain = string.Format("{0:N}.example.com", Guid.NewGuid());
+                var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
                 await Api.Inbound.AddDomainAsync(domain);
                 _added.Add(domain);
 

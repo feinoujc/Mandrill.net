@@ -1,10 +1,10 @@
-name: Build and test
+name: CI
 
 on: [push]
 
 jobs:
-  test:
 
+  test:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -12,19 +12,42 @@ jobs:
         os: [windows-latest, ubuntu-latest]
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.0.100
-    - run: dotnet --version
-    - run: dotnet restore
-    - name: test
-      run: dotnet test tests /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./coverage.lcov
-      env:
-        MANDRILL_API_KEY: ${{ secrets.MANDRILL_API_KEY }}
-    - name: Push coverage result
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ./tests/coverage.lcov
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.0.100
+      - run: dotnet restore
+      - name: test
+        env:
+          MANDRILL_API_KEY: ${{ secrets.MANDRILL_API_KEY }}
+          MANDRILL_SENDING_DOMAIN: ${{ secrets.MANDRILL_SENDING_DOMAIN }}
+        run: dotnet test tests --configuration Release --logger "console;verbosity=normal" -p:CollectCoverage=true -p:CoverletOutputFormat=lcov -p:CoverletOutput=./coverage.lcov
+      - name: Push coverage result
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./tests/coverage.lcov
+
+  publish-nuget:
+    needs: test
+    runs-on: windows-latest
+    # tag a release as v1.0.0....
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.0.100
+
+      - name: Extract tag version
+        run: |
+          $env:GITHUB_REF -match "^refs/tags/v(.+)"
+          $versionTag = $Matches[1]
+          Write-Host "::set-env name=VERSION_TAG::$versionTag"
+
+      - name: pack
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}        
+        run: dotnet pack src/Mandrill.net --configuration Release -p:PackageVersion=$env:VERSION_TAG -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --output artifacts
+      - run: dotnet nuget push artifacts\*.nupkg -k $env:NUGET_API_KEY -s https://api.nuget.org/v3/index.json
