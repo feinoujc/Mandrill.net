@@ -38,5 +38,7 @@ namespace Mandrill.Model
         public bool TextFlowed { get; set; }
 
         public List<List<string>> To { get; set; } = new List<List<string>>();
+        
+        public List<List<string>> CC { get; set; } = new List<List<string>>();
     }
 }
