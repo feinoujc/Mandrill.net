@@ -378,10 +378,15 @@ namespace Tests
 
             events[0].Msg.To[0][0].Should().Be("test@inbound.example.com");
 
+            events[0].Msg.Cc[0][0].Should().Be("testCc@inbound.example.com");
+
             events[1].Msg.Attachments.Count.Should().Be(1);
             events[1].Msg.Attachments.First().Value.Content.Should().NotBeEmpty();
             events[1].Msg.Images.Count.Should().Be(1);
             events[1].Msg.Images.First().Value.Content.Length.Should().BeGreaterThan(0);
+
+            events[0].Msg.FromName.Should().Be("Example Sender");
+            events[1].Msg.FromName.Should().BeNullOrEmpty();
 
             Output.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
 

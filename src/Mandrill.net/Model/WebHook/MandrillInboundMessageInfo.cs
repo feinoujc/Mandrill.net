@@ -11,6 +11,8 @@ namespace Mandrill.Model
 
         public string FromEmail { get; set; }
 
+        public string FromName { get; set; }
+
         public Dictionary<string, object> Headers { get; set; } = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         public string Html { get; set; }
@@ -38,5 +40,7 @@ namespace Mandrill.Model
         public bool TextFlowed { get; set; }
 
         public List<List<string>> To { get; set; } = new List<List<string>>();
+
+        public List<List<string>> Cc { get; set; } = new List<List<string>>();
     }
 }
