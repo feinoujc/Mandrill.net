@@ -19,6 +19,7 @@ namespace Tests
             },
             ""email"": ""test@inbound.example.com"",
             ""from_email"": ""example.sender@mandrillapp.com"",
+            ""from_name"": ""Example Sender"",
             ""headers"": {
                 ""Content-Type"": ""multipart/alternative; boundary=\""_av-7r7zDhHxVEAo2yMWasfuFw\"""",
                 ""Date"": ""Fri, 10 May 2013 19:28:20 +0000"",
@@ -128,10 +129,16 @@ namespace Tests
             ""text"": ""This is an example inbound message.\n"",
             ""text_flowed"": false,
             ""to"": [
-                [
-                    ""test@inbound.example.com"",
-                    null
-                ]
+                        [
+                            ""test@inbound.example.com"",
+                            null
+                        ]
+            ],
+            ""cc"": [
+                        [
+                            ""testCc@inbound.example.com"",
+                            null
+                        ]
             ]
         },
         ""ts"": 1368214102
@@ -145,6 +152,7 @@ namespace Tests
             },
             ""email"": ""test@inbound.example.com"",
             ""from_email"": ""example.sender@mandrillapp.com"",
+            ""from_name"": null,
             ""headers"": {
                 ""Content-Type"": ""multipart/alternative; boundary=\""_av-7r7zDhHxVEAo2yMWasfuFw\"""",
                 ""Date"": ""Fri, 10 May 2013 19:28:20 +0000"",
@@ -272,6 +280,12 @@ namespace Tests
                     ""test@inbound.example.com"",
                     null
                 ]
+            ],
+            ""cc"": [
+                        [
+                            ""testCc@inbound.example.com"",
+                            null
+                        ]
             ]
         },
         ""ts"": 1368214102
