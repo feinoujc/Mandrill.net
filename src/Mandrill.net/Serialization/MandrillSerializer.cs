@@ -17,7 +17,7 @@ namespace Mandrill.Serialization
 
             settings.Converters.Add(new UnixDateTimeConverter());
             settings.Converters.Add(new StringEnumConverter { NamingStrategy = new SnakeCaseNamingStrategy(), AllowIntegerValues = false });
-            settings.NullValueHandling = NullValueHandling.Ignore;
+            settings.NullValueHandling = NullValueHandling.Include;
             settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
             return JsonSerializer.Create(settings);
         }
