@@ -7,32 +7,43 @@ namespace Mandrill.Serialization
 {
     public static class MandrillSerializer
     {
-        private static readonly Lazy<JsonSerializer> LazyJsonSerializer = new Lazy<JsonSerializer>(CreateSerializer);
+        [Obsolete("Use CreateDefault or Create factory instead")]
+        public static JsonSerializer Instance { get; } = CreateDefault();
 
-        public static JsonSerializer Instance => LazyJsonSerializer.Value;
+        public static JsonSerializer CreateDefault() => Create(CreateSerializerSettings(NullValueHandling.Include));
 
-        private static JsonSerializer CreateSerializer()
+        public static JsonSerializer Create(JsonSerializerSettings contentSerializerSettings)
         {
-            var settings = new JsonSerializerSettings { ContractResolver = new MandrillJsonContractResolver() };
-
-            settings.Converters.Add(new UnixDateTimeConverter());
-            settings.Converters.Add(new StringEnumConverter { NamingStrategy = new SnakeCaseNamingStrategy(), AllowIntegerValues = false });
-            settings.NullValueHandling = NullValueHandling.Ignore;
-            settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+            var settings = CreateSerializerSettings(NullValueHandling.Ignore);
+            settings.Converters.Add(new MandrillMergeVarConverter(contentSerializerSettings));
             return JsonSerializer.Create(settings);
         }
+
+        private static JsonSerializerSettings CreateSerializerSettings(NullValueHandling nullValueHandling)
+        {
+            var settings = new JsonSerializerSettings { ContractResolver = new MandrillJsonContractResolver() };
+            settings.Converters.Add(new UnixDateTimeConverter());
+            settings.Converters.Add(new StringEnumConverter { NamingStrategy = new SnakeCaseNamingStrategy(), AllowIntegerValues = false });
+            settings.NullValueHandling = nullValueHandling;
+            settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+            return settings;
+        }
+
+        internal static JsonSerializerSettings CreateDefaultContentSerializerSettings() => CreateSerializerSettings(NullValueHandling.Include);
     }
 
     public static class MandrillSerializer<T>
     {
+        private static readonly JsonSerializer _serializer = MandrillSerializer.CreateDefault();
+
         public static T Deserialize(JsonReader reader)
         {
-            return MandrillSerializer.Instance.Deserialize<T>(reader);
+            return _serializer.Deserialize<T>(reader);
         }
 
         public static void Serialize(JsonWriter writer, T value)
         {
-            MandrillSerializer.Instance.Serialize(writer, value);
+            _serializer.Serialize(writer, value);
         }
     }
 }

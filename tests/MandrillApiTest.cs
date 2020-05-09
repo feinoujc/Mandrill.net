@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Mandrill;
 using Mandrill.Model;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Tests
@@ -19,6 +20,16 @@ namespace Tests
             var client = new HttpClient();
 
             using (var api = new MandrillApi("api_key", client))
+            {
+                api.HttpClient.BaseAddress.OriginalString.Should().Be("https://mandrillapp.com/api/1.0/");
+                api.HttpClient.DefaultRequestHeaders.Accept.Count.Should().Be(1);
+            }
+        }
+
+        [Fact]
+        public void MandrillApi_ctor_non_content_serializer_client_is_default()
+        {
+            using (var api = new MandrillApi("api_key", new JsonSerializerSettings()))
             {
                 api.HttpClient.BaseAddress.OriginalString.Should().Be("https://mandrillapp.com/api/1.0/");
                 api.HttpClient.DefaultRequestHeaders.Accept.Count.Should().Be(1);

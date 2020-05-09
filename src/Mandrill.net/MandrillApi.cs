@@ -2,6 +2,8 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Mandrill.Model;
+using Mandrill.Serialization;
+using Newtonsoft.Json;
 
 namespace Mandrill
 {
@@ -22,17 +24,42 @@ namespace Mandrill
 
         public HttpClient HttpClient => _request.HttpClient;
 
-        public MandrillApi(string apiKey) : this(new MandrillRequest(apiKey, DefaultHttpClient.CreateDefault()))
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="apiKey">The mandrill api key</param>
+        public MandrillApi(string apiKey) : this(apiKey, DefaultHttpClient.CreateDefault(), MandrillSerializer.CreateDefaultContentSerializerSettings())
         {
         }
 
-        public MandrillApi(string apiKey, HttpClient client) : this(new MandrillRequest(apiKey, DefaultHttpClient.ApplyDefaults(client)))
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="apiKey">The mandrill api key</param>
+        /// <param name="client">An <see cref="HttpClient"/>to use for the api requests.</param>
+        public MandrillApi(string apiKey, HttpClient client) : this(apiKey, DefaultHttpClient.ApplyDefaults(client), MandrillSerializer.CreateDefaultContentSerializerSettings())
         {
         }
 
-        private MandrillApi(MandrillRequest request)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="apiKey">The mandrill api key</param>
+        /// <param name="contentSerializerSettings">A <see cref="JsonSerializerSettings"/> that will be used to serialize any merge variable content (used in handlebars templates)</param>
+        public MandrillApi(string apiKey, JsonSerializerSettings contentSerializerSettings) : this(apiKey, DefaultHttpClient.CreateDefault(), contentSerializerSettings)
         {
-            _request = request;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="apiKey">The mandrill api key</param>
+        /// <param name="client">An <see cref="HttpClient"/>to use for the api requests.</param>
+        /// <param name="contentSerializerSettings">A <see cref="JsonSerializerSettings"/> that will be used to serialize any merge variable content (used in handlebars templates)</param>
+        public MandrillApi(string apiKey, HttpClient client, JsonSerializerSettings contentSerializerSettings)
+        {
+            _request = new MandrillRequest(apiKey, client, MandrillSerializer.Create(contentSerializerSettings));
         }
 
         public string ApiKey => _request.ApiKey;
