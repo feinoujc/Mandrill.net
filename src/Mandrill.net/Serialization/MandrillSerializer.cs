@@ -7,19 +7,23 @@ namespace Mandrill.Serialization
 {
     public static class MandrillSerializer
     {
-        private static readonly Lazy<JsonSerializer> LazyJsonSerializer = new Lazy<JsonSerializer>(CreateSerializer);
+        public static JsonSerializer Instance { get; } = Create();
 
-        public static JsonSerializer Instance => LazyJsonSerializer.Value;
+        private static JsonSerializer Create()
+        {
+            var settings = CreateSerializerSettings(NullValueHandling.Ignore);
+            settings.Converters.Add(new MandrillMergeVarConverter(CreateSerializerSettings(NullValueHandling.Include)));
+            return JsonSerializer.Create(settings);
+        }
 
-        private static JsonSerializer CreateSerializer()
+        private static JsonSerializerSettings CreateSerializerSettings(NullValueHandling nullValueHandling)
         {
             var settings = new JsonSerializerSettings { ContractResolver = new MandrillJsonContractResolver() };
-
             settings.Converters.Add(new UnixDateTimeConverter());
             settings.Converters.Add(new StringEnumConverter { NamingStrategy = new SnakeCaseNamingStrategy(), AllowIntegerValues = false });
-            settings.NullValueHandling = NullValueHandling.Ignore;
+            settings.NullValueHandling = nullValueHandling;
             settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-            return JsonSerializer.Create(settings);
+            return settings;
         }
     }
 

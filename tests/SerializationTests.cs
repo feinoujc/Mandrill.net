@@ -88,6 +88,53 @@ namespace Tests
         }
 
         [Fact]
+        public void Can_serialize_content_including_nulls_by_default()
+        {
+            var message = new MandrillMessage();
+
+            var data = new { FirstName = "test", LastName = (string)null, Items = new string[0] };
+
+            message.GlobalMergeVars.Add(new MandrillMergeVar()
+            {
+                Name = "test",
+                Content = data
+            });
+
+            var json = JObject.FromObject(message, MandrillSerializer.Instance);
+
+            json["global_merge_vars"].Should().NotBeEmpty();
+            var result = json["global_merge_vars"].First["content"];
+
+            result.Value<string>("first_name").Should().Be("test");
+            result["last_name"].Should().NotBeNull();
+            result["last_name"].Value<string>().Should().BeNull();
+            result["items"].Should().NotBeNull();
+            result["items"].ToArray().Should().BeEmpty();
+        }
+
+        [Fact]
+        public void Can_serialize_merge_var_content_using_custom_settings()
+        {
+            var message = new MandrillMessage();
+            var data = new ContentModel { FirstName = "test", LastName = null };
+
+            message.GlobalMergeVars.Add(new MandrillMergeVar()
+            {
+                Name = "test",
+                Content = data
+            });
+
+            var json = JObject.FromObject(message, MandrillSerializer.Instance);
+
+            json["global_merge_vars"].Should().NotBeEmpty();
+            var result = json["global_merge_vars"].First["content"];
+
+            result.Value<string>("FirstName").Should().Be("test");
+            result["LastName"].Should().NotBeNull();
+            result["LastName"].Value<string>().Should().BeNull();
+        }
+
+        [Fact]
         public void Can_set_property_name_by_convention()
         {
             var model = new TestModel { SomePropertyName = "foo" };
@@ -496,6 +543,14 @@ namespace Tests
             var epoc = new DateTime(1970, 1, 1);
             var delta = self - epoc;
             return (long)delta.TotalSeconds;
+        }
+
+        private class ContentModel
+        {
+            [JsonProperty("FirstName")]
+            public string FirstName { get; set; }
+            [JsonProperty("LastName")]
+            public string LastName { get; set; }
         }
     }
 }

@@ -2,6 +2,8 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Mandrill.Model;
+using Mandrill.Serialization;
+using Newtonsoft.Json;
 
 namespace Mandrill
 {

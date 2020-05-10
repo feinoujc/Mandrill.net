@@ -12,14 +12,18 @@ namespace Mandrill
 {
     internal class MandrillRequest
     {
-        public HttpClient HttpClient { get; }
         public string ApiKey { get; }
+        public HttpClient HttpClient { get; }
+        public JsonSerializer JsonSerializer { get; }
+
         public MandrillRequest(string apiKey, HttpClient httpClient)
         {
             if (apiKey == null) throw new ArgumentNullException(nameof(apiKey));
+            if (httpClient == null) throw new ArgumentNullException(nameof(httpClient));
 
             ApiKey = apiKey;
-            this.HttpClient = httpClient;
+            HttpClient = httpClient;
+            JsonSerializer = MandrillSerializer.Instance;
         }
 
         public async Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value) where TRequest : MandrillRequestBase
@@ -67,12 +71,12 @@ namespace Mandrill
             using (var reader = new StreamReader(stream))
             using (var jsonReader = new JsonTextReader(reader))
             {
-                return MandrillSerializer<T>.Deserialize(jsonReader);
+                return JsonSerializer.Deserialize<T>(jsonReader);
             }
         }
 
         private async Task<HttpResponseMessage> PostAsJsonAsync<T>(string requestUri, T value,
-            CancellationToken c = default(CancellationToken))
+            CancellationToken c = default)
         {
             using (var stream = new MemoryStream())
             using (var writer = new StreamWriter(stream))
@@ -86,7 +90,7 @@ namespace Mandrill
         {
             using (var jsonWriter = new JsonTextWriter(writer) { CloseOutput = false })
             {
-                MandrillSerializer<T>.Serialize(jsonWriter, value);
+                JsonSerializer.Serialize(jsonWriter, value);
                 jsonWriter.Flush();
             }
             writer.BaseStream.Seek(0, SeekOrigin.Begin);

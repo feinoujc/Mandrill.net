@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Mandrill;
 using Mandrill.Model;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Tests
