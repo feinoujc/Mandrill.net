@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Mandrill.Model;
+using Mandrill.Serialization;
 using Newtonsoft.Json;
 
 namespace Mandrill
@@ -15,15 +16,14 @@ namespace Mandrill
         public HttpClient HttpClient { get; }
         public JsonSerializer JsonSerializer { get; }
 
-        public MandrillRequest(string apiKey, HttpClient httpClient, JsonSerializer jsonSerializer)
+        public MandrillRequest(string apiKey, HttpClient httpClient)
         {
             if (apiKey == null) throw new ArgumentNullException(nameof(apiKey));
             if (httpClient == null) throw new ArgumentNullException(nameof(httpClient));
-            if (jsonSerializer == null) throw new ArgumentNullException(nameof(jsonSerializer));
 
             ApiKey = apiKey;
             HttpClient = httpClient;
-            JsonSerializer = jsonSerializer;
+            JsonSerializer = MandrillSerializer.Instance;
         }
 
         public async Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value) where TRequest : MandrillRequestBase

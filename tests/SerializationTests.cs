@@ -29,7 +29,7 @@ namespace Tests
             var expected = ToUnixTime(date);
             var model = new TestModel { Ts = date };
 
-            var json = JObject.FromObject(model, MandrillSerializer.CreateDefault());
+            var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
             json["ts"].Value<long>().Should().Be(expected);
         }
@@ -45,7 +45,7 @@ namespace Tests
                 Content = "some content"
             });
 
-            var json = JObject.FromObject(message, MandrillSerializer.CreateDefault());
+            var json = JObject.FromObject(message, MandrillSerializer.Instance);
             json["global_merge_vars"].Should().NotBeEmpty();
             json["global_merge_vars"].First["content"].Value<string>().Should().Be("some content");
         }
@@ -75,11 +75,11 @@ namespace Tests
                 Content = data.ToList()
             });
 
-            var json = JObject.FromObject(message, MandrillSerializer.CreateDefault());
+            var json = JObject.FromObject(message, MandrillSerializer.Instance);
 
             json["global_merge_vars"].Should().NotBeEmpty();
             var result = json["global_merge_vars"].First["content"]
-                .ToObject<List<Dictionary<string, object>>>(MandrillSerializer.CreateDefault());
+                .ToObject<List<Dictionary<string, object>>>(MandrillSerializer.Instance);
 
             result[0]["sku"].Should().Be("apples");
             result[0]["unit_price"].Should().Be(0.20);
@@ -100,7 +100,7 @@ namespace Tests
                 Content = data
             });
 
-            var json = JObject.FromObject(message, MandrillSerializer.CreateDefault());
+            var json = JObject.FromObject(message, MandrillSerializer.Instance);
 
             json["global_merge_vars"].Should().NotBeEmpty();
             var result = json["global_merge_vars"].First["content"];
@@ -116,7 +116,7 @@ namespace Tests
         public void Can_serialize_merge_var_content_using_custom_settings()
         {
             var message = new MandrillMessage();
-            var data = new { FirstName = "test", LastName = (string)null };
+            var data = new ContentModel { FirstName = "test", LastName = null };
 
             message.GlobalMergeVars.Add(new MandrillMergeVar()
             {
@@ -124,7 +124,7 @@ namespace Tests
                 Content = data
             });
 
-            var json = JObject.FromObject(message, MandrillSerializer.Create(new JsonSerializerSettings()));
+            var json = JObject.FromObject(message, MandrillSerializer.Instance);
 
             json["global_merge_vars"].Should().NotBeEmpty();
             var result = json["global_merge_vars"].First["content"];
@@ -139,7 +139,7 @@ namespace Tests
         {
             var model = new TestModel { SomePropertyName = "foo" };
 
-            var json = JObject.FromObject(model, MandrillSerializer.CreateDefault());
+            var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
             json["some_property_name"].Value<string>().Should().Be("foo");
         }
@@ -149,7 +149,7 @@ namespace Tests
         {
             var model = new TestModel { List1 = new string[0] };
 
-            var json = JObject.FromObject(model, MandrillSerializer.CreateDefault());
+            var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
             json["list1"].Should().BeNull();
         }
@@ -166,9 +166,9 @@ namespace Tests
                 }
             };
 
-            var json = JObject.FromObject(model, MandrillSerializer.CreateDefault());
+            var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
-            json["list2"].ToObject<IList<TestSubModel>>(MandrillSerializer.CreateDefault())
+            json["list2"].ToObject<IList<TestSubModel>>(MandrillSerializer.Instance)
                 .Should()
                 .HaveCount(2);
         }
@@ -185,9 +185,9 @@ namespace Tests
                 }
             };
 
-            var json = JObject.FromObject(model, MandrillSerializer.CreateDefault());
+            var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
-            json["list2"].ToObject<IList<TestSubModel>>(MandrillSerializer.CreateDefault())
+            json["list2"].ToObject<IList<TestSubModel>>(MandrillSerializer.Instance)
                 .Should()
                 .HaveCount(2);
         }
@@ -198,7 +198,7 @@ namespace Tests
         {
             var model = new TestModel { Id = Guid.NewGuid().ToString("N") };
 
-            var json = JObject.FromObject(model, MandrillSerializer.CreateDefault());
+            var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
             json["_id"].Value<string>().Should().Be(model.Id);
         }
@@ -209,7 +209,7 @@ namespace Tests
         {
             var model = new TestModel { Value1 = null };
 
-            var json = JObject.FromObject(model, MandrillSerializer.CreateDefault());
+            var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
             json["value1"].Should().BeNull();
         }
@@ -219,7 +219,7 @@ namespace Tests
         {
             var model = new[] { new TestModel { Enum = TestEnum.Reject }, new TestModel { Enum = TestEnum.SoftBounce } };
 
-            var json = JArray.FromObject(model, MandrillSerializer.CreateDefault());
+            var json = JArray.FromObject(model, MandrillSerializer.Instance);
 
             json[0]["enum"].Value<string>().Should().Be("reject");
             json[1]["enum"].Value<string>().Should().Be("soft_bounce");
@@ -231,7 +231,7 @@ namespace Tests
         {
             var model = new TestModel { Dictionary = null };
 
-            var json = JObject.FromObject(model, MandrillSerializer.CreateDefault());
+            var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
             json["dictionary"].Should().BeNull();
         }
@@ -244,7 +244,7 @@ namespace Tests
                 Dictionary = new Dictionary<string, string> { { "key1", "value1" }, { "key2", "value2" } }
             };
 
-            var json = JObject.FromObject(model, MandrillSerializer.CreateDefault());
+            var json = JObject.FromObject(model, MandrillSerializer.Instance);
 
             json["dictionary"].Should().NotBeNull();
             var dictionary = json["dictionary"].ToObject<Dictionary<string, string>>();
@@ -339,9 +339,9 @@ namespace Tests
     }";
 
 
-            var message = JToken.Load(new JsonTextReader(new StringReader(json))).ToObject<MandrillMessage>(MandrillSerializer.CreateDefault());
-            json = JObject.FromObject(message, MandrillSerializer.CreateDefault()).ToString();
-            message = JToken.Load(new JsonTextReader(new StringReader(json))).ToObject<MandrillMessage>(MandrillSerializer.CreateDefault());
+            var message = JToken.Load(new JsonTextReader(new StringReader(json))).ToObject<MandrillMessage>(MandrillSerializer.Instance);
+            json = JObject.FromObject(message, MandrillSerializer.Instance).ToString();
+            message = JToken.Load(new JsonTextReader(new StringReader(json))).ToObject<MandrillMessage>(MandrillSerializer.Instance);
 
             message.Html.Should().Be("<p>Example HTML content</p>");
             message.Text.Should().Be("Example text content");
@@ -392,7 +392,7 @@ namespace Tests
             events.Should().NotBeNullOrEmpty();
             events.Should().HaveCount(14);
 
-            Output.WriteLine(JArray.FromObject(events, MandrillSerializer.CreateDefault()).ToString());
+            Output.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
         }
 
 
@@ -406,7 +406,7 @@ namespace Tests
             events.Should().NotBeNullOrEmpty();
             events.Should().HaveCount(14);
 
-            Output.WriteLine(JArray.FromObject(events, MandrillSerializer.CreateDefault()).ToString());
+            Output.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
         }
 
         [Fact]
@@ -435,7 +435,7 @@ namespace Tests
             events[0].Msg.FromName.Should().Be("Example Sender");
             events[1].Msg.FromName.Should().BeNullOrEmpty();
 
-            Output.WriteLine(JArray.FromObject(events, MandrillSerializer.CreateDefault()).ToString());
+            Output.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
 
         }
 
@@ -543,6 +543,14 @@ namespace Tests
             var epoc = new DateTime(1970, 1, 1);
             var delta = self - epoc;
             return (long)delta.TotalSeconds;
+        }
+
+        private class ContentModel
+        {
+            [JsonProperty("FirstName")]
+            public string FirstName { get; set; }
+            [JsonProperty("LastName")]
+            public string LastName { get; set; }
         }
     }
 }

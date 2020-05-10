@@ -27,16 +27,6 @@ namespace Tests
         }
 
         [Fact]
-        public void MandrillApi_ctor_non_content_serializer_client_is_default()
-        {
-            using (var api = new MandrillApi("api_key", new JsonSerializerSettings()))
-            {
-                api.HttpClient.BaseAddress.OriginalString.Should().Be("https://mandrillapp.com/api/1.0/");
-                api.HttpClient.DefaultRequestHeaders.Accept.Count.Should().Be(1);
-            }
-        }
-
-        [Fact]
         public void MandrillApi_ctor_non_default_client_retains_custom_settings()
         {
             var client = new HttpClient();
