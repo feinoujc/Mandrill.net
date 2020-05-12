@@ -33,9 +33,18 @@ namespace Mandrill.Serialization
             writer.WriteStartObject();
             writer.WritePropertyName("name");
             writer.WriteValue(mergeVar.Name);
-            var content = JToken.FromObject((object)mergeVar.Content, _contentSerializer);
             writer.WritePropertyName("content");
-            content.WriteTo(writer);
+            var content = (object)mergeVar.Content;
+            if (content == null)
+            {
+                writer.WriteNull();
+            }
+            else
+            {
+                var token = JToken.FromObject(content, _contentSerializer);
+                token.WriteTo(writer);
+            }
+
             writer.WriteEndObject();
         }
     }
