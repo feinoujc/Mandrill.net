@@ -135,6 +135,27 @@ namespace Tests
         }
 
         [Fact]
+        public void Can_serialize_merge_var_with_null_content()
+        {
+            var message = new MandrillMessage();
+            string data = null;
+
+            message.GlobalMergeVars.Add(new MandrillMergeVar()
+            {
+                Name = "test",
+                Content = data
+            });
+
+            var json = JObject.FromObject(message, MandrillSerializer.Instance);
+
+            json["global_merge_vars"].Should().NotBeEmpty();
+            var result = json["global_merge_vars"].First["content"];
+
+            Output.WriteLine(json.ToString(Formatting.Indented));
+            result.ToObject<object>().Should().BeNull();
+        }
+
+        [Fact]
         public void Can_set_property_name_by_convention()
         {
             var model = new TestModel { SomePropertyName = "foo" };
