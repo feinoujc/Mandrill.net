@@ -457,7 +457,21 @@ namespace Tests
             events[1].Msg.FromName.Should().BeNullOrEmpty();
 
             Output.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
+        }
 
+        [Fact]
+        public void Can_serialize_inbound_web_hook_with_empty_headers()
+        {
+            string json = TestData.mandrill_inbound_empty_headers;
+
+            var events = MandrillInboundEvent.ParseMandrillEvents(json);
+
+            events.Should().NotBeNullOrEmpty();
+            events.Should().HaveCount(1);
+
+            events[0].Msg.Headers.Should().BeEmpty();
+
+            Output.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
         }
 
         [Fact]
@@ -473,7 +487,6 @@ namespace Tests
             events[0].Action.Should().Be(MandrillSyncAction.Add);
             events[0].Type.Should().Be(MandrillSyncType.Blacklist);
         }
-
 
         [Fact]
         public void Can_serialize_case_insensitive_header_dictionary()

@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Mandrill.net.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Mandrill.Model
 {
@@ -13,6 +16,8 @@ namespace Mandrill.Model
 
         public string FromName { get; set; }
 
+        /// Inbound webhooks contain either a dictionary or an empty array for the headers property
+        [JsonConverter(typeof(EmptyArrayOrDictionaryConverter))]
         public Dictionary<string, object> Headers { get; set; } = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         public string Html { get; set; }
