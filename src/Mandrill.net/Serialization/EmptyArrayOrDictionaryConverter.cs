@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-namespace Mandrill.net.Serialization
+namespace Mandrill.Serialization
 {
     /// <summary>
-    /// This converter will allow an empty array to be converted to a dictionary
+    /// This converter will allow an empty array to be converted to an empty dictionary
     /// </summary>
     internal class EmptyArrayOrDictionaryConverter : JsonConverter
     {
@@ -20,28 +16,26 @@ namespace Mandrill.net.Serialization
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            JToken token = JToken.Load(reader);
-
-            if (token.Type == JTokenType.Object)
+            if (reader.TokenType == JsonToken.StartArray)
             {
-                return token.ToObject(objectType);
-            }
-            else if (token.Type == JTokenType.Array)
-            {
-                if (!token.HasValues)
+                while (reader.Read() && reader.TokenType != JsonToken.EndArray)
                 {
-                    // Create empty dictionary
-                    return Activator.CreateInstance(objectType);
+                    // discard
                 }
+                return existingValue ?? serializer.ContractResolver.ResolveContract(objectType).DefaultCreator();
             }
-
-            throw new JsonSerializationException("Object or empty array expected");
+            // default behavior
+            existingValue = existingValue ?? serializer.ContractResolver.ResolveContract(objectType).DefaultCreator();
+            serializer.Populate(reader, existingValue);
+            return existingValue;
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            serializer.Serialize(writer, value);
+            throw new NotSupportedException("CanWrite is false");
         }
+
+        public override bool CanWrite => false;
     }
 
 }
