@@ -13,12 +13,16 @@ namespace Mandrill.Serialization
 
         private static JsonSerializer CreateSerializer()
         {
-            var settings = new JsonSerializerSettings { ContractResolver = new MandrillJsonContractResolver() };
+            var settings = new JsonSerializerSettings
+            {
+                ContractResolver = new MandrillJsonContractResolver()
+            };
 
             settings.Converters.Add(new UnixDateTimeConverter());
             settings.Converters.Add(new StringEnumConverter { NamingStrategy = new SnakeCaseNamingStrategy(), AllowIntegerValues = false });
             settings.NullValueHandling = NullValueHandling.Ignore;
             settings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+   
             return JsonSerializer.Create(settings);
         }
     }

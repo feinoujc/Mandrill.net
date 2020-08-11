@@ -46,7 +46,6 @@ namespace Mandrill.Serialization
                         var dictionary = prop.GetValue(instance) as IDictionary<string, string>;
                         return dictionary?.Count > 0;
                     };
-
                 }
 
                 if (typeof(IDictionary<string, object>).GetTypeInfo().IsAssignableFrom(propertyType.GetTypeInfo()))
