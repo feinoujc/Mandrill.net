@@ -47,7 +47,7 @@ jobs:
                   dotnet-version: "6.0.x"
 
             - name: Extract tag version
-              shell: powershell
+              shell: pwsh
               run: |
                   $env:GITHUB_REF -match "^refs/tags/v(.+)"
                   $versionTag = $Matches[1]
