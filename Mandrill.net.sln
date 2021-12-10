@@ -1,4 +1,4 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -15,6 +15,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "tests\Tests.csproj", "{46BA8A52-1F53-4099-9F62-540D149F287D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mandrill.net", "src\Mandrill.net\Mandrill.net.csproj", "{29C93DA7-379F-40CA-9BF3-0F6AA006E28E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mandrill.net.Extensions.DependencyInjection", "src\Mandrill.net.Extensions.DependencyInjection\Mandrill.net.Extensions.DependencyInjection.csproj", "{2D86B07D-408A-4239-AEB7-143DA31362BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,18 @@ Global
 		{29C93DA7-379F-40CA-9BF3-0F6AA006E28E}.Release|x64.Build.0 = Release|Any CPU
 		{29C93DA7-379F-40CA-9BF3-0F6AA006E28E}.Release|x86.ActiveCfg = Release|Any CPU
 		{29C93DA7-379F-40CA-9BF3-0F6AA006E28E}.Release|x86.Build.0 = Release|Any CPU
+		{2D86B07D-408A-4239-AEB7-143DA31362BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D86B07D-408A-4239-AEB7-143DA31362BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D86B07D-408A-4239-AEB7-143DA31362BC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2D86B07D-408A-4239-AEB7-143DA31362BC}.Debug|x64.Build.0 = Debug|Any CPU
+		{2D86B07D-408A-4239-AEB7-143DA31362BC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2D86B07D-408A-4239-AEB7-143DA31362BC}.Debug|x86.Build.0 = Debug|Any CPU
+		{2D86B07D-408A-4239-AEB7-143DA31362BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D86B07D-408A-4239-AEB7-143DA31362BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D86B07D-408A-4239-AEB7-143DA31362BC}.Release|x64.ActiveCfg = Release|Any CPU
+		{2D86B07D-408A-4239-AEB7-143DA31362BC}.Release|x64.Build.0 = Release|Any CPU
+		{2D86B07D-408A-4239-AEB7-143DA31362BC}.Release|x86.ActiveCfg = Release|Any CPU
+		{2D86B07D-408A-4239-AEB7-143DA31362BC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,5 +71,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{46BA8A52-1F53-4099-9F62-540D149F287D} = {3D7BA565-AE66-447A-AF77-81106169A83A}
 		{29C93DA7-379F-40CA-9BF3-0F6AA006E28E} = {EF1B7483-88D5-4E7B-A194-E7375C9E1227}
+		{2D86B07D-408A-4239-AEB7-143DA31362BC} = {EF1B7483-88D5-4E7B-A194-E7375C9E1227}
 	EndGlobalSection
 EndGlobal
