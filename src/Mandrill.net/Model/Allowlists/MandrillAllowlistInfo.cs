@@ -4,7 +4,7 @@ using System;
 
 namespace Mandrill.Model
 {
-    public class MandrillWhitelistInfo
+    public class MandrillAllowlistInfo
     {
         public string Email { get; set; }
 

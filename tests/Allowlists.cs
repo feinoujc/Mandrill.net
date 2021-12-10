@@ -8,13 +8,13 @@ using Xunit.Abstractions;
 
 namespace Tests
 {
-    [Trait("Category", "whitelists")]
-    [Collection("whitelists")]
-    public class Whitelists : IntegrationTest
+    [Trait("Category", "allowlists")]
+    [Collection("allowlists")]
+    public class Allowlists : IntegrationTest
     {
         private HashSet<string> _added = new HashSet<string>();
 
-        public Whitelists(ITestOutputHelper output) : base(output)
+        public Allowlists(ITestOutputHelper output) : base(output)
         {
         }
 
@@ -22,12 +22,12 @@ namespace Tests
         {
             foreach (var email in _added)
             {
-                var result = Api.Whitelists.DeleteAsync(email).GetAwaiter().GetResult();
+                var result = Api.Allowlists.DeleteAsync(email).GetAwaiter().GetResult();
             }
         }
 
-        [Trait("Category", "whitelists/list.json")]
-        public class List : Whitelists
+        [Trait("Category", "allowlists/list.json")]
+        public class List : Allowlists
         {
             public List(ITestOutputHelper output) : base(output)
             {
@@ -37,7 +37,7 @@ namespace Tests
             public async Task Can_list_all()
             {
                 string email = null;
-                var results = await Api.Whitelists.ListAsync(email);
+                var results = await Api.Allowlists.ListAsync(email);
 
                 //the api doesn't return results immediately, it may return no results
                 var found = results.OrderBy(x => x.CreatedAt).FirstOrDefault();
@@ -47,7 +47,7 @@ namespace Tests
                 }
                 else
                 {
-                    Output.WriteLine("no emails found on whitelist.");
+                    Output.WriteLine("no emails found on allowlist.");
                 }
             }
 
@@ -55,55 +55,55 @@ namespace Tests
             public async Task Can_list_all_filtered()
             {
                 string email = null;
-                var entirelist = await Api.Whitelists.ListAsync(email);
+                var entirelist = await Api.Allowlists.ListAsync(email);
 
                 //the api doesn't return results immediately, it may return no results
                 var found = entirelist.OrderBy(x => x.CreatedAt).LastOrDefault();
                 if (found != null)
                 {
-                    var result = await Api.Whitelists.ListAsync(found.Email);
-                    string whitelistemail = result.FirstOrDefault().Email;
-                    whitelistemail.Should().NotBeNullOrEmpty();
-                    whitelistemail.Should().Be(found.Email);
+                    var result = await Api.Allowlists.ListAsync(found.Email);
+                    string allowlistemail = result.FirstOrDefault().Email;
+                    allowlistemail.Should().NotBeNullOrEmpty();
+                    allowlistemail.Should().Be(found.Email);
                 }
                 else
                 {
-                    Output.WriteLine("no emails on whitelist found.");
+                    Output.WriteLine("no emails on allowlist found.");
                 }
             }
         }
 
-        [Trait("Category", "whitelists/add.json")]
-        public class Add : Whitelists
+        [Trait("Category", "allowlists/add.json")]
+        public class Add : Allowlists
         {
             public Add(ITestOutputHelper output) : base(output)
             {
             }
 
             [Fact]
-            public async Task Can_add_whitelist()
+            public async Task Can_add_allowlist()
             {
                 var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
-                var result = await Api.Whitelists.AddAsync(email);
+                var result = await Api.Allowlists.AddAsync(email);
                 result.Added.Should().BeTrue();
                 _added.Add(result.Email);
             }
         }
 
-        [Trait("Category", "whitelists/delete.json")]
-        public class Delete : Whitelists
+        [Trait("Category", "allowlists/delete.json")]
+        public class Delete : Allowlists
         {
             public Delete(ITestOutputHelper output) : base(output)
             {
             }
 
             [Fact]
-            public async Task Can_delete_whitelist()
+            public async Task Can_delete_allowlist()
             {
                 var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
-                await Api.Whitelists.AddAsync(email);
+                await Api.Allowlists.AddAsync(email);
 
-                var result = await Api.Whitelists.DeleteAsync(email);
+                var result = await Api.Allowlists.DeleteAsync(email);
                 result.Deleted.Should().BeTrue();
             }
         }

@@ -2,8 +2,6 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Mandrill.Model;
-using Mandrill.Serialization;
-using Newtonsoft.Json;
 
 namespace Mandrill
 {
@@ -20,7 +18,7 @@ namespace Mandrill
         private MandrillTemplatesApi _templates;
         private MandrillUsersApi _users;
         private MandrillWebHooksApi _webhooks;
-        private MandrillWhitelistsApi _whitelists;
+        private MandrillAllowlistsApi _allowlists;
 
         public HttpClient HttpClient => _request.HttpClient;
 
@@ -51,7 +49,7 @@ namespace Mandrill
 
         public IMandrillSendersApi Senders => _senders ?? (_senders = new MandrillSendersApi(this));
 
-        public IMandrillWhitelistsApi Whitelists => _whitelists ?? (_whitelists = new MandrillWhitelistsApi(this));
+        public IMandrillAllowlistsApi Allowlists => _allowlists ?? (_allowlists = new MandrillAllowlistsApi(this));
 
         public IMandrillSubaccountsApi Subaccounts => _subaccounts ?? (_subaccounts = new MandrillSubaccountsApi(this));
 
