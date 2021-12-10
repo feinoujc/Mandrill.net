@@ -17,6 +17,7 @@ namespace Mandrill.Model
         [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime VerifiedAt { get; set; }
         public bool ValidSigning { get; set; }
+        public string VerifyTxtKey { get; set; }
         public MandrillSenderVerifyDomain Verified { get; set; }
     }
 }
