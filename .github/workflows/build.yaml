@@ -54,7 +54,7 @@ jobs:
                   echo "VERSION_TAG=$versionTag" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
             - name: pack
-              run: dotnet pack src/Mandrill.net --configuration Release -p:PackageVersion=$env:VERSION_TAG -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --output artifacts
+              run: dotnet pack src/Mandrill.net --configuration Release -p:PackageVersion=$VERSION_TAG -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --output artifacts
 
             - name: push
               env:
