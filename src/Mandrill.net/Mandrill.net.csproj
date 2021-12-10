@@ -8,7 +8,7 @@
     <Description>.NET wrapper for the Mandrill API</Description>
     <AssemblyTitle>Mandrill.net</AssemblyTitle>
     <Description>Simple .net wrapper for the Mandrill.net api</Description>
-    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AssemblyName>Mandrill.net</AssemblyName>
     <SignAssembly>true</SignAssembly>
@@ -22,7 +22,7 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/feinoujc/Mandrill.net</RepositoryUrl>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <None Include="logo.png" Pack="true" PackagePath="" />
   </ItemGroup>
