@@ -1,7 +1,6 @@
-Mandrill.net
-============
+# Mandrill.net
 
-Simple, cross-platform Mandrill api wrapper for .NET Core and .NET 4.6+
+Simple, cross-platform Mandrill api wrapper for .NET Core
 
 [![Coverage Status](https://coveralls.io/repos/github/feinoujc/Mandrill.net/badge.svg?v=1)](https://coveralls.io/github/feinoujc/Mandrill.net)
 <a href="http://www.nuget.org/packages/Mandrill.net/"><img src="https://img.shields.io/nuget/v/Mandrill.net.svg" title="NuGet Status"></a>
@@ -17,10 +16,9 @@ Install-Package Mandrill.net
 ```
 
 ## Building
+
 ```sh
-dotnet build src/Mandrill.net
-# if on mac/linux, you cannot build against the .net461 target:
-# dotnet build src/Mandrill.net -f netstandard2.0
+dotnet build
 ```
 
 ## Testing
@@ -32,7 +30,7 @@ dotnet build src/Mandrill.net
 ```sh
 # include MANDRILL_API_KEY and MANDRILL_SENDING_DOMAIN in your env. For example:
 # MANDRILL_API_KEY=xxxxxxxxx MANDRILL_SENDING_DOMAIN=acme.com dotnet test tests
-dotnet test tests
+dotnet test
 ```
 
 ### Send a new transactional message through Mandrill
@@ -45,6 +43,7 @@ var result = await api.Messages.SendAsync(message);
 ```
 
 ### Send a new transactional message through Mandrill using a template
+
 ```cs
 var api = new MandrillApi("YOUR_API_KEY_GOES_HERE");
 var message = new MandrillMessage();
