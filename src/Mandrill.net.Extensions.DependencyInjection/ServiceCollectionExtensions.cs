@@ -6,7 +6,7 @@ public static class ServiceCollectionExtensions
 {
 
     /// <summary>
-    /// Adds the <see cref="System.Net.Http.IHttpClientFactory"/> with <see cref="MandrllApi"/> and related services to the <see cref="IServiceCollection"/>.
+    /// Adds the <see cref="System.Net.Http.IHttpClientFactory"/> with <see cref="MandrillApi"/> and related services to the <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/>.</param>
     /// <param name="configureOptions">A delegate that is used to configure a <see cref="MandrillClientOptions"/>.</param>
