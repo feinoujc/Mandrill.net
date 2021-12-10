@@ -1,6 +1,6 @@
 namespace Mandrill.Model
 {
-    internal class MandrillWhitelistRequest : MandrillRequestBase
+    internal class MandrillAllowlistRequest : MandrillRequestBase
     {
         public string Email { get; set; }
     }
