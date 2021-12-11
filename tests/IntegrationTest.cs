@@ -2,6 +2,9 @@ using System;
 using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
+using Mandrill.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Tests
 {
@@ -11,10 +14,15 @@ namespace Tests
     public abstract class IntegrationTest : IDisposable
     {
         protected ITestOutputHelper Output { get; }
+        private ServiceProvider _services;
+
 
         protected IntegrationTest(ITestOutputHelper output)
         {
             Output = output;
+            var registry = new ServiceCollection();
+            registry.AddLogging((builder) => builder.AddXunit(this.Output));
+            _services = registry.AddMandrill(options => options.ApiKey = ApiKeyLazy.Value).Services.BuildServiceProvider();
         }
         private static readonly Lazy<string> ApiKeyLazy = new Lazy<string>(() =>
         {
@@ -27,11 +35,9 @@ namespace Tests
             return apiKey;
         });
 
-        private static readonly Lazy<MandrillApi> LazyApi = new Lazy<MandrillApi>(() => new MandrillApi(ApiKeyLazy.Value));
-
         protected string ApiKey => ApiKeyLazy.Value;
 
-        protected MandrillApi Api => LazyApi.Value;
+        protected IMandrillApi Api => _services.GetRequiredService<IMandrillApi>();
 
         public virtual void Dispose()
         {

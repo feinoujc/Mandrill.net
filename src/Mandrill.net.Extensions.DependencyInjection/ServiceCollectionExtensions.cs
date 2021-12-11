@@ -6,7 +6,7 @@ public static class ServiceCollectionExtensions
 {
 
     /// <summary>
-    /// Adds the <see cref="System.Net.Http.IHttpClientFactory"/> with <see cref="MandrillApi"/> and related services to the <see cref="IServiceCollection"/>.
+    /// Adds the <see cref="System.Net.Http.IHttpClientFactory"/> with <see cref="IMandrillApi"/> and related services to the <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/>.</param>
     /// <param name="configureOptions">A delegate that is used to configure a <see cref="MandrillClientOptions"/>.</param>
@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
                 }
             });
 
-        services.TryAddTransient<MandrillApi>(resolver => resolver.GetRequiredService<InjectableMandrillClient>());
+        services.TryAddTransient<IMandrillApi>(resolver => resolver.GetRequiredService<InjectableMandrillClient>());
         services.AddMandrillService(api => api.Allowlists);
         services.AddMandrillService(api => api.Exports);
         services.AddMandrillService(api => api.Inbound);
@@ -39,7 +39,7 @@ public static class ServiceCollectionExtensions
         return services.AddHttpClient<InjectableMandrillClient>();
     }
     /// <summary>
-    /// Adds the <see cref="System.Net.Http.IHttpClientFactory"/> with <see cref="MandrillApi"/> and related services to the <see cref="IServiceCollection"/>.
+    /// Adds the <see cref="System.Net.Http.IHttpClientFactory"/> with <see cref="IMandrillApi"/> and related services to the <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/>.</param>
     /// <param name="configureOptions">A delegate that is used to configure a <see cref="MandrillClientOptions"/>.</param>
@@ -49,7 +49,7 @@ public static class ServiceCollectionExtensions
         return services.AddMandrill((_, options) => configureOptions(options));
     }
 
-    internal static void AddMandrillService<T>(this IServiceCollection services, Func<MandrillApi, T> accessor) where T : class
+    internal static void AddMandrillService<T>(this IServiceCollection services, Func<IMandrillApi, T> accessor) where T : class
     {
         services.TryAddTransient<T>(resolver => accessor(resolver.GetRequiredService<InjectableMandrillClient>()));
     }

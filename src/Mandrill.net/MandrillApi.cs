@@ -5,7 +5,7 @@ using Mandrill.Model;
 
 namespace Mandrill
 {
-    public class MandrillApi : IDisposable
+    public class MandrillApi : IDisposable, IMandrillApi
     {
         private readonly MandrillRequest _request;
         private MandrillExportsApi _exports;

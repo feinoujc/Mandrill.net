@@ -4,18 +4,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Mandrill.Extensions.DependencyInjection;
 using Xunit;
-using Xunit.Abstractions;
 using Mandrill;
-using System.Threading.Tasks;
 
 namespace Tests
 {
-    public class ServiceCollectionExtensionsTests : IntegrationTest
+    public class ServiceCollectionExtensionsTests
     {
-        public ServiceCollectionExtensionsTests(ITestOutputHelper output) : base(output)
-        {
-        }
-
         [Fact]
         public void TestAddMandrillWithoutApiKey()
         {
@@ -23,7 +17,7 @@ namespace Tests
             var services = new ServiceCollection().AddMandrill(options => { }).Services.BuildServiceProvider();
 
             // Act && Assert
-            Assert.Throws<ArgumentNullException>(() => services.GetRequiredService<MandrillApi>());
+            Assert.Throws<ArgumentNullException>(() => services.GetRequiredService<IMandrillApi>());
         }
 
         [Fact]
@@ -50,7 +44,7 @@ namespace Tests
             var builder = collection.AddMandrill(options => options.ApiKey = "FAKE_API_KEY");
 
             // Assert
-            var serviceDescriptor = collection.FirstOrDefault(x => x.ServiceType == typeof(MandrillApi));
+            var serviceDescriptor = collection.FirstOrDefault(x => x.ServiceType == typeof(IMandrillApi));
             Assert.NotNull(serviceDescriptor);
             Assert.Equal(ServiceLifetime.Transient, serviceDescriptor.Lifetime);
         }
@@ -75,7 +69,7 @@ namespace Tests
             var services = new ServiceCollection().AddMandrill(options => options.ApiKey = "FAKE_API_KEY").Services.BuildServiceProvider();
 
             // Act
-            var Mandrill = services.GetService<MandrillApi>();
+            var Mandrill = services.GetService<IMandrillApi>();
 
             // Assert
             Assert.NotNull(Mandrill);
@@ -103,19 +97,6 @@ namespace Tests
 
             // Assert
             Assert.NotNull(instance);
-        }
-
-        [Fact]
-        public async Task TestAddMandrillCanReallyCallHttpServices()
-        {
-            // Arrange
-            var services = new ServiceCollection().AddMandrill(options => options.ApiKey = this.ApiKey).Services.BuildServiceProvider();
-
-            // Act
-            var result = await services.GetService<IMandrillUsersApi>().PingAsync();
-
-            // Assert
-            Assert.Equal("PONG!", result);
         }
     }
 }
