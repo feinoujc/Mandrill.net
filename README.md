@@ -2,7 +2,7 @@
 
 Simple, cross-platform Mandrill api wrapper for .NET Core
 
-[![Coverage Status](https://coveralls.io/repos/github/feinoujc/Mandrill.net/badge.svg?v=1)](https://coveralls.io/github/feinoujc/Mandrill.net)
+[![Coverage Status](https://coveralls.io/repos/github/feinoujc/Mandrill.net/badge.svg?branch=main)](https://coveralls.io/github/feinoujc/Mandrill.net?branch=main)
 <a href="http://www.nuget.org/packages/Mandrill.net/"><img src="https://img.shields.io/nuget/v/Mandrill.net.svg" title="NuGet Status"></a>
 
 ## API Docs
