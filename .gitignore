@@ -240,3 +240,6 @@ $RECYCLE.BIN/
 # coverage folder
 coverage/
 coverage.xml
+
+
+artifacts
