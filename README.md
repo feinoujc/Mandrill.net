@@ -66,16 +66,29 @@ var result = await api.Messages.SendTemplateAsync(message, "customer-invoice");
 It is recommended that you do not create an instance of the `MandrillApi` for every request, to effectively pool connections to mandrill, and prevent socket exhaustion in your app. If you are using .net dependency injection, you can use the `Mandrill.net.Extensions.Microsoft.DependencyInjection` package which includes a `IServiceCollection.AddMandrill()` extension method, allowing you to register all the needed interfaces and also customize the [HttpClientFactory](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests) to efficiently manage the HttpClient connections.
 
 ```cs
-public void ConfigureServices(IServiceCollection services)
+using Microsoft.Extensions.DependencyInjection;
+using Mandrill;
+using Mandrill.Model;
+using Mandrill.Extensions.DependencyInjection;
+
+var services = ConfigureServices(new ServiceCollection()).BuildServiceProvider();
+var api = services.GetRequiredService<IMandrillApi>();
+// we can also target specific mandrill api endpoint interfaces...
+//var messagesApi = services.GetRequiredService<IMandrillMessagesApi>();
+var message = new MandrillMessage("from@example.com", "to@example.com",
+        "hello mandrill!", "...how are you?");
+var result = await api.Messages.SendAsync(message);
+
+static IServiceCollection ConfigureServices(IServiceCollection services)
 {
-  services.AddMandrill(options =>
-  {
-      options.ApiKey = "YOUR_API_KEY_GOES_HERE"; // Load the api key from configuration
-  });
+    services.AddMandrill(options =>
+    {
+        options.ApiKey = "YOUR_API_KEY_GOES_HERE"; // Load the api key from configuration
+    });
+
+    return services;
 }
 ```
-
-This will register `IMandrillApi` and each specific endpoint interfaces in the service provider
 
 
 ### Processing a web hook batch
