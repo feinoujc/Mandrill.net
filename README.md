@@ -12,26 +12,12 @@ https://mandrillapp.com/api/docs/
 ## Getting Started
 
 ```ps
-Install-Package Mandrill.net
+dotnet add package Mandrill.net
+
+# use Mandrill with HttpClientFactory
+dotnet add package Mandrill.net.Extensions.DependencyInjection
 ```
 
-## Building
-
-```sh
-dotnet build
-```
-
-## Testing
-
-**You must set the user environment variable MANDRILL_API_KEY in order to run these tests. Go to https://mandrillapp.com/ to obtain an api key.**
-
-**In order for the email from address to match your allowed sending domains, you can set MANDRILL_SENDING_DOMAIN to match your account.**
-
-```sh
-# include MANDRILL_API_KEY and MANDRILL_SENDING_DOMAIN in your env. For example:
-# MANDRILL_API_KEY=xxxxxxxxx MANDRILL_SENDING_DOMAIN=acme.com dotnet test tests
-dotnet test
-```
 
 ### Send a new transactional message through Mandrill
 
@@ -74,14 +60,23 @@ var result = await api.Messages.SendTemplateAsync(message, "customer-invoice");
 
 ```
 
+
 ### Service Registration
 
-It is recommended that you do not create an instance of the `MandrillApi` for every request, to effectively pool connections to mandrill, and prevent socket exhaustion in your app. For example, an ASP.NET Core service registration that registers the API Interfaces as singletons:
+It is recommended that you do not create an instance of the `MandrillApi` for every request, to effectively pool connections to mandrill, and prevent socket exhaustion in your app. If you are using .net dependency injection, you can use the `Mandrill.net.Extensions.Microsoft.DependencyInjection` package which includes a `IServiceCollection.AddMandrill()` extension method, allowing you to register all the needed interfaces and also customize the [HttpClientFactory](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests) to efficiently manage the HttpClient connections.
 
 ```cs
-var api = new MandrillApi("YOUR_API_KEY_GOES_HERE");
-services.AddSingleton<IMandrillMessagesApi>(api.Messages);
+public void ConfigureServices(IServiceCollection services)
+{
+  services.AddMandrill(options =>
+  {
+      options.ApiKey = "YOUR_API_KEY_GOES_HERE"; // Load the api key from configuration
+  });
+}
 ```
+
+This will register `IMandrillApi` and each specific endpoint interfaces in the service provider
+
 
 ### Processing a web hook batch
 
@@ -116,6 +111,24 @@ private bool ValidateRequest(FormDataCollection value)
 
    return WebHookSignatureHelper.VerifyWebHookSignature(signature, key, Request.RequestUri, value.ReadAsNameValueCollection());
 }
+```
+
+## Building
+
+```sh
+dotnet build
+```
+
+## Testing
+
+**You must set the user environment variable MANDRILL_API_KEY in order to run these tests. Go to https://mandrillapp.com/ to obtain an api key.**
+
+**In order for the email from address to match your allowed sending domains, you can set MANDRILL_SENDING_DOMAIN to match your account.**
+
+```sh
+# include MANDRILL_API_KEY and MANDRILL_SENDING_DOMAIN in your env. For example:
+# MANDRILL_API_KEY=xxxxxxxxx MANDRILL_SENDING_DOMAIN=acme.com dotnet test tests
+dotnet test
 ```
 
 ## API coverage
