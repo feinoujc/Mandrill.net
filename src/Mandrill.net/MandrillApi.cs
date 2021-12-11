@@ -26,7 +26,11 @@ namespace Mandrill
         {
         }
 
-        public MandrillApi(string apiKey, HttpClient client) : this(new MandrillRequest(apiKey, DefaultHttpClient.ApplyDefaults(client)))
+        public MandrillApi(string apiKey, HttpClient client) : this(client, new MandrillClientOptions { ApiKey = apiKey })
+        {
+        }
+
+        public MandrillApi(HttpClient client, MandrillClientOptions options) : this(new MandrillRequest(options.ApiKey, DefaultHttpClient.ApplyDefaults(client)))
         {
         }
 
