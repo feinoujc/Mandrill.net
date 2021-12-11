@@ -82,16 +82,31 @@ This will register `IMandrillApi` and each specific endpoint interfaces in the s
 
 ```cs
 [HttpPost]
-public IHttpActionResult MyWebApiControllerMethod(FormDataCollection value)
+[Route("/api/some/route/outbound")]
+[Consumes("application/x-www-form-urlencoded")]
+public async Task<IActionResult> Outbound([FromForm(Name = "mandrill_events")] string body)
 {
-    //optional: validate your webhook signature
-    // see https://mandrill.zendesk.com/hc/en-us/articles/205583257-How-to-Authenticate-Webhook-Requests
-    if(!ValidateRequest(value))
+    if (!Request.Headers.TryGetValue("X-Mandrill-Signature", out var signature))
     {
-      return Forbidden();
+        return Unauthorized();
     }
 
-    var events = MandrillMessageEvent.ParseMandrillEvents(value.Get("mandrill_events"));
+
+    var events = MandrillMessageEvent.ParseMandrillEvents(body);
+
+    // accept an empty test request
+    if (events.Count == 0)
+    {
+        return Accepted();
+    }
+
+    var hook = await GetWebHookForRequest();
+
+    if (!ValidateRequest(body, signature, "WEBHOOK_SECRET_KEY_HERE"))
+    {
+        return Forbid();
+    }
+
     foreach (var messageEvent in events)
     {
         // do something with the event
@@ -99,17 +114,12 @@ public IHttpActionResult MyWebApiControllerMethod(FormDataCollection value)
     return Ok();
 }
 
-private bool ValidateRequest(FormDataCollection value)
-{
-   IEnumerable<string> headers;
-   if (!Request.Headers.TryGetValues("X-Mandrill-Signature", out headers))
-   {
-     return false;
-   }
-   var signature = headers.Single();
-   var key = "MANDRILL_WEBHOOK_KEY_HERE";
 
-   return WebHookSignatureHelper.VerifyWebHookSignature(signature, key, Request.RequestUri, value.ReadAsNameValueCollection());
+private bool ValidateRequest(string body, string signature, string authKey)
+{
+    var form = new NameValueCollection();
+    form.Set("mandrill_events", body);
+    return WebHookSignatureHelper.VerifyWebHookSignature(signature, authKey, new Uri(Request.GetDisplayUrl()), form);
 }
 ```
 
