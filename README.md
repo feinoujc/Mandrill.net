@@ -63,7 +63,7 @@ var result = await api.Messages.SendTemplateAsync(message, "customer-invoice");
 
 ### Service Registration
 
-It is recommended that you do not create an instance of the `MandrillApi` for every request, to effectively pool connections to mandrill, and prevent socket exhaustion in your app. If you are using .net dependency injection, you can use the `Mandrill.net.Extensions.Microsoft.DependencyInjection` package which includes a `IServiceCollection.AddMandrill()` extension method, allowing you to register all the needed interfaces and also customize the [HttpClientFactory](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests) to efficiently manage the HttpClient connections.
+It is recommended that you do not create an instance of the `MandrillApi` for every request, to effectively pool connections to mandrill, and prevent socket exhaustion in your app. If you are using .net dependency injection, you can use the `Mandrill.net.Extensions.DependencyInjection` package which includes a `IServiceCollection.AddMandrill()` extension method, allowing you to register all the needed interfaces and also customize the [HttpClientFactory](https://docs.microsoft.com/en-us/dotnet/architecture/microservices/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests) to efficiently manage the HttpClient connections.
 
 ```cs
 using Microsoft.Extensions.DependencyInjection;
@@ -112,8 +112,6 @@ public async Task<IActionResult> Outbound([FromForm(Name = "mandrill_events")] s
     {
         return Accepted();
     }
-
-    var hook = await GetWebHookForRequest();
 
     if (!ValidateRequest(body, signature, "WEBHOOK_SECRET_KEY_HERE"))
     {
