@@ -12,6 +12,7 @@ namespace Mandrill.Model
         Click,
         Spam,
         Unsub,
-        Reject
+        Reject,
+        Delivered
     }
 }
