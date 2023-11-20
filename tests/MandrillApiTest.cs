@@ -59,7 +59,7 @@ namespace Tests
             }
             catch (ObjectDisposedException)
             {
-                Assert.False(true, "Should not have been disposed");
+                Assert.Fail("Should not have been disposed");
             }
             catch (HttpRequestException)
             {

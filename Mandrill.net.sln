@@ -1,14 +1,11 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34302.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3D7BA565-AE66-447A-AF77-81106169A83A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A359CB29-3E2A-4A41-A897-725C5A0888C6}"
-	ProjectSection(SolutionItems) = preProject
-		.travis.yml = .travis.yml
-		appveyor.yml = appveyor.yml
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EF1B7483-88D5-4E7B-A194-E7375C9E1227}"
 EndProject
@@ -16,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "tests\Tests.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mandrill.net", "src\Mandrill.net\Mandrill.net.csproj", "{29C93DA7-379F-40CA-9BF3-0F6AA006E28E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mandrill.net.Extensions.DependencyInjection", "src\Mandrill.net.Extensions.DependencyInjection\Mandrill.net.Extensions.DependencyInjection.csproj", "{2D86B07D-408A-4239-AEB7-143DA31362BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mandrill.net.Extensions.DependencyInjection", "src\Mandrill.net.Extensions.DependencyInjection\Mandrill.net.Extensions.DependencyInjection.csproj", "{2D86B07D-408A-4239-AEB7-143DA31362BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
