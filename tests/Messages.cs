@@ -390,11 +390,11 @@ To: Mr Smith
                 };
                 message.Images.Add(new MandrillImage("image/png", "mandrill_logo", TestData.PngImage));
                 message.Attachments.Add(new MandrillAttachment("text/plain", "message.txt", Encoding.UTF8.GetBytes("This is an attachment.\n")));
-                message.Attachments.Add(new MandrillAttachment(MandrillAttachmentType.Txt, "message.txt", Encoding.UTF8.GetBytes("This is an attachment.\n")));
+                message.Attachments.Add(new MandrillAttachment(MandrillAttachmentType.Txt, "message2.txt", Encoding.UTF8.GetBytes("This is also an attachment.\n")));
 
                 var result = await Api.Messages.SendAsync(message);
 
-                result.Should().HaveCount(3);
+                result.Should().HaveCount(2);
                 AssertResults(result);
             }
 
