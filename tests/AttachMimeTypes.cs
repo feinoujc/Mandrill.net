@@ -12,7 +12,7 @@ namespace Tests
 {
     [Trait("Category", "AttachMimeTypes")]
     [Collection("AttachMimeTypes")]
-    public class AttachMimeTypes 
+    public class AttachMimeTypes
     {
         [Fact]
         public void AreAllEnumValuesPresent_ShouldReturnTrueWhenAllValuesPresent()
@@ -20,12 +20,12 @@ namespace Tests
             foreach (MandrillAttachmentType myType in Enum.GetValues(typeof(MandrillAttachmentType)))
             {
                 try
-                {             
-                MandrillAttachmentMime.GetMimeType(myType);
+                {
+                    MandrillAttachmentMime.GetMimeType(myType);
                 }
                 catch (Exception ex)
                 {
-                    Assert.True(false, $"{myType} is not in MandrillAttachmentMime dictionary");
+                    Assert.Fail($"{myType} is not in MandrillAttachmentMime dictionary");
                 }
             }
             Assert.True(true);

@@ -6,9 +6,9 @@ namespace Mandrill.Model
     {
         public MandrillAttachment()
         {
-          
+
         }
-       
+
         public MandrillAttachment(string type, string name, byte[] content)
         {
             Type = type;

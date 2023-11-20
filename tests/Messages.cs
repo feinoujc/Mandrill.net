@@ -30,7 +30,7 @@ namespace Tests
             {
                 if (response.Status == MandrillSendMessageResponseStatus.Invalid)
                 {
-                    Assert.True(false, "invalid email: " + response.RejectReason);
+                    Assert.Fail("invalid email: " + response.RejectReason);
                 }
                 if (response.Status == MandrillSendMessageResponseStatus.Rejected &&
         response.RejectReason == "unsigned")
@@ -40,7 +40,7 @@ namespace Tests
                 }
                 if (response.Status == MandrillSendMessageResponseStatus.Rejected)
                 {
-                    Assert.True(false, "rejected email: " + response.RejectReason);
+                    Assert.Fail("rejected email: " + response.RejectReason);
 
                 }
 
@@ -50,7 +50,7 @@ namespace Tests
                     break;
                 }
 
-                Assert.True(false, "Unexptected status:" + response.Status);
+                Assert.Fail("Unexptected status:" + response.Status);
             }
         }
 

@@ -42,7 +42,7 @@ namespace Mandrill.Model
     public class MandrillAttachmentMime
     {
         public static string GetMimeType(MandrillAttachmentType mime) => _mimeTypes[mime.ToString()];
-         static Dictionary<string, string> _mimeTypes = new Dictionary<string, string>{
+        static Dictionary<string, string> _mimeTypes = new Dictionary<string, string>{
             { "Jpg", "image/jpeg" },
             { "Jpeg", "image/jpeg" },
             { "Png", "image/png" },
@@ -73,6 +73,6 @@ namespace Mandrill.Model
             { "Mp4", "video/mp4" },
             { "Avi", "video/x-msvideo" }
       };
-        
+
     }
 }
