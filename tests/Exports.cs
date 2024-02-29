@@ -37,7 +37,7 @@ namespace Tests
                 {
                     throw new ExportThrottledTestException(mex.Message, mex);
                 }
-                throw mex;
+                throw;
             }
         }
 
