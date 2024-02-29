@@ -8,13 +8,12 @@ namespace Mandrill.Model
 {
     public static class WebHookSignatureHelper
     {
-        public static bool VerifyWebHookSignature(string signature, string key, Uri absoluteUri, NameValueCollection formPost)
+        public static bool VerifyWebHookSignature(string signature, string key, string absoluteUri, NameValueCollection formPost)
         {
             if (signature == null) throw new ArgumentNullException(nameof(signature));
             if (key == null) throw new ArgumentNullException(nameof(key));
             if (absoluteUri == null) throw new ArgumentNullException(nameof(absoluteUri));
             if (formPost == null) throw new ArgumentNullException(nameof(formPost));
-            if (!absoluteUri.IsAbsoluteUri) throw new ArgumentException("uri must be an absolute uri", nameof(absoluteUri));
 
             var toSign = new StringBuilder();
             toSign.Append(absoluteUri);
@@ -31,6 +30,13 @@ namespace Mandrill.Model
 
                 return signature == hash;
             }
+        }
+        public static bool VerifyWebHookSignature(string signature, string key, Uri absoluteUri, NameValueCollection formPost)
+        {
+            if (absoluteUri == null) throw new ArgumentNullException(nameof(absoluteUri));
+            if (!absoluteUri.IsAbsoluteUri) throw new ArgumentException("uri must be an absolute uri", nameof(absoluteUri));
+
+            return VerifyWebHookSignature(signature, key, absoluteUri.ToString(), formPost);
         }
     }
 }
