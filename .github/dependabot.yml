@@ -1,12 +1,10 @@
 version: 2
 updates:
-- package-ecosystem: nuget
-  directory: "/"
-  schedule:
-    interval: daily
-    time: "02:00"
-  open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: coverlet.msbuild
-    versions:
-    - 3.0.2
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: "weekly"

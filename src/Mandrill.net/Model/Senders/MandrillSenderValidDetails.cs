@@ -9,7 +9,7 @@ namespace Mandrill.Model
         public bool Valid { get; set; }
 
         [JsonConverter(typeof(IsoDateTimeConverter))]
-        public DateTime ValidAfter { get; set; }
+        public DateTime? ValidAfter { get; set; }
 
         public string Error { get; set; }
     }
