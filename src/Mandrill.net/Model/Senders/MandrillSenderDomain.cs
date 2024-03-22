@@ -16,7 +16,10 @@ namespace Mandrill.Model
 
         public MandrillSenderValidDetails SPF { get; set; }
         public MandrillSenderValidDetails DKIM { get; set; }
+
+        [JsonProperty("dkim2")]
         public MandrillSenderValidDetails DKIM2 { get; set; }
+
         public MandrillSenderValidDetails DMARC { get; set; }
 
         [JsonConverter(typeof(IsoDateTimeConverter))]
