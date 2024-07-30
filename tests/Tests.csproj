@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net60</TargetFramework>
+    <TargetFramework>net80</TargetFramework>
     <AssemblyName>Tests</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
@@ -15,7 +15,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\Mandrill.net\Mandrill.net.csproj" />
-    <ProjectReference Include="..\src\Mandrill.net.Extensions.DependencyInjection\Mandrill.net.Extensions.DependencyInjection.csproj" />
+    <ProjectReference
+      Include="..\src\Mandrill.net.Extensions.DependencyInjection\Mandrill.net.Extensions.DependencyInjection.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
