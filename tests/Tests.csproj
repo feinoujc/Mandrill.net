@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net80</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>Tests</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
