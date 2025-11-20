@@ -718,6 +718,55 @@ namespace Tests
 
         #endregion
 
+        #region mandrill_webhook_invalid_metadata
+
+        public const string mandrill_webhook_invalid_metadata = @"[
+    {
+        ""event"": ""send"",
+        ""msg"": {
+            ""ts"": 1365109999,
+            ""subject"": ""This an example webhook message"",
+            ""email"": ""example.webhook@mandrillapp.com"",
+            ""sender"": ""example.sender@mandrillapp.com"",
+            ""tags"": [
+                ""webhook-example""
+            ],
+            ""opens"": [],
+            ""clicks"": [],
+            ""state"": ""sent"",
+            ""metadata"": [],
+            ""_id"": ""fa239ebedd0a4831a3eefa59e880d8b2"",
+            ""_version"": ""exampleaaaaaaaaaaaaaaa""
+        },
+        ""_id"": ""fa239ebedd0a4831a3eefa59e880d8b2"",
+        ""ts"": 1420303407
+    },
+    {
+        ""event"": ""deferral"",
+        ""msg"": {
+            ""ts"": 1365109999,
+            ""subject"": ""This an example webhook message"",
+            ""email"": ""example.webhook@mandrillapp.com"",
+            ""sender"": ""example.sender@mandrillapp.com"",
+            ""tags"": [
+                ""webhook-example""
+            ],
+            ""opens"": [],
+            ""clicks"": [],
+            ""state"": ""sent"",
+            ""metadata"": {
+                ""user_id"": 111
+            },
+            ""_id"": ""fa239ebedd0a4831a3eefa59e880d8b2"",
+            ""_version"": ""exampleaaaaaaaaaaaaaaa""
+        },
+        ""_id"": ""fa239ebedd0a4831a3eefa59e880d8b2"",
+        ""ts"": 1420303407
+    }
+]";
+
+        #endregion
+
         #region mandrill_webhook_invalid
 
         public const string mandrill_webhook_invalid = @"[

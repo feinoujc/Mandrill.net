@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Mandrill.Extensions.DependencyInjection;
+
 public static class ServiceCollectionExtensions
 {
 

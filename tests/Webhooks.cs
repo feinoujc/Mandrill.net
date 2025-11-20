@@ -18,7 +18,7 @@ namespace Tests
         public Webhooks(ITestOutputHelper output) : base(output)
         {
             _added.Clear();
-            var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_OUTBOUND_WEBHOOK") ?? "https://reqres.in/api/mandrill-webhook-test";
+            var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_OUTBOUND_WEBHOOK") ?? "https://httpbin.org/status/200";
 
             WebhookUri = new Uri(configuredWebHook);
 
