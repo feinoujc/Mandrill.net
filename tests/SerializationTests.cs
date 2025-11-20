@@ -416,6 +416,32 @@ namespace Tests
             Output.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
         }
 
+        [Fact]
+        public void Can_serialize_message_web_hook_with_invalid_metadata()
+        {
+            string json = TestData.mandrill_webhook_invalid_metadata;
+
+            var events = MandrillMessageEvent.ParseMandrillEvents(json);
+
+            events.Should().NotBeNullOrEmpty();
+            events.Should().HaveCount(2);
+
+            Assert.Collection(events,
+                e =>
+                {
+                    e.Msg.Metadata.Should().NotBeNull();
+                    e.Msg.Metadata.Should().HaveCount(0);
+                },
+                e =>
+                {
+                    e.Msg.Metadata.Should().NotBeNull();
+                    e.Msg.Metadata.Should().HaveCount(1);
+                    e.Msg.Metadata["user_id"].Should().Be("111");
+                });
+
+            Output.WriteLine(JArray.FromObject(events, MandrillSerializer.Instance).ToString());
+        }
+
 
         [Fact]
         public void Can_serialize_message_web_hook_with_invalid_longitude_latitude()

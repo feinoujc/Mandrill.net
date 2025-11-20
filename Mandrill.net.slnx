@@ -1,0 +1,15 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/" />
+  <Folder Name="/src/">
+    <Project Path="src/Mandrill.net.Extensions.DependencyInjection/Mandrill.net.Extensions.DependencyInjection.csproj" />
+    <Project Path="src/Mandrill.net/Mandrill.net.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="tests/Tests.csproj" />
+  </Folder>
+</Solution>

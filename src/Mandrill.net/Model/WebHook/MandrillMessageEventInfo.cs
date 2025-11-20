@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mandrill.Serialization;
 using Newtonsoft.Json;
 
 namespace Mandrill.Model
@@ -30,6 +31,7 @@ namespace Mandrill.Model
 
         public MandrillMessageState State { get; set; }
 
+        [JsonConverter(typeof(EmptyArrayOrDictionaryConverter))]
         public Dictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public List<MandrillSmtpEvent> SmtpEvents { get; set; } = new List<MandrillSmtpEvent>();
