@@ -44,7 +44,6 @@ jobs:
                   path-to-lcov: ./tests/coverage.lcov
 
     publish-nuget:
-        needs: test
         runs-on: ubuntu-latest
         # tag a release as v1.0.0....
         if: startsWith(github.ref, 'refs/tags/v')
