@@ -4,7 +4,9 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Folder Name="/Solution Items/" />
+  <Folder Name="/Solution Items/">
+    <File Path=".github/workflows/build.yaml" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Mandrill.net.Extensions.DependencyInjection/Mandrill.net.Extensions.DependencyInjection.csproj" />
     <Project Path="src/Mandrill.net/Mandrill.net.csproj" />
