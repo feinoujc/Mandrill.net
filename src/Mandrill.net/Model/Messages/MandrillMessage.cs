@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Mandrill.Serialization;
 
 namespace Mandrill.Model
 {
@@ -40,67 +41,42 @@ namespace Mandrill.Model
         }
 
         public string Html { get; set; }
-
         public string Text { get; set; }
-
         public string Subject { get; set; }
-
         public string FromEmail { get; set; }
-
         public string FromName { get; set; }
-
         public List<MandrillMailAddress> To { get; set; } = new List<MandrillMailAddress>();
 
+        [JsonConverter(typeof(EmptyArrayOrDictionaryConverter))]
         public Dictionary<string, object> Headers { get; set; } = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         public bool? Important { get; set; }
-
         public bool? TrackOpens { get; set; }
-
         public bool? TrackClicks { get; set; }
-
         public bool? AutoText { get; set; }
-
         public bool? AutoHtml { get; set; }
-
         public bool? InlineCss { get; set; }
-
         public bool? UrlStripQs { get; set; }
-
         public bool? PreserveRecipients { get; set; }
-
         public bool? ViewContentLink { get; set; }
-
         public string BccAddress { get; set; }
-
         public string TrackingDomain { get; set; }
-
         public string SigningDomain { get; set; }
-
         public string ReturnPathDomain { get; set; }
-
         public bool? Merge { get; set; }
-
         public MandrillMessageMergeLanguage? MergeLanguage { get; set; }
-
         public List<MandrillMergeVar> GlobalMergeVars { get; set; } = new List<MandrillMergeVar>();
-
         public List<MandrillRcptMergeVar> MergeVars { get; set; } = new List<MandrillRcptMergeVar>();
-
         public List<string> Tags { get; set; } = new List<string>();
-
         public string Subaccount { get; set; }
-
         public List<string> GoogleAnalyticsDomains { get; set; } = new List<string>();
-
         public string GoogleAnalyticsCampaign { get; set; }
 
+        [JsonConverter(typeof(EmptyArrayOrDictionaryConverter))]
         public Dictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public List<MandrillRcptMetadata> RecipientMetadata { get; set; } = new List<MandrillRcptMetadata>();
-
         public List<MandrillAttachment> Attachments { get; set; } = new List<MandrillAttachment>();
-
         public List<MandrillImage> Images { get; set; } = new List<MandrillImage>();
 
         [JsonIgnore]
@@ -108,25 +84,26 @@ namespace Mandrill.Model
         {
             get
             {
-                object value;
-                if (Headers.TryGetValue("Reply-To", out value))
+                if (Headers.TryGetValue("Reply-To", out var value))
                 {
-                    return value as string;
+                    if (value is string text)
+                    {
+                        return text;
+                    }
+
+                    if (value is JsonElement element && element.ValueKind == JsonValueKind.String)
+                    {
+                        return element.GetString();
+                    }
                 }
+
                 return null;
             }
             set { Headers["Reply-To"] = value; }
         }
 
-        public void AddTo(string email)
-        {
-            AddTo(email, null, null);
-        }
-
-        public void AddTo(string email, string name)
-        {
-            AddTo(email, name, null);
-        }
+        public void AddTo(string email) => AddTo(email, null, null);
+        public void AddTo(string email, string name) => AddTo(email, name, null);
 
         public void AddTo(string email, string name, MandrillMailAddressType? type)
         {
@@ -140,11 +117,7 @@ namespace Mandrill.Model
 
         public void AddGlobalMergeVars(string name, dynamic content)
         {
-            GlobalMergeVars.Add(new MandrillMergeVar
-            {
-                Name = name,
-                Content = content
-            });
+            GlobalMergeVars.Add(new MandrillMergeVar { Name = name, Content = content });
         }
 
         public void AddRcptMergeVars(string rcptEmail, string name, string content)
@@ -154,11 +127,8 @@ namespace Mandrill.Model
             {
                 MergeVars.Add(mergeVar = new MandrillRcptMergeVar { Rcpt = rcptEmail });
             }
-            mergeVar.Vars.Add(new MandrillMergeVar
-            {
-                Name = name,
-                Content = content
-            });
+
+            mergeVar.Vars.Add(new MandrillMergeVar { Name = name, Content = content });
         }
 
         public void AddRcptMergeVars(string rcptEmail, string name, dynamic content)
@@ -168,17 +138,11 @@ namespace Mandrill.Model
             {
                 MergeVars.Add(mergeVar = new MandrillRcptMergeVar { Rcpt = rcptEmail });
             }
-            mergeVar.Vars.Add(new MandrillMergeVar
-            {
-                Name = name,
-                Content = content
-            });
+
+            mergeVar.Vars.Add(new MandrillMergeVar { Name = name, Content = content });
         }
 
-        public void AddMetadata(string key, string value)
-        {
-            Metadata[key] = value;
-        }
+        public void AddMetadata(string key, string value) => Metadata[key] = value;
 
         public void AddRecipientMetadata(string rcptEmail, string key, string value)
         {
@@ -187,17 +151,11 @@ namespace Mandrill.Model
             {
                 RecipientMetadata.Add(metadata = new MandrillRcptMetadata { Rcpt = rcptEmail });
             }
+
             metadata.Values[key] = value;
         }
 
-        public void AddHeader(string key, string value)
-        {
-            Headers[key] = value;
-        }
-
-        public void AddHeader(string key, IEnumerable<string> values)
-        {
-            Headers[key] = values.ToArray();
-        }
+        public void AddHeader(string key, string value) => Headers[key] = value;
+        public void AddHeader(string key, IEnumerable<string> values) => Headers[key] = values.ToArray();
     }
 }

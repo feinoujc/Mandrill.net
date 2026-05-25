@@ -1,5 +1,5 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using Mandrill.Serialization;
+using System.Text.Json.Serialization;
 using System;
 
 namespace Mandrill.Model
@@ -17,7 +17,7 @@ namespace Mandrill.Model
         public MandrillSenderValidDetails SPF { get; set; }
         public MandrillSenderValidDetails DKIM { get; set; }
 
-        [JsonProperty("dkim2")]
+        [JsonPropertyName("dkim2")]
         public MandrillSenderValidDetails DKIM2 { get; set; }
 
         public MandrillSenderValidDetails DMARC { get; set; }

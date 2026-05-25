@@ -1,50 +1,77 @@
 using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Mandrill.Model;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Mandrill.Serialization
 {
-    internal class MandrillMergeVarConverter : JsonConverter
+    internal class MandrillMergeVarConverter : JsonConverter<MandrillMergeVar>
     {
-        private readonly JsonSerializer _contentSerializer;
+        private readonly JsonSerializerOptions _contentOptions;
 
-        public MandrillMergeVarConverter(JsonSerializerSettings contentSettings)
+        public MandrillMergeVarConverter(JsonSerializerOptions contentOptions)
         {
-            _contentSerializer = JsonSerializer.Create(contentSettings);
+            _contentOptions = contentOptions;
         }
 
-        public override bool CanConvert(Type objectType) => objectType == typeof(MandrillMergeVar);
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override MandrillMergeVar Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
-        }
-
-        public override bool CanRead
-        {
-            get { return false; }
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            var mergeVar = (MandrillMergeVar)value;
-
-            writer.WriteStartObject();
-            writer.WritePropertyName("name");
-            writer.WriteValue(mergeVar.Name);
-            writer.WritePropertyName("content");
-            var content = (object)mergeVar.Content;
-            if (content == null)
+            if (reader.TokenType != JsonTokenType.StartObject)
             {
-                writer.WriteNull();
+                throw new JsonException();
+            }
+
+            var mergeVar = new MandrillMergeVar();
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.EndObject)
+                {
+                    return mergeVar;
+                }
+
+                if (reader.TokenType != JsonTokenType.PropertyName)
+                {
+                    throw new JsonException();
+                }
+
+                var propertyName = reader.GetString();
+                reader.Read();
+
+                switch (propertyName)
+                {
+                    case "name":
+                        mergeVar.Name = reader.TokenType == JsonTokenType.Null ? null : reader.GetString();
+                        break;
+                    case "content":
+                        mergeVar.Content = reader.TokenType switch
+                        {
+                            JsonTokenType.Null => null,
+                            JsonTokenType.String => reader.GetString(),
+                            _ => JsonSerializer.Deserialize<object>(ref reader, options),
+                        };
+                        break;
+                    default:
+                        reader.Skip();
+                        break;
+                }
+            }
+
+            throw new JsonException();
+        }
+
+        public override void Write(Utf8JsonWriter writer, MandrillMergeVar value, JsonSerializerOptions options)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("name", value.Name);
+            writer.WritePropertyName("content");
+            if (value.Content == null)
+            {
+                writer.WriteNullValue();
             }
             else
             {
-                var token = JToken.FromObject(content, _contentSerializer);
-                token.WriteTo(writer);
+                JsonSerializer.Serialize(writer, value.Content, _contentOptions);
             }
-
             writer.WriteEndObject();
         }
     }

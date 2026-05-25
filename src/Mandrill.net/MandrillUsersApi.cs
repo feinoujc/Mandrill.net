@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Mandrill.Model;
-using Newtonsoft.Json.Linq;
 
 namespace Mandrill
 {
@@ -16,8 +16,8 @@ namespace Mandrill
 
         public async Task<string> PingAsync()
         {
-            return (await MandrillApi.PostAsync<MandrillUsersRequest, JObject>("users/ping2.json",
-                new MandrillUsersRequest()).ConfigureAwait(false))["PING"].Value<string>();
+            return (await MandrillApi.PostAsync<MandrillUsersRequest, JsonElement>("users/ping2.json",
+                new MandrillUsersRequest()).ConfigureAwait(false)).GetProperty("PING").GetString()!;
         }
 
         public Task<IList<MandrillSenderDemographics>> SendersAsync()

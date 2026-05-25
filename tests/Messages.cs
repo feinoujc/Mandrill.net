@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
@@ -215,8 +215,10 @@ To: Mr Smith
                 var result = await Api.Messages.ParseAsync(rawMessage);
 
                 result.Should().NotBeNull();
-                result.Headers["Received"].Should().BeOfType<JArray>();
-                ((JArray)result.Headers["Received"]).Count.Should().Be(3);
+                result.Headers["Received"].Should().BeOfType<JsonElement>();
+                var received = (JsonElement)result.Headers["Received"];
+                received.ValueKind.Should().Be(JsonValueKind.Array);
+                received.GetArrayLength().Should().Be(3);
                 result.Headers["Delivered-To"].Should().BeOfType<string>();
                 result.Headers["Delivered-To"].Should().Be("MrSmith@gmail.com");
                 result.ReplyTo.Should().Be("MrsJohnson@gmail.com");

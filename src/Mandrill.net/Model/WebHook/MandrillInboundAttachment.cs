@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Mandrill.Model
 {
@@ -7,7 +7,8 @@ namespace Mandrill.Model
         public string Name { get; set; }
         public string Type { get; set; }
         public string Content { get; set; }
-        [JsonProperty("base64")]
+
+        [JsonPropertyName("base64")]
         public bool Base64 { get; set; }
     }
 }

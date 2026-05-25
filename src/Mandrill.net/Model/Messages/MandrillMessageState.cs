@@ -1,7 +1,10 @@
 using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
+using Mandrill.Serialization;
 
 namespace Mandrill.Model
 {
+    [JsonConverter(typeof(MandrillMessageStateConverter))]
     public enum MandrillMessageState
     {
         Sent,
@@ -14,5 +17,4 @@ namespace Mandrill.Model
         Deferred,
         Inbound
     }
-
 }

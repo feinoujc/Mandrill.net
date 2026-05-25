@@ -1,10 +1,10 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Mandrill.Model
 {
     public class MandrillSubaccountInfo : MandrillSubaccountResponse
     {
-        [JsonProperty("last_30_days")]
+        [JsonPropertyName("last_30_days")]
         public MandrillSubaccountStats Last30Days { get; set; }
     }
 }

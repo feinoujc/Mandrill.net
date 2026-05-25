@@ -1,6 +1,6 @@
 using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using Mandrill.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Mandrill.Model
 {
