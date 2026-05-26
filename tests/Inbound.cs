@@ -84,11 +84,9 @@ namespace Tests
 
             public Routes(ITestOutputHelper output) : base(output)
             {
-                var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_INBOUND_WEBHOOK") ?? "https://reqres.in/api/mandrill-webhook-test";
+                var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_INBOUND_WEBHOOK") ?? "https://httpbin.org/status/200";
 
                 WebhookUri = new UriBuilder(configuredWebHook) { Query = "id=" + Guid.NewGuid().ToString("N") }.Uri;
-
-                //configure webhook api at http://requestb.in
             }
             public override void Dispose()
             {
