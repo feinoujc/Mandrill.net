@@ -26,7 +26,7 @@ namespace Mandrill
         public async Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value) where TRequest : MandrillRequestBase
         {
             value.Key = ApiKey;
-            var response = await HttpClient.PostAsJsonAsync(requestUri, value, JsonOptions).ConfigureAwait(false);
+            var response = await HttpClient.PostAsync(requestUri, JsonContent.Create(value, value.GetType(), options: JsonOptions)).ConfigureAwait(false);
             await EnsureSuccessAsync(response).ConfigureAwait(false);
             return (await response.Content.ReadFromJsonAsync<TResponse>(JsonOptions).ConfigureAwait(false))!;
         }
