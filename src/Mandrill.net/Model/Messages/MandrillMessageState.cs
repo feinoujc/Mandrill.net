@@ -1,10 +1,8 @@
-using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
-using Mandrill.Serialization;
 
 namespace Mandrill.Model
 {
-    [JsonConverter(typeof(MandrillMessageStateConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter<MandrillMessageState>))]
     public enum MandrillMessageState
     {
         Sent,
@@ -12,7 +10,7 @@ namespace Mandrill.Model
         Spam,
         Unsub,
         Bounced,
-        [EnumMember(Value = "soft-bounced")]
+        [JsonStringEnumMemberName("soft-bounced")]
         SoftBounced,
         Deferred,
         Inbound

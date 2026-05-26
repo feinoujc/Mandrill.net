@@ -23,7 +23,6 @@ namespace Mandrill.Model
         public List<MandrillOpensDetail> Opens { get; set; } = new List<MandrillOpensDetail>();
         public List<MandrillClicksDetail> Clicks { get; set; } = new List<MandrillClicksDetail>();
 
-        [JsonConverter(typeof(MandrillMessageStateConverter))]
         public MandrillMessageState State { get; set; }
 
         [JsonConverter(typeof(EmptyArrayOrDictionaryConverter))]

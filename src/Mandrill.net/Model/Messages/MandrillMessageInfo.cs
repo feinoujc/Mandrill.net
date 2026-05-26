@@ -22,7 +22,6 @@ namespace Mandrill.Model
         public int? Clicks { get; set; }
         public List<MandrillClicksDetail> ClicksDetail { get; set; } = new List<MandrillClicksDetail>();
 
-        [JsonConverter(typeof(MandrillMessageStateConverter))]
         public MandrillMessageState State { get; set; }
 
         [JsonConverter(typeof(EmptyArrayOrDictionaryConverter))]
