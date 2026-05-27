@@ -1,0 +1,404 @@
+{
+    "groups": {
+        "allowlist": {
+            "interface": "IMandrillAllowlistsApi",
+            "class": "MandrillAllowlistsApi",
+            "property": "Allowlists"
+        },
+        "exports": {
+            "interface": "IMandrillExportsApi",
+            "class": "MandrillExportsApi",
+            "property": "Exports"
+        },
+        "inbound": {
+            "interface": "IMandrillInboundApi",
+            "class": "MandrillInboundApi",
+            "property": "Inbound"
+        },
+        "ips": {
+            "interface": "IMandrillIpsApi",
+            "class": "MandrillIpsApi",
+            "property": "Ips"
+        },
+        "mc templates": {
+            "interface": "IMandrillMcTemplatesApi",
+            "class": "MandrillMcTemplatesApi",
+            "property": "McTemplates"
+        },
+        "messages": {
+            "interface": "IMandrillMessagesApi",
+            "class": "MandrillMessagesApi",
+            "property": "Messages"
+        },
+        "metadata": {
+            "interface": "IMandrillMetadataApi",
+            "class": "MandrillMetadataApi",
+            "property": "Metadata"
+        },
+        "rejects": {
+            "interface": "IMandrillRejectsApi",
+            "class": "MandrillRejectsApi",
+            "property": "Rejects"
+        },
+        "senders": {
+            "interface": "IMandrillSendersApi",
+            "class": "MandrillSendersApi",
+            "property": "Senders"
+        },
+        "subaccounts": {
+            "interface": "IMandrillSubaccountsApi",
+            "class": "MandrillSubaccountsApi",
+            "property": "Subaccounts"
+        },
+        "tags": {
+            "interface": "IMandrillTagsApi",
+            "class": "MandrillTagsApi",
+            "property": "Tags"
+        },
+        "templates": {
+            "interface": "IMandrillTemplatesApi",
+            "class": "MandrillTemplatesApi",
+            "property": "Templates"
+        },
+        "urls": {
+            "interface": "IMandrillUrlsApi",
+            "class": "MandrillUrlsApi",
+            "property": "Urls"
+        },
+        "users": {
+            "interface": "IMandrillUsersApi",
+            "class": "MandrillUsersApi",
+            "property": "Users"
+        },
+        "webhooks": {
+            "interface": "IMandrillWebHooksApi",
+            "class": "MandrillWebHooksApi",
+            "property": "WebHooks"
+        }
+    },
+    "operations": {
+        "messages/send": { "method": "SendAsync", "customImpl": true },
+        "messages/send-template": {
+            "method": "SendTemplateAsync",
+            "customImpl": true
+        },
+        "messages/send-raw": { "method": "SendRawAsync", "customImpl": true },
+        "messages/send-mc-template": {
+            "method": "SendMcTemplateAsync",
+            "customImpl": false
+        },
+        "messages/send-sms": { "method": "SendSmsAsync", "customImpl": true },
+        "messages/search": { "method": "SearchAsync", "customImpl": true },
+        "messages/search-time-series": {
+            "method": "SearchTimeSeriesAsync",
+            "customImpl": true
+        },
+        "messages/info": { "method": "InfoAsync", "customImpl": false },
+        "messages/content": { "method": "ContentAsync", "customImpl": false },
+        "messages/parse": { "method": "ParseAsync", "customImpl": true },
+        "messages/list-scheduled": {
+            "method": "ListScheduledAsync",
+            "customImpl": false
+        },
+        "messages/reschedule": {
+            "method": "RescheduleAsync",
+            "customImpl": true
+        },
+        "messages/cancel-scheduled": {
+            "method": "CancelScheduledAsync",
+            "customImpl": false
+        },
+        "templates/add": { "method": "AddAsync", "customImpl": false },
+        "templates/update": { "method": "UpdateAsync", "customImpl": false },
+        "templates/delete": { "method": "DeleteAsync", "customImpl": false },
+        "templates/list": { "method": "ListAsync", "customImpl": false },
+        "templates/render": { "method": "RenderAsync", "customImpl": false },
+        "templates/info": { "method": "InfoAsync", "customImpl": false },
+        "templates/publish": { "method": "PublishAsync", "customImpl": false },
+        "templates/time-series": {
+            "method": "TimeSeriesAsync",
+            "customImpl": false
+        },
+        "tags/list": { "method": "ListAsync", "customImpl": false },
+        "tags/info": { "method": "InfoAsync", "customImpl": false },
+        "tags/delete": { "method": "DeleteAsync", "customImpl": false },
+        "tags/time-series": {
+            "method": "TimeSeriesAsync",
+            "customImpl": false
+        },
+        "tags/all-time-series": {
+            "method": "AllTimeSeriesAsync",
+            "customImpl": false
+        },
+        "rejects/add": { "method": "AddAsync", "customImpl": false },
+        "rejects/delete": { "method": "DeleteAsync", "customImpl": false },
+        "rejects/list": { "method": "ListAsync", "customImpl": false },
+        "rejects/add-sms": { "method": "AddSmsAsync", "customImpl": false },
+        "rejects/delete-sms": {
+            "method": "DeleteSmsAsync",
+            "customImpl": false
+        },
+        "rejects/list-sms": { "method": "ListSmsAsync", "customImpl": false },
+        "users/info": { "method": "InfoAsync", "customImpl": false },
+        "users/ping": { "method": "PingAsync", "customImpl": true },
+        "users/ping2": { "method": "Ping2Async", "customImpl": true },
+        "users/senders": { "method": "SendersAsync", "customImpl": false },
+        "senders/list": { "method": "ListAsync", "customImpl": false },
+        "senders/domains": { "method": "DomainsAsync", "customImpl": false },
+        "senders/add-domain": {
+            "method": "AddDomainAsync",
+            "customImpl": false
+        },
+        "senders/check-domain": {
+            "method": "CheckDomainAsync",
+            "customImpl": false
+        },
+        "senders/verify-domain": {
+            "method": "VerifyDomainAsync",
+            "customImpl": false
+        },
+        "senders/delete-domain": {
+            "method": "DeleteDomainAsync",
+            "customImpl": false
+        },
+        "senders/info": { "method": "InfoAsync", "customImpl": false },
+        "senders/time-series": {
+            "method": "TimeSeriesAsync",
+            "customImpl": false
+        },
+        "allowlists/add": { "method": "AddAsync", "customImpl": false },
+        "allowlists/delete": { "method": "DeleteAsync", "customImpl": false },
+        "allowlists/list": { "method": "ListAsync", "customImpl": false },
+        "subaccounts/list": { "method": "ListAsync", "customImpl": false },
+        "subaccounts/add": { "method": "AddAsync", "customImpl": false },
+        "subaccounts/info": { "method": "InfoAsync", "customImpl": false },
+        "subaccounts/update": { "method": "UpdateAsync", "customImpl": false },
+        "subaccounts/delete": { "method": "DeleteAsync", "customImpl": false },
+        "subaccounts/pause": { "method": "PauseAsync", "customImpl": false },
+        "subaccounts/resume": { "method": "ResumeAsync", "customImpl": false },
+        "inbound/domains": { "method": "DomainsAsync", "customImpl": false },
+        "inbound/add-domain": {
+            "method": "AddDomainAsync",
+            "customImpl": false
+        },
+        "inbound/check-domain": {
+            "method": "CheckDomainAsync",
+            "customImpl": false
+        },
+        "inbound/delete-domain": {
+            "method": "DeleteDomainAsync",
+            "customImpl": false
+        },
+        "inbound/routes": { "method": "RoutesAsync", "customImpl": false },
+        "inbound/add-route": { "method": "AddRouteAsync", "customImpl": false },
+        "inbound/update-route": {
+            "method": "UpdateRouteAsync",
+            "customImpl": false
+        },
+        "inbound/delete-route": {
+            "method": "DeleteRouteAsync",
+            "customImpl": false
+        },
+        "inbound/send-raw": { "method": "SendRawAsync", "customImpl": false },
+        "webhooks/list": { "method": "ListAsync", "customImpl": false },
+        "webhooks/add": { "method": "AddAsync", "customImpl": false },
+        "webhooks/info": { "method": "InfoAsync", "customImpl": false },
+        "webhooks/update": { "method": "UpdateAsync", "customImpl": false },
+        "webhooks/delete": { "method": "DeleteAsync", "customImpl": false },
+        "exports/list": { "method": "ListAsync", "customImpl": false },
+        "exports/info": { "method": "InfoAsync", "customImpl": false },
+        "exports/rejects": { "method": "RejectsAsync", "customImpl": false },
+        "exports/whitelist": {
+            "method": "WhitelistAsync",
+            "customImpl": false
+        },
+        "exports/allowlist": {
+            "method": "AllowlistAsync",
+            "customImpl": false
+        },
+        "exports/activity": { "method": "ActivityAsync", "customImpl": false }
+    },
+    "schemas": {
+        "MessagesSendResult": "MandrillSendMessageResponse",
+        "MessagesSendResponse": "MandrillSendMessageResponse",
+        "MessagesEmailInfo": "MandrillMessageInfo",
+        "MessagesSearchResponse": "MandrillMessageInfo",
+        "MessagesInfoResponse": "MandrillMessageInfo",
+        "MessagesSmsInfo": "MandrillSmsMessageInfo",
+        "MessagesSearchTimeSeries": "MandrillMessageTimeSeries",
+        "MessagesSearchTimeSeriesResponse": "MandrillMessageTimeSeries",
+        "MessagesEmailContent": "MandrillMessageContent",
+        "MessagesContentResponse": "MandrillMessageContent",
+        "MessagesScheduled": "MandrillMessageScheduleInfo",
+        "MessagesListScheduledResponse": "MandrillMessageScheduleInfo",
+        "MessagesRescheduleResponse": "MandrillMessageScheduleInfo",
+        "MessagesCancelScheduledResponse": "MandrillMessageScheduleInfo",
+        "TagsTag": "MandrillTagInfo",
+        "TagsInfoResponse": "MandrillTagInfo",
+        "TagsDeleteResponse": "MandrillTagInfo",
+        "TagsListResponse": "MandrillTagInfo",
+        "TagsTagTimeSeries": "MandrillTagTimeSeries",
+        "TagsTimeSeriesResponse": "MandrillTagTimeSeries",
+        "TagsTimeSeriesWithTag": "MandrillTagTimeSeries",
+        "TagsAllTimeSeriesResponse": "MandrillTagTimeSeries",
+        "IPsCancelWarmupResponse": "MandrillIpInfo",
+        "IPsCheckCustomDnsResponse": "MandrillIpCustomDnsResponse",
+        "IPsCreatePoolResponse": "MandrillIpPool",
+        "IPsDeletePoolResponse": "MandrillIpPoolDeleteResponse",
+        "IPsDeleteResponse": "MandrillIpDeleteResponse",
+        "IPsInfoResponse": "MandrillIpInfo",
+        "IPsListPoolsResponse": "MandrillIpPool",
+        "IPsListResponse": "MandrillIpInfo",
+        "IPsPoolInfoResponse": "MandrillIpPool",
+        "IPsProvisionResponse": "MandrillIpProvisionResponse",
+        "IPsSetCustomDnsResponse": "MandrillIpInfo",
+        "IPsSetPoolResponse": "MandrillIpInfo",
+        "IPsStartWarmupResponse": "MandrillIpInfo",
+        "MctemplatesInfoResponse": "MandrillMcTemplateInfo",
+        "MctemplatesMcTemplate": "MandrillMcTemplateInfo",
+        "MctemplatesRenderResponse": "MandrillMcTemplateRenderResponse",
+        "MctemplatesTimeSeries": "MandrillMcTemplateTimeSeries",
+        "MctemplatesTimeSeriesResponse": "MandrillMcTemplateTimeSeries",
+        "MctemplatesListResponse": "MandrillMcTemplateInfo",
+        "MessagesParseResponse": "MandrillMessage",
+        "MessagesSendMcTemplateResponse": "MandrillSendMessageResponse",
+        "MessagesSendRawResponse": "MandrillSendMessageResponse",
+        "MessagesSendTemplateResponse": "MandrillSendMessageResponse",
+        "MessagesSendSmsResponse": "MandrillSmsMessage",
+        "MessagesSmsMessage": "MandrillSmsMessage",
+        "RejectsAddSmsResponse": "MandrillSmsReject",
+        "RejectsDeleteSmsResponse": "MandrillSmsReject",
+        "RejectsListSmsResponse": "MandrillSmsReject",
+        "RejectsSmsReject": "MandrillSmsReject",
+        "MetadataResponseData": "MandrillMetadataInfo",
+        "MetadataAddResponse": "MandrillMetadataInfo",
+        "MetadataDeleteResponse": "MandrillMetadataInfo",
+        "MetadataUpdateResponse": "MandrillMetadataInfo",
+        "MetadataListResponse": "MandrillMetadataInfo",
+        "UsersPingResponse": "string",
+        "UsersPing2Response": "MandrillUserPing2Response",
+        "TemplatesTemplateHistory": "MandrillTemplateTimeSeries",
+        "UrlsAddTrackingDomainResponse": "MandrillTrackingDomain",
+        "UrlsCheckTrackingDomainResponse": "MandrillTrackingDomain",
+        "UrlsDeleteTrackingDomainResponse": "MandrillTrackingDomain",
+        "UrlsTrackingDomainsResponse": "MandrillTrackingDomain",
+        "SendersInfoResponse": "MandrillSenderInfo",
+        "TemplatesTemplate": "MandrillTemplateInfo",
+        "TemplatesInfoResponse": "MandrillTemplateInfo",
+        "TemplatesAddResponse": "MandrillTemplateInfo",
+        "TemplatesUpdateResponse": "MandrillTemplateInfo",
+        "TemplatesDeleteResponse": "MandrillTemplateInfo",
+        "TemplatesListResponse": "MandrillTemplateInfo",
+        "TemplatesPublishResponse": "MandrillTemplateInfo",
+        "TemplatesRenderResponse": "MandrillTemplateRenderResponse",
+        "TemplatesTimeSeriesResponse": "MandrillMessageTimeSeries",
+        "UsersInfoResponse": "MandrillUserInfo",
+        "UsersSendersResponse": "MandrillSenderDemographics",
+        "Sender": "MandrillSenderDemographics",
+        "SendersListResponse": "MandrillSenderInfo",
+        "SendersInfoResponse": "MandrillSenderInfo",
+        "SendersSenderDomain": "MandrillSenderDomain",
+        "SendersDomainsResponse": "MandrillSenderDomain",
+        "SendersAddDomainResponse": "MandrillSenderDomain",
+        "SendersCheckDomainResponse": "MandrillSenderDomain",
+        "SendersDeleteDomainResponse": "MandrillSenderDomain",
+        "SendersVerifyDomainResponse": "MandrillSenderVerifyDomain",
+        "SendersTimeSeriesResponse": "MandrillSenderTimeSeries",
+        "SendersHourStat": "MandrillSenderTimeSeries",
+        "AllowlistsAddResponse": "MandrillAllowlistInfo",
+        "AllowlistsDeleteResponse": "MandrillAllowlistInfo",
+        "AllowlistsListResponse": "MandrillAllowlistInfo",
+        "SubaccountsSubaccount": "MandrillSubaccountResponse",
+        "SubaccountsListResponse": "MandrillSubaccountResponse",
+        "SubaccountsAddResponse": "MandrillSubaccountResponse",
+        "SubaccountsUpdateResponse": "MandrillSubaccountResponse",
+        "SubaccountsDeleteResponse": "MandrillSubaccountResponse",
+        "SubaccountsPauseResponse": "MandrillSubaccountResponse",
+        "SubaccountsResumeResponse": "MandrillSubaccountResponse",
+        "SubaccountsInfoResponse": "MandrillSubaccountInfo",
+        "InboundDomain": "MandrillInboundInfo",
+        "InboundDomainsResponse": "MandrillInboundInfo",
+        "InboundAddDomainResponse": "MandrillInboundInfo",
+        "InboundCheckDomainResponse": "MandrillInboundInfo",
+        "InboundDeleteDomainResponse": "MandrillInboundInfo",
+        "InboundRoute": "MandrillInboundRoute",
+        "InboundRoutesResponse": "MandrillInboundRoute",
+        "InboundAddRouteResponse": "MandrillInboundRoute",
+        "InboundUpdateRouteResponse": "MandrillInboundRoute",
+        "InboundDeleteRouteResponse": "MandrillInboundRoute",
+        "InboundSendRawResponse": "MandrillInboundSendResponse",
+        "Webhook": "MandrillWebHookInfo",
+        "WebhooksListResponse": "MandrillWebHookInfo",
+        "WebhooksAddResponse": "MandrillWebHookInfo",
+        "WebhooksInfoResponse": "MandrillWebHookInfo",
+        "WebhooksUpdateResponse": "MandrillWebHookInfo",
+        "WebhooksDeleteResponse": "MandrillWebHookInfo",
+        "Export": "MandrillExportInfo",
+        "ExportsListResponse": "MandrillExportInfo",
+        "ExportsInfoResponse": "MandrillExportInfo",
+        "ExportsRejectsResponse": "MandrillExportInfo",
+        "ExportsWhitelistResponse": "MandrillExportInfo",
+        "ExportsAllowlistResponse": "MandrillExportInfo",
+        "ExportsActivityResponse": "MandrillExportInfo",
+        "RejectsAddResponse": "MandrillRejectAddResponse",
+        "RejectsDeleteResponse": "MandrillRejectDeleteResponse",
+        "RejectsListResponse": "MandrillRejectInfo",
+        "StatsWindow": "MandrillStatsWindow",
+        "IP": "MandrillIpInfo",
+        "IPsPool": "MandrillIpPool",
+        "IPsWarmupStatus": "MandrillIpWarmupStatus",
+        "MctemplatesMcTemplate": "MandrillMcTemplateInfo",
+        "Metadata": "MandrillMetadataInfo",
+        "MetadataResponseData": "MandrillMetadataInfo",
+        "TrackingDomain": "MandrillTrackingDomain",
+        "MessagesRequestComponent": "MandrillMessage",
+        "MergeVar": "MandrillMergeVar",
+        "TemplateContent": "MandrillTemplateContent",
+        "TemplateContentItem": "MandrillTemplateContent",
+        "MergeVarsItem": "MandrillMergeVar",
+        "MessageItem": "MandrillMessage",
+        "Message": "MandrillMessage"
+    },
+    "exclude": [
+        "MandrillMessage",
+        "MandrillMergeVar",
+        "MandrillRcptMergeVar",
+        "MandrillAttachment",
+        "MandrillImage",
+        "MandrillMailAddress",
+        "MandrillTemplateContent",
+        "MandrillMessageEvent",
+        "MandrillInboundEvent",
+        "MandrillSyncEvent",
+        "MandrillWebHookEventType",
+        "MandrillStatsWindow",
+        "MandrillStats",
+        "MandrillSendMessageResponse",
+        "MandrillMessageInfo",
+        "MandrillMessageContent",
+        "MandrillMessageTimeSeries",
+        "MandrillMessageScheduleInfo",
+        "MandrillTagInfo",
+        "MandrillTagTimeSeries",
+        "MandrillTemplateInfo",
+        "MandrillTemplateRenderResponse",
+        "MandrillUserInfo",
+        "MandrillSenderDemographics",
+        "MandrillSenderInfo",
+        "MandrillSenderDomain",
+        "MandrillSenderTimeSeries",
+        "MandrillSenderVerifyDomain",
+        "MandrillAllowlistInfo",
+        "MandrillSubaccountResponse",
+        "MandrillSubaccountInfo",
+        "MandrillInboundInfo",
+        "MandrillInboundRoute",
+        "MandrillInboundSendResponse",
+        "MandrillRejectAddResponse",
+        "MandrillRejectDeleteResponse",
+        "MandrillRejectInfo",
+        "MandrillWebHookInfo",
+        "MandrillExportInfo",
+        "MandrillUserPing2Response"
+    ]
+}

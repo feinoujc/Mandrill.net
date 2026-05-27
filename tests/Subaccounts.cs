@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Mandrill;
 using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
@@ -10,30 +11,24 @@ namespace Tests
 {
     [Trait("Category", "subaccounts")]
     [Collection("subaccounts")]
-    public class Subaccounts : IntegrationTest
+    public class Subaccounts(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        HashSet<string> _added = new HashSet<string>();
+        private readonly HashSet<string> _added = [];
 
-        public Subaccounts(ITestOutputHelper output) : base(output)
-        {
-        }
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
 
-        public override void Dispose()
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+
+        public virtual async Task DisposeAsync()
         {
             foreach (var id in _added)
-            {
-                var result = Api.Subaccounts.DeleteAsync(id).GetAwaiter().GetResult();
-            }
-            base.Dispose();
+                await Api.Subaccounts.DeleteAsync(id);
         }
 
         [Trait("Category", "subaccounts/add.json")]
-        public class Add : Subaccounts
+        public class Add(MandrillFixture fixture, ITestOutputHelper output) : Subaccounts(fixture, output)
         {
-            public Add(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_add_subaccount()
             {
@@ -46,18 +41,15 @@ namespace Tests
         }
 
         [Trait("Category", "subaccounts/list.json")]
-        public class List : Subaccounts
+        public class List(MandrillFixture fixture, ITestOutputHelper output) : Subaccounts(fixture, output)
         {
-            public List(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_list_subaccount()
             {
                 var results = await Api.Subaccounts.ListAsync(q: null);
                 results.Count.Should().BeGreaterOrEqualTo(0);
             }
+
             [Fact]
             public async Task Can_filter_subaccount()
             {
@@ -67,12 +59,8 @@ namespace Tests
         }
 
         [Trait("Category", "subaccounts/update.json")]
-        public class Update : Subaccounts
+        public class Update(MandrillFixture fixture, ITestOutputHelper output) : Subaccounts(fixture, output)
         {
-            public Update(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_update_subaccount()
             {
@@ -84,16 +72,11 @@ namespace Tests
                 result.CustomQuota.Should().Be(5000);
                 _added.Add(result.Id);
             }
-
         }
 
         [Trait("Category", "subaccounts/pause.json")]
-        public class Pause : Subaccounts
+        public class Pause(MandrillFixture fixture, ITestOutputHelper output) : Subaccounts(fixture, output)
         {
-            public Pause(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_pause_subaccount()
             {
@@ -105,16 +88,11 @@ namespace Tests
                 result.Status.Should().Be(MandrillSubaccountStatus.Paused);
                 _added.Add(result.Id);
             }
-
         }
 
         [Trait("Category", "subaccounts/resume.json")]
-        public class Resume : Subaccounts
+        public class Resume(MandrillFixture fixture, ITestOutputHelper output) : Subaccounts(fixture, output)
         {
-            public Resume(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_resume_subaccount()
             {
@@ -129,16 +107,11 @@ namespace Tests
                 result.Status.Should().Be(MandrillSubaccountStatus.Active);
                 _added.Add(result.Id);
             }
-
         }
 
         [Trait("Category", "subaccounts/delete.json")]
-        public class Delete : Subaccounts
+        public class Delete(MandrillFixture fixture, ITestOutputHelper output) : Subaccounts(fixture, output)
         {
-            public Delete(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_delete_subaccount()
             {
@@ -149,16 +122,11 @@ namespace Tests
                 var result = await Api.Subaccounts.DeleteAsync(id);
                 result.Id.Should().Be(id);
             }
-
         }
 
         [Trait("Category", "subaccounts/info.json")]
-        public class Info : Subaccounts
+        public class Info(MandrillFixture fixture, ITestOutputHelper output) : Subaccounts(fixture, output)
         {
-            public Info(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_get_info_subaccount()
             {
@@ -170,7 +138,6 @@ namespace Tests
                 result.Id.Should().Be(id);
                 result.Last30Days.Clicks.Should().Be(0);
                 result.FirstSentAt.Should().Be((DateTime?)null);
-
                 _added.Add(result.Id);
             }
         }

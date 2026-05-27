@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -10,31 +11,27 @@ namespace Tests
 {
     [Trait("Category", "inbound")]
     [Collection("inbound")]
-    public class Inbound : IntegrationTest
+    public class Inbound(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        private HashSet<string> _added = new HashSet<string>();
+        private readonly HashSet<string> _added = [];
 
-        public Inbound(ITestOutputHelper output) : base(output)
-        {
-        }
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
 
-        public override void Dispose()
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+
+        public virtual async Task DisposeAsync()
         {
             foreach (var id in _added)
             {
-                Api.Inbound.DeleteDomainAsync(id).GetAwaiter().GetResult();
+                await Api.Inbound.DeleteDomainAsync(id);
                 Output.WriteLine("inbound domain deleted: " + id);
             }
-            base.Dispose();
         }
 
         [Trait("Category", "inbound/domains")]
-        public class Domains : Inbound
+        public class Domains(MandrillFixture fixture, ITestOutputHelper output) : Inbound(fixture, output)
         {
-            public Domains(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_get_domains()
             {
@@ -42,14 +39,12 @@ namespace Tests
                 results.Count.Should().BeGreaterOrEqualTo(0);
             }
 
-
             [Fact]
             public async Task Can_add_domain()
             {
                 var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
                 var results = await Api.Inbound.AddDomainAsync(domain);
                 _added.Add(results.Domain);
-
                 results.Domain.Should().Be(domain);
             }
 
@@ -61,9 +56,7 @@ namespace Tests
                 _added.Add(domain);
 
                 var result = await Api.Inbound.CheckDomainAsync(domain);
-
                 result.ValidMx.Should().Be(false);
-
             }
 
             [Fact]
@@ -80,22 +73,23 @@ namespace Tests
         [Trait("Category", "inbound/routes")]
         public class Routes : Inbound
         {
-            protected Uri WebhookUri { get; set; }
+            protected Uri WebhookUrl { get; }
 
-            public Routes(ITestOutputHelper output) : base(output)
+            public Routes(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
-                var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_INBOUND_WEBHOOK") ?? "https://httpbin.org/status/200";
-
-                WebhookUri = new UriBuilder(configuredWebHook) { Query = "id=" + Guid.NewGuid().ToString("N") }.Uri;
-            }
-            public override void Dispose()
-            {
-                var webhook = Api.WebHooks.ListAsync().GetAwaiter().GetResult().Single(x => x.Url == WebhookUri).Id;
-                Api.WebHooks.DeleteAsync(webhook).GetAwaiter().GetResult();
-                base.Dispose();
+                var configured = Environment.GetEnvironmentVariable("MANDRILL_INBOUND_WEBHOOK") ?? "https://httpbin.org/status/200";
+                WebhookUrl = new UriBuilder(configured) { Query = "id=" + Guid.NewGuid().ToString("N") }.Uri;
             }
 
             public string SendingDomain { get; set; }
+
+            public override async Task DisposeAsync()
+            {
+                var webhooks = await Api.WebHooks.ListAsync();
+                var webhook = webhooks.Single(x => x.Url == WebhookUrl);
+                await Api.WebHooks.DeleteAsync(webhook.Id);
+                await base.DisposeAsync();
+            }
 
             [Fact]
             public async Task Can_get_routes()
@@ -104,7 +98,7 @@ namespace Tests
                 await Api.Inbound.AddDomainAsync(domain);
                 _added.Add(domain);
 
-                var route = await Api.Inbound.AddRouteAsync(domain, domain, WebhookUri);
+                var route = await Api.Inbound.AddRouteAsync(domain, domain, WebhookUrl.ToString());
 
                 var results = await Api.Inbound.RoutesAsync(domain);
                 results.Should().NotBeEmpty();
@@ -118,10 +112,9 @@ namespace Tests
                 await Api.Inbound.AddDomainAsync(domain);
                 _added.Add(domain);
 
-                var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri);
-
+                var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUrl.ToString());
                 result.Id.Should().NotBeNull();
-                result.Url.Should().Be(WebhookUri);
+                result.Url.Should().Be(WebhookUrl);
             }
 
             [Fact]
@@ -131,18 +124,16 @@ namespace Tests
                 await Api.Inbound.AddDomainAsync(domain);
                 _added.Add(domain);
 
-                var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri);
+                var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUrl.ToString());
                 result.Id.Should().NotBeNull();
-                result.Url.Should().Be(WebhookUri);
+                result.Url.Should().Be(WebhookUrl);
                 var id = result.Id;
 
                 var newpattern = string.Format("{0:N}-*", Guid.NewGuid());
-
-                result = await Api.Inbound.UpdateRouteAsync(id, newpattern, WebhookUri);
+                result = await Api.Inbound.UpdateRouteAsync(id, newpattern, WebhookUrl.ToString());
                 result.Id.Should().Be(id);
                 result.Pattern.Should().Be(newpattern);
             }
-
 
             [Fact]
             public async Task Can_delete_route()
@@ -151,11 +142,10 @@ namespace Tests
                 await Api.Inbound.AddDomainAsync(domain);
                 _added.Add(domain);
 
-                var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri);
+                var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUrl.ToString());
                 result.Id.Should().NotBeNull();
-                result.Url.Should().Be(WebhookUri);
+                result.Url.Should().Be(WebhookUrl.ToString());
                 var id = result.Id;
-
 
                 result = await Api.Inbound.DeleteRouteAsync(id);
                 result.Id.Should().Be(id);
@@ -170,20 +160,20 @@ namespace Tests
 
                 var id = Guid.NewGuid().ToString("N");
                 var pattern = string.Format("{0}-*", id);
-                var result = await Api.Inbound.AddRouteAsync(domain, pattern, WebhookUri);
+                var result = await Api.Inbound.AddRouteAsync(domain, pattern, WebhookUrl.ToString());
                 result.Id.Should().NotBeNull();
-                result.Url.Should().Be(WebhookUri);
-
+                result.Url.Should().Be(WebhookUrl.ToString());
 
                 var email = string.Format(id + "-@" + domain);
                 var raw = string.Format(@"From: sender@mandrilldotnet.org\nTo: {0}\nSubject: Some Subject\n\nSome content.", email);
 
-                var responses = await Api.Inbound.SendRawAsync(raw, new[] { email });
+                var response = await Api.Inbound.SendRawAsync(raw, new List<string> { email });
 
-                responses.Should().NotBeEmpty();
-                responses[0].Email.Should().EndWith(domain);
-                responses[0].Url.Should().Be(WebhookUri);
-                responses[0].Pattern.Should().Be(pattern);
+                response.Should().NotBeNullOrEmpty();
+                var first = response!.First();
+                first.Email.Should().EndWith(domain);
+                first.Url.Should().Be(WebhookUrl);
+                first.Pattern.Should().Be(pattern);
             }
         }
     }

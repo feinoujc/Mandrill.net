@@ -1,13 +1,13 @@
-using System.Collections.Generic;
+#nullable enable
+using System.Threading;
 using System.Threading.Tasks;
 using Mandrill.Model;
 
-namespace Mandrill
+namespace Mandrill;
+
+public partial interface IMandrillUsersApi
 {
-    public partial interface IMandrillUsersApi
-    {
-        Task<string> PingAsync();
-        Task<IList<MandrillSenderDemographics>> SendersAsync();
-        Task<MandrillUserInfo> InfoAsync();
-    }
+    Task<string> PingAsync(CancellationToken cancellationToken = default);
+
+    Task<MandrillUserPing2Response> Ping2Async(CancellationToken cancellationToken = default);
 }

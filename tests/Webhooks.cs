@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Mandrill;
 using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
@@ -10,34 +11,35 @@ namespace Tests
 {
     [Trait("Category", "webhooks")]
     [Collection("webhooks")]
-    public class Webhooks : IntegrationTest
+    public class Webhooks : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        protected Uri WebhookUri { get; set; }
-        private HashSet<int> _added = new HashSet<int>();
+        private readonly MandrillFixture _fixture;
+        private readonly HashSet<int> _added = [];
 
-        public Webhooks(ITestOutputHelper output) : base(output)
+        protected IMandrillApi Api => _fixture.Api;
+        protected ITestOutputHelper Output { get; }
+        protected string WebhookUrl { get; }
+
+        public Webhooks(MandrillFixture fixture, ITestOutputHelper output)
         {
-            _added.Clear();
-            var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_OUTBOUND_WEBHOOK") ?? "https://httpbin.org/status/200";
-
-            WebhookUri = new Uri(configuredWebHook);
-
-            //configure webhook api at http://requestb.in
+            _fixture = fixture;
+            Output = output;
+            var configured = Environment.GetEnvironmentVariable("MANDRILL_OUTBOUND_WEBHOOK") ?? "https://httpbin.org/status/200";
+            WebhookUrl = new Uri(configured).ToString();
         }
 
-        public override void Dispose()
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+
+        public virtual async Task DisposeAsync()
         {
             foreach (var id in _added)
-            {
-                var result = Api.WebHooks.DeleteAsync(id).GetAwaiter().GetResult();
-            }
-            base.Dispose();
+                await Api.WebHooks.DeleteAsync(id);
         }
 
         [Fact]
         public async Task Can_add()
         {
-            var result = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, });
+            var result = await Api.WebHooks.AddAsync(WebhookUrl, "a test webhook", new List<string> { "unsub" });
             result.Should().NotBeNull();
             _added.Add(result.Id);
 
@@ -48,7 +50,7 @@ namespace Tests
         [Fact]
         public async Task Throws_when_bad_url()
         {
-            await Assert.ThrowsAsync<MandrillException>(() => Api.WebHooks.AddAsync(new Uri("http://www.invalid_url.org")));
+            await Assert.ThrowsAsync<MandrillException>(() => Api.WebHooks.AddAsync("http://www.invalid_url.org"));
         }
 
         [Fact]
@@ -61,7 +63,7 @@ namespace Tests
         [Fact]
         public async Task Can_delete()
         {
-            var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, });
+            var added = await Api.WebHooks.AddAsync(WebhookUrl, "a test webhook", new List<string> { "unsub" });
             _added.Add(added.Id);
 
             var result = await Api.WebHooks.DeleteAsync(added.Id);
@@ -72,7 +74,7 @@ namespace Tests
         [Fact]
         public async Task Can_get()
         {
-            var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, });
+            var added = await Api.WebHooks.AddAsync(WebhookUrl, "a test webhook", new List<string> { "unsub" });
             _added.Add(added.Id);
 
             var result = await Api.WebHooks.InfoAsync(added.Id);
@@ -82,10 +84,10 @@ namespace Tests
         [Fact]
         public async Task Can_update()
         {
-            var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, });
+            var added = await Api.WebHooks.AddAsync(WebhookUrl, "a test webhook", new List<string> { "unsub" });
             _added.Add(added.Id);
 
-            var result = await Api.WebHooks.UpdateAsync(added.Id, WebhookUri, description: "An updated description", events: new[] { MandrillWebHookEventType.Unsub, });
+            var result = await Api.WebHooks.UpdateAsync(added.Id, WebhookUrl, description: "An updated description", events: new List<string> { "unsub" });
             result.Id.Should().Be(added.Id);
         }
     }

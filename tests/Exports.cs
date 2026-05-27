@@ -1,28 +1,30 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Mandrill;
+using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
-using FluentAssertions;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Mandrill.Model;
 
 namespace Tests
 {
     [Trait("Category", "exports")]
     [Collection("exports")]
-    public class Exports : IntegrationTest
+    public class Exports(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        public Exports(ITestOutputHelper output) : base(output)
-        {
-        }
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
 
-        class ExportThrottledTestException : Exception
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual Task DisposeAsync() => Task.CompletedTask;
+
+        private class ExportThrottledTestException : Exception
         {
             public ExportThrottledTestException() { }
             public ExportThrottledTestException(string message) : base(message) { }
             public ExportThrottledTestException(string message, Exception inner) : base(message, inner) { }
-
         }
 
         protected async Task<T> HandleExportThrottleError<T>(Task<T> method)
@@ -31,29 +33,20 @@ namespace Tests
             {
                 return await method;
             }
-            catch (MandrillException mex)
+            catch (MandrillException mex) when (mex.Code == -99 && mex.Name == "UserError")
             {
-                if (mex.Code == -99 && mex.Name == "UserError")
-                {
-                    throw new ExportThrottledTestException(mex.Message, mex);
-                }
-                throw;
+                throw new ExportThrottledTestException(mex.Message, mex);
             }
         }
 
         [Trait("Category", "exports/list.json")]
-        public class List : Exports
+        public class List(MandrillFixture fixture, ITestOutputHelper output) : Exports(fixture, output)
         {
-            public List(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_list_all()
             {
                 var results = await Api.Exports.ListAsync();
 
-                //the api doesn't return results immediately, it may return no results
                 var found = results.OrderBy(x => x.Id).FirstOrDefault();
                 if (found != null)
                 {
@@ -67,12 +60,8 @@ namespace Tests
         }
 
         [Trait("Category", "exports/info.json")]
-        public class Info : Exports
+        public class Info(MandrillFixture fixture, ITestOutputHelper output) : Exports(fixture, output)
         {
-            public Info(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_retrieve_info()
             {
@@ -91,18 +80,12 @@ namespace Tests
         }
 
         [Trait("Category", "exports/rejects.json")]
-        public class Rejects : Exports
+        public class Rejects(MandrillFixture fixture, ITestOutputHelper output) : Exports(fixture, output)
         {
-            public Rejects(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_export_info()
             {
-                // notifyEmail is an optional field that will
-                // be emailed when the export is done compiling. omitting for test purposes.
-                string notifyEmail = string.Empty;
+                string notifyEmail = "mandrillnet@hotmail.com";
                 try
                 {
                     var result = await HandleExportThrottleError(Api.Exports.RejectsAsync(notifyEmail));
@@ -117,18 +100,12 @@ namespace Tests
         }
 
         [Trait("Category", "exports/whitelist.json")]
-        public class Whitelist : Exports
+        public class Whitelist(MandrillFixture fixture, ITestOutputHelper output) : Exports(fixture, output)
         {
-            public Whitelist(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_export_info()
             {
-                // notifyEmail is an optional field that will
-                // be emailed when the export is done compiling. omitting for test purposes.
-                string notifyEmail = string.Empty;
+                string notifyEmail = "mandrillnet@hotmail.com";
                 try
                 {
                     var result = await HandleExportThrottleError(Api.Exports.WhitelistAsync(notifyEmail));
@@ -143,22 +120,18 @@ namespace Tests
         }
 
         [Trait("Category", "exports/activity.json")]
-        public class Activity : Exports
+        public class Activity(MandrillFixture fixture, ITestOutputHelper output) : Exports(fixture, output)
         {
-            public Activity(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_export_activity()
             {
-                string notifyEmail = string.Empty;
-                DateTime? dateFrom = null;
-                DateTime? dateTo = null;
-                IList<string> tags = null;
-                IList<string> senders = null;
-                IList<string> states = null;
-                IList<string> apiKeys = null;
+                string notifyEmail = "mandrillnet@hotmail.com";
+                string dateFrom = null;
+                string dateTo = null;
+                List<string> tags = null;
+                List<string> senders = null;
+                List<string> states = null;
+                List<string> apiKeys = null;
 
                 try
                 {
@@ -175,10 +148,8 @@ namespace Tests
                 }
                 catch (ExportThrottledTestException)
                 {
-
                 }
             }
         }
-
     }
 }

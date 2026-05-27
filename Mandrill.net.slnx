@@ -6,6 +6,7 @@
   </Configurations>
   <Folder Name="/Solution Items/">
     <File Path=".github/workflows/build.yaml" />
+    <File Path="spec/mandrill-openapi.json" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Mandrill.net.Extensions.DependencyInjection/Mandrill.net.Extensions.DependencyInjection.csproj" />
@@ -13,5 +14,8 @@
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="tests/Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/Mandrill.CodeGen/Mandrill.CodeGen.csproj" />
   </Folder>
 </Solution>

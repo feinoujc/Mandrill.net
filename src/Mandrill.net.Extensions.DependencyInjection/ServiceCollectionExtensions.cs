@@ -28,12 +28,16 @@ public static class ServiceCollectionExtensions
         services.AddMandrillService(api => api.Allowlists);
         services.AddMandrillService(api => api.Exports);
         services.AddMandrillService(api => api.Inbound);
+        services.AddMandrillService(api => api.Ips);
+        services.AddMandrillService(api => api.McTemplates);
         services.AddMandrillService(api => api.Messages);
+        services.AddMandrillService(api => api.Metadata);
         services.AddMandrillService(api => api.Rejects);
         services.AddMandrillService(api => api.Senders);
         services.AddMandrillService(api => api.Subaccounts);
         services.AddMandrillService(api => api.Tags);
         services.AddMandrillService(api => api.Templates);
+        services.AddMandrillService(api => api.Urls);
         services.AddMandrillService(api => api.Users);
         services.AddMandrillService(api => api.WebHooks);
 

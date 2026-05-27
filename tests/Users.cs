@@ -9,19 +9,17 @@ using Xunit.Abstractions;
 namespace Tests
 {
     [Trait("Category", "users")]
-    public class Users : IntegrationTest
+    public class Users(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        public Users(ITestOutputHelper output) : base(output)
-        {
-        }
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual Task DisposeAsync() => Task.CompletedTask;
 
         [Trait("Category", "users/info.json")]
-        public class Info : Users
+        public class Info(MandrillFixture fixture, ITestOutputHelper output) : Users(fixture, output)
         {
-            public Info(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_get_info()
             {
@@ -41,12 +39,8 @@ namespace Tests
         }
 
         [Trait("Category", "users/ping2.json")]
-        public class Ping : Users
+        public class Ping(MandrillFixture fixture, ITestOutputHelper output) : Users(fixture, output)
         {
-            public Ping(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_ping()
             {
@@ -64,21 +58,15 @@ namespace Tests
         }
 
         [Trait("Category", "users/senders.json")]
-        public class Senders : Users
+        public class Senders(MandrillFixture fixture, ITestOutputHelper output) : Users(fixture, output)
         {
-            public Senders(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_list_senders()
             {
                 var results = await Api.Users.SendersAsync();
 
                 if (results.Count == 0)
-                {
                     Output.WriteLine("No senders returned");
-                }
 
                 foreach (var sender in results)
                 {

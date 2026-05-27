@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -10,45 +11,35 @@ namespace Tests
 {
     [Trait("Category", "allowlists")]
     [Collection("allowlists")]
-    public class Allowlists : IntegrationTest
+    public class Allowlists(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        private HashSet<string> _added = new HashSet<string>();
+        private readonly HashSet<string> _added = [];
 
-        public Allowlists(ITestOutputHelper output) : base(output)
-        {
-        }
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
 
-        public override void Dispose()
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+
+        public virtual async Task DisposeAsync()
         {
             foreach (var email in _added)
-            {
-                var result = Api.Allowlists.DeleteAsync(email).GetAwaiter().GetResult();
-            }
+                await Api.Allowlists.DeleteAsync(email);
         }
 
         [Trait("Category", "allowlists/list.json")]
-        public class List : Allowlists
+        public class List(MandrillFixture fixture, ITestOutputHelper output) : Allowlists(fixture, output)
         {
-            public List(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_list_all()
             {
                 string email = null;
                 var results = await Api.Allowlists.ListAsync(email);
 
-                //the api doesn't return results immediately, it may return no results
                 var found = results.OrderBy(x => x.CreatedAt).FirstOrDefault();
                 if (found != null)
-                {
                     results.Count.Should().BeGreaterOrEqualTo(1);
-                }
                 else
-                {
                     Output.WriteLine("no emails found on allowlist.");
-                }
             }
 
             [Fact]
@@ -57,7 +48,6 @@ namespace Tests
                 string email = null;
                 var entirelist = await Api.Allowlists.ListAsync(email);
 
-                //the api doesn't return results immediately, it may return no results
                 var found = entirelist.OrderBy(x => x.CreatedAt).LastOrDefault();
                 if (found != null)
                 {
@@ -74,12 +64,8 @@ namespace Tests
         }
 
         [Trait("Category", "allowlists/add.json")]
-        public class Add : Allowlists
+        public class Add(MandrillFixture fixture, ITestOutputHelper output) : Allowlists(fixture, output)
         {
-            public Add(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_add_allowlist()
             {
@@ -91,12 +77,8 @@ namespace Tests
         }
 
         [Trait("Category", "allowlists/delete.json")]
-        public class Delete : Allowlists
+        public class Delete(MandrillFixture fixture, ITestOutputHelper output) : Allowlists(fixture, output)
         {
-            public Delete(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_delete_allowlist()
             {

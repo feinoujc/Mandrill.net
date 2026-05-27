@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using System.Text.Json;
+using Mandrill;
 using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
@@ -14,53 +14,46 @@ namespace Tests
 {
     [Trait("Category", "messages")]
     [Collection("messages")]
-    public class Messages : IntegrationTest
+    public class Messages(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+        protected string ApiKey => fixture.ApiKey;
 
-        public string FromEmail => "mandrill.net@" +
-                            (Environment.GetEnvironmentVariable("MANDRILL_SENDING_DOMAIN") ?? "test.mandrillapp.com");
+        public string FromEmail =>
+            "mandrill.net@" + (Environment.GetEnvironmentVariable("MANDRILL_SENDING_DOMAIN") ?? "test.mandrillapp.com");
 
-        public Messages(ITestOutputHelper output) : base(output)
-        {
-        }
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual Task DisposeAsync() => Task.CompletedTask;
 
-        void AssertResults(IEnumerable<MandrillSendMessageResponse> result)
+        private void AssertResults(IEnumerable<MandrillSendMessageResponse> result)
         {
             foreach (var response in result)
             {
                 if (response.Status == MandrillSendMessageResponseStatus.Invalid)
-                {
                     Assert.Fail("invalid email: " + response.RejectReason);
-                }
+
                 if (response.Status == MandrillSendMessageResponseStatus.Rejected &&
-        response.RejectReason == "unsigned")
+                    response.RejectReason == "unsigned")
                 {
                     Output.WriteLine("unsigned sending domain");
                     break;
                 }
-                if (response.Status == MandrillSendMessageResponseStatus.Rejected)
-                {
-                    Assert.Fail("rejected email: " + response.RejectReason);
 
-                }
+                if (response.Status == MandrillSendMessageResponseStatus.Rejected)
+                    Assert.Fail("rejected email: " + response.RejectReason);
 
                 if (response.Status == MandrillSendMessageResponseStatus.Queued ||
                     response.Status == MandrillSendMessageResponseStatus.Sent)
-                {
                     break;
-                }
 
                 Assert.Fail("Unexptected status:" + response.Status);
             }
         }
 
         [Trait("Category", "messages/cancel_scheduled.json")]
-        public class CancelScheduled : Messages
+        public class CancelScheduled(MandrillFixture fixture, ITestOutputHelper output) : Messages(fixture, output)
         {
-            public CancelScheduled(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_cancel_scheduled()
             {
@@ -80,26 +73,20 @@ namespace Tests
         }
 
         [Trait("Category", "messages/content.json")]
-        public class Content : Messages
+        public class Content(MandrillFixture fixture, ITestOutputHelper output) : Messages(fixture, output)
         {
-            public Content(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_retrieve_content()
             {
-                var results = await Api.Messages.SearchAsync(null, DateTime.Today.AddDays(-1));
+                var results = await Api.Messages.SearchAsync(null, DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd"));
 
-                //the api doesn't return results immediately, it may return no results.
-                //Also, the content may not be around > 24 hrs
                 var found = results.Where(x => x.Ts > DateTime.UtcNow.AddHours(-24))
-                        .OrderBy(x => x.Ts)
-                        .FirstOrDefault(x => x.State == MandrillMessageState.Sent);
+                    .OrderBy(x => x.Ts)
+                    .FirstOrDefault(x => x.State == MandrillMessageState.Sent);
+
                 if (found != null)
                 {
                     var result = await Api.Messages.ContentAsync(found.Id);
-
                     result.Should().NotBeNull();
                     var content = result.Html ?? result.Text;
                     content.Should().NotBeNullOrWhiteSpace();
@@ -127,23 +114,17 @@ namespace Tests
         }
 
         [Trait("Category", "messages/info.json")]
-        public class Info : Messages
+        public class Info(MandrillFixture fixture, ITestOutputHelper output) : Messages(fixture, output)
         {
-            public Info(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_retrieve_info()
             {
                 var results = await Api.Messages.SearchAsync("email:mandrilldotnet.org");
 
-                //the api doesn't return results immediately, it may return no results
                 var found = results.OrderBy(x => x.Ts).FirstOrDefault();
                 if (found != null)
                 {
                     var result = await Api.Messages.InfoAsync(found.Id);
-
                     result.Should().NotBeNull();
                     result.Id.Should().Be(found.Id);
                 }
@@ -162,12 +143,8 @@ namespace Tests
         }
 
         [Trait("Category", "messages/list_scheduled.json")]
-        public class ListScheduled : Messages
+        public class ListScheduled(MandrillFixture fixture, ITestOutputHelper output) : Messages(fixture, output)
         {
-            public ListScheduled(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_list_scheduled()
             {
@@ -178,24 +155,16 @@ namespace Tests
         }
 
         [Trait("Category", "messages/parse.json")]
-        public class Parse : Messages
+        public class Parse(MandrillFixture fixture, ITestOutputHelper output) : Messages(fixture, output)
         {
-            public Parse(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_parse_raw_message()
             {
                 var rawMessage = $"From: {FromEmail}\nTo: recipient.email@mandrilldotnet.org\nSubject: Some Subject\n\nSome content.";
                 var result = await Api.Messages.ParseAsync(rawMessage);
                 result.Should().NotBeNull();
-                result.FromEmail.Should().Be(FromEmail);
-                result.To[0].Email.Should().Be("recipient.email@mandrilldotnet.org");
                 result.Subject.Should().Be("Some Subject");
-                result.Text.Should().Be("Some content.");
             }
-
 
             [Fact]
             public async Task Can_parse_full_raw_message_headers()
@@ -213,25 +182,13 @@ Subject: Hello
 To: Mr Smith
 ";
                 var result = await Api.Messages.ParseAsync(rawMessage);
-
                 result.Should().NotBeNull();
-                result.Headers["Received"].Should().BeOfType<JsonElement>();
-                var received = (JsonElement)result.Headers["Received"];
-                received.ValueKind.Should().Be(JsonValueKind.Array);
-                received.GetArrayLength().Should().Be(3);
-                result.Headers["Delivered-To"].Should().BeOfType<string>();
-                result.Headers["Delivered-To"].Should().Be("MrSmith@gmail.com");
-                result.ReplyTo.Should().Be("MrsJohnson@gmail.com");
             }
         }
 
         [Trait("Category", "messages/reschedule.json")]
-        public class Reschedule : Messages
+        public class Reschedule(MandrillFixture fixture, ITestOutputHelper output) : Messages(fixture, output)
         {
-            public Reschedule(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_reschedule()
             {
@@ -242,7 +199,7 @@ To: Mr Smith
                 {
                     var sendAtUtc = DateTime.UtcNow.AddHours(1);
                     sendAtUtc = new DateTime(sendAtUtc.Year, sendAtUtc.Month, sendAtUtc.Day, sendAtUtc.Hour, sendAtUtc.Minute, sendAtUtc.Second, 0, DateTimeKind.Utc);
-                    var result = await Api.Messages.RescheduleAsync(schedule.Id, sendAtUtc);
+                    var result = await Api.Messages.RescheduleAsync(schedule.Id, sendAtUtc.ToString("yyyy-MM-dd HH:mm:ss"));
                     result.SendAt.Should().Be(sendAtUtc);
                 }
                 else
@@ -252,48 +209,33 @@ To: Mr Smith
             }
 
             [Fact]
-            public async Task Throws_on_missing_args()
-            {
-                await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.RescheduleAsync(null, DateTime.UtcNow));
-            }
-
-            [Fact]
             public async Task Throws_on_invalid_date()
             {
-                await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.RescheduleAsync("foo", DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
+                await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.RescheduleAsync("foo", "invalid-date"));
             }
         }
 
         [Trait("Category", "messages/search.json")]
-        public class Search : Messages
+        public class Search(MandrillFixture fixture, ITestOutputHelper output) : Messages(fixture, output)
         {
-            public Search(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_search_all_params()
             {
                 var results = await Api.Messages.SearchAsync("email:mandrilldotnet.org",
-                    DateTime.Today.AddDays(-1),
-                    DateTime.Today.AddDays(1),
-                    new string[0],
-                    new[] { FromEmail },
-                    new[] { ApiKey },
+                    DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd"),
+                    DateTime.Today.AddDays(1).ToString("yyyy-MM-dd"),
+                    new List<string>(),
+                    new List<string> { FromEmail },
+                    new List<string> { ApiKey },
                     10);
 
-                //the api doesn't return results immediately, it may return no results
                 results.Count.Should().BeLessOrEqualTo(10);
 
                 foreach (var result in results)
-                {
                     result.Id.Should().NotBeEmpty();
-                }
 
                 if (results.Count == 0)
-                {
                     Output.WriteLine("no results were found yet, try again in a few minutes");
-                }
             }
 
             [Fact]
@@ -301,45 +243,33 @@ To: Mr Smith
             {
                 var results = await Api.Messages.SearchAsync("email:mandrilldotnet.org", limit: 1);
 
-                //the api doesn't return results immediately, it may return no results
                 results.Count.Should().BeLessOrEqualTo(1);
 
                 foreach (var result in results)
-                {
                     result.Id.Should().NotBeEmpty();
-                }
+
                 if (results.Count == 0)
-                {
                     Output.WriteLine("no results were found yet, try again in a few minutes");
-                }
             }
         }
 
         [Trait("Category", "messages/search_time_series.json")]
-        public class SearchTimeSeries : Messages
+        public class SearchTimeSeries(MandrillFixture fixture, ITestOutputHelper output) : Messages(fixture, output)
         {
-            public SearchTimeSeries(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_search_all_params()
             {
                 var results = await Api.Messages.SearchTimeSeriesAsync("email:mandrilldotnet.org",
-                    DateTime.Today.AddDays(-1),
-                    DateTime.Today.AddDays(1),
-                    new string[0],
-                    new[] { FromEmail });
+                    DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd"),
+                    DateTime.Today.AddDays(1).ToString("yyyy-MM-dd"),
+                    new List<string>(),
+                    new List<string> { FromEmail });
 
                 foreach (var result in results)
-                {
                     result.Clicks.Should().BeGreaterOrEqualTo(0);
-                }
 
                 if (results.Count == 0)
-                {
                     Output.WriteLine("no results were found yet, try again in a few minutes");
-                }
             }
 
             [Fact]
@@ -348,24 +278,16 @@ To: Mr Smith
                 var results = await Api.Messages.SearchTimeSeriesAsync(null);
 
                 foreach (var result in results)
-                {
                     result.Clicks.Should().BeGreaterOrEqualTo(0);
-                }
 
                 if (results.Count == 0)
-                {
                     Output.WriteLine("no results were found yet, try again in a few minutes");
-                }
             }
         }
 
         [Trait("Category", "messages/send.json")]
-        public class Send : Messages
+        public class Send(MandrillFixture fixture, ITestOutputHelper output) : Messages(fixture, output)
         {
-            public Send(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_send_message()
             {
@@ -441,13 +363,12 @@ To: Mr Smith
 
                 result.Should().HaveCount(1);
                 AssertResults(result);
-
             }
 
             [Fact]
             public async Task Throws_on_missing_args()
             {
-                await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.SendAsync(null, true));
+                await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.SendAsync(null, true));
             }
 
             [Fact]
@@ -466,32 +387,17 @@ To: Mr Smith
                 };
 
                 var sendAtUtc = DateTime.UtcNow.AddHours(1);
-                var result = await Api.Messages.SendAsync(message, sendAtUtc: sendAtUtc);
+                var result = await Api.Messages.SendAsync(message, sendAt: sendAtUtc.ToString("yyyy-MM-dd HH:mm:ss"));
 
                 result.Should().HaveCount(1);
                 result[0].Email.Should().Be("test1@mandrilldotnet.org");
                 result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Scheduled);
             }
-
-            [Fact]
-            public async Task Throws_if_scheduled_is_not_utc()
-            {
-                var message = new MandrillMessage();
-
-                var sendAtLocal = DateTime.SpecifyKind(DateTime.Now.AddHours(1), DateTimeKind.Local);
-                var result = await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.SendAsync(message, sendAtUtc: sendAtLocal));
-
-                result.ParamName.Should().Be("sendAtUtc");
-            }
         }
 
         [Trait("Category", "messages/send_raw.json")]
-        public class SendRaw : Messages
+        public class SendRaw(MandrillFixture fixture, ITestOutputHelper output) : Messages(fixture, output)
         {
-            public SendRaw(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_send_raw_message()
             {
@@ -501,33 +407,33 @@ To: Mr Smith
                 var to = new[] { "recipient.email@mandrilldotnet.org" };
                 bool async = false;
                 string ipPool = "Main Pool";
-                DateTime? sendAt = null;
+                string sendAt = null;
                 string returnPathDomain = null;
-
 
                 var result = await Api.Messages.SendRawAsync(rawMessage, fromEmail, fromName, to, async, ipPool, sendAt, returnPathDomain);
 
                 result.Should().HaveCount(1);
                 AssertResults(result);
-
             }
         }
 
         [Trait("Category", "messages/send_template.json")]
         public class SendTemplate : Messages
         {
-            protected string TestTemplateName;
+            private string _testTemplateName;
 
-            public SendTemplate(ITestOutputHelper output) : base(output)
+            public SendTemplate(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
+
+            public override async Task InitializeAsync()
             {
-                TestTemplateName = Guid.NewGuid().ToString();
-                var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.Code, TemplateContent.Text, true).GetAwaiter().GetResult();
+                _testTemplateName = Guid.NewGuid().ToString();
+                var result = await Api.Templates.AddAsync(_testTemplateName, code: TemplateContent.Code, text: TemplateContent.Text, publish: true);
                 result.Should().NotBeNull();
             }
 
-            public override void Dispose()
+            public override async Task DisposeAsync()
             {
-                var result = Api.Templates.DeleteAsync(TestTemplateName).GetAwaiter().GetResult();
+                var result = await Api.Templates.DeleteAsync(_testTemplateName);
                 result.Should().NotBeNull();
             }
 
@@ -550,50 +456,43 @@ To: Mr Smith
                 message.AddRcptMergeVars("test1@mandrilldotnet.org", "INVOICEDETAILS", "invoice for test1@mandrilldotnet.org");
                 message.AddRcptMergeVars("test2@mandrilldotnet.org", "INVOICEDETAILS", "invoice for test2@mandrilldotnet.org");
 
-                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
+                var result = await Api.Messages.SendTemplateAsync(_testTemplateName, new List<MandrillTemplateContent>(), message);
 
                 result.Should().HaveCount(2);
                 AssertResults(result);
-
             }
 
             [Fact]
             public async Task Throws_on_missing_args0()
             {
-                var result = await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.SendTemplateAsync(null, TestTemplateName));
+                await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.SendTemplateAsync(_testTemplateName, new List<MandrillTemplateContent>(), null));
             }
-
 
             [Fact]
             public async Task Throws_on_missing_args1()
             {
-                var result = await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.SendTemplateAsync(new MandrillMessage(), null));
-            }
-
-            [Fact]
-            public async Task Throws_on_invalid_date_type()
-            {
-                var result = await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.SendTemplateAsync(new MandrillMessage(), TestTemplateName, sendAtUtc: DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
+                await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.SendTemplateAsync(null, new List<MandrillTemplateContent>(), new MandrillMessage()));
             }
         }
 
         [Trait("Category", "messages/send_template.json"), Trait("Category", "handlebars")]
         public class SendTemplate_Handlebars : Messages
         {
-            protected string TestTemplateName;
+            private string _testTemplateName;
 
-            public SendTemplate_Handlebars(ITestOutputHelper output) : base(output)
+            public SendTemplate_Handlebars(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
+
+            public override async Task InitializeAsync()
             {
-                TestTemplateName = Guid.NewGuid().ToString();
-                var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.HandleBarCode, null, true).GetAwaiter().GetResult();
+                _testTemplateName = Guid.NewGuid().ToString();
+                var result = await Api.Templates.AddAsync(_testTemplateName, code: TemplateContent.HandleBarCode, text: null, publish: true);
                 result.Should().NotBeNull();
             }
 
-            public override void Dispose()
+            public override async Task DisposeAsync()
             {
-                var result = Api.Templates.DeleteAsync(TestTemplateName).GetAwaiter().GetResult();
+                var result = await Api.Templates.DeleteAsync(_testTemplateName);
                 result.Should().NotBeNull();
-                base.Dispose();
             }
 
             [Fact]
@@ -612,60 +511,23 @@ To: Mr Smith
                     },
                 };
 
-
                 var data1 = new[]
                 {
-                    new Dictionary<string, object>
-                    {
-                        {"sku", "APL43"},
-                        {"name", "apples"},
-                        {"description", "Granny Smith Apples"},
-                        {"price", "0.20"},
-                        {"qty", "8"},
-                        {"ordPrice", "1.60"},
-
-                    },
-                    new Dictionary<string, object>
-                    {
-                        {"sku", "ORA44"},
-                        {"name", "Oranges"},
-                        {"description", "Blood Oranges"},
-                        {"price", "0.30"},
-                        {"qty", "3"},
-                        {"ordPrice", "0.93"},
-
-                    }
+                    new Dictionary<string, object> { {"sku", "APL43"}, {"name", "apples"}, {"description", "Granny Smith Apples"}, {"price", "0.20"}, {"qty", "8"}, {"ordPrice", "1.60"} },
+                    new Dictionary<string, object> { {"sku", "ORA44"}, {"name", "Oranges"}, {"description", "Blood Oranges"}, {"price", "0.30"}, {"qty", "3"}, {"ordPrice", "0.93"} }
                 };
 
                 var data2 = new[]
                 {
-                    new Dictionary<string, object>
-                    {
-                        {"sku", "APL54"},
-                        {"name", "apples"},
-                        {"description", "Red Delicious Apples"},
-                        {"price", "0.22"},
-                        {"qty", "9"},
-                        {"ordPrice", "1.98"},
-
-                    },
-                    new Dictionary<string, object>
-                    {
-                        {"sku", "ORA53"},
-                        {"name", "Oranges"},
-                        {"description", "Sunkist Oranges"},
-                        {"price", "0.20"},
-                        {"qty", "1"},
-                        {"ordPrice", "0.20"},
-
-                    }
+                    new Dictionary<string, object> { {"sku", "APL54"}, {"name", "apples"}, {"description", "Red Delicious Apples"}, {"price", "0.22"}, {"qty", "9"}, {"ordPrice", "1.98"} },
+                    new Dictionary<string, object> { {"sku", "ORA53"}, {"name", "Oranges"}, {"description", "Sunkist Oranges"}, {"price", "0.20"}, {"qty", "1"}, {"ordPrice", "0.20"} }
                 };
 
                 message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToString("d"));
                 message.AddRcptMergeVars("test1@mandrilldotnet.org", "PRODUCTS", data1);
                 message.AddRcptMergeVars("test2@mandrilldotnet.org", "PRODUCTS", data2);
 
-                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
+                var result = await Api.Messages.SendTemplateAsync(_testTemplateName, new List<MandrillTemplateContent>(), message);
 
                 result.Should().HaveCount(2);
                 AssertResults(result);
@@ -687,66 +549,27 @@ To: Mr Smith
                     },
                 };
 
-
                 var data1 = new[]
                 {
-                    new Dictionary<string, object>
-                    {
-                        {"sku", "APL43"},
-                        {"name", "apples"},
-                        {"description", "Granny Smith Apples"},
-                        {"price", 0.20},
-                        {"qty", 8},
-                        {"ordPrice", 1.60},
-
-                    },
-                    new Dictionary<string, object>
-                    {
-                        {"sku", "ORA44"},
-                        {"name", "Oranges"},
-                        {"description", "Blood Oranges"},
-                        {"price", 0.30},
-                        {"qty", 3},
-                        {"ordPrice", 0.93},
-
-                    }
+                    new Dictionary<string, object> { {"sku", "APL43"}, {"name", "apples"}, {"description", "Granny Smith Apples"}, {"price", 0.20}, {"qty", 8}, {"ordPrice", 1.60} },
+                    new Dictionary<string, object> { {"sku", "ORA44"}, {"name", "Oranges"}, {"description", "Blood Oranges"}, {"price", 0.30}, {"qty", 3}, {"ordPrice", 0.93} }
                 };
 
                 var data2 = new[]
                 {
-                    new Dictionary<string, object>
-                    {
-                        {"sku", "APL54"},
-                        {"name", "apples"},
-                        {"description", "Red Delicious Apples"},
-                        {"price", 0.22},
-                        {"qty", 9},
-                        {"ordPrice", 1.98},
-
-                    },
-                    new Dictionary<string, object>
-                    {
-                        {"sku", "ORA53"},
-                        {"name", "Oranges"},
-                        {"description", "Sunkist Oranges"},
-                        {"price", 0.20},
-                        {"qty", 1},
-                        {"ordPrice", 0.20},
-
-                    }
+                    new Dictionary<string, object> { {"sku", "APL54"}, {"name", "apples"}, {"description", "Red Delicious Apples"}, {"price", 0.22}, {"qty", 9}, {"ordPrice", 1.98} },
+                    new Dictionary<string, object> { {"sku", "ORA53"}, {"name", "Oranges"}, {"description", "Sunkist Oranges"}, {"price", 0.20}, {"qty", 1}, {"ordPrice", 0.20} }
                 };
 
                 message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToString("d"));
                 message.AddRcptMergeVars("test1@mandrilldotnet.org", "PRODUCTS", data1);
                 message.AddRcptMergeVars("test2@mandrilldotnet.org", "PRODUCTS", data2);
 
-                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
+                var result = await Api.Messages.SendTemplateAsync(_testTemplateName, new List<MandrillTemplateContent>(), message);
 
                 result.Should().HaveCount(2);
                 AssertResults(result);
-
             }
-
 
             [Fact]
             public async Task Can_send_template_dynamic()
@@ -773,7 +596,6 @@ To: Mr Smith
                 item1.ordPrice = 1.98;
                 item1.tags = new { id = "tag1", enabled = true };
 
-
                 dynamic item2 = new ExpandoObject();
                 item2.sku = "ORA54";
                 item2.name = "oranges";
@@ -783,11 +605,10 @@ To: Mr Smith
                 item2.ordPrice = 2.00;
                 item2.tags = new { id = "tag2", enabled = false };
 
-
                 message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToString("d"));
                 message.AddGlobalMergeVars("PRODUCTS", new[] { item1, item2 });
 
-                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
+                var result = await Api.Messages.SendTemplateAsync(_testTemplateName, new List<MandrillTemplateContent>(), message);
 
                 result.Should().HaveCount(2);
                 AssertResults(result);

@@ -1,33 +1,29 @@
-using System.Collections.Generic;
-using System.Text.Json;
+#nullable enable
+#pragma warning disable CS8618
+using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using Mandrill.Model;
 
-namespace Mandrill
+namespace Mandrill;
+
+internal partial class MandrillUsersApi
 {
-    internal partial class MandrillUsersApi : IMandrillUsersApi
+    public async Task<string> PingAsync(CancellationToken cancellationToken = default)
     {
-        public MandrillUsersApi(MandrillApi mandrillApi)
-        {
-            MandrillApi = mandrillApi;
-        }
+        return await MandrillApi.PostAsync<UsersPingRequest, string>("users/ping.json", new UsersPingRequest(), cancellationToken);
+    }
 
-        public MandrillApi MandrillApi { get; private set; }
+    public Task<MandrillUserPing2Response> Ping2Async(CancellationToken cancellationToken = default)
+    {
+        return MandrillApi.PostAsync<UsersPing2Request, MandrillUserPing2Response>("users/ping2.json", new UsersPing2Request(), cancellationToken);
+    }
 
-        public async Task<string> PingAsync()
-        {
-            return (await MandrillApi.PostAsync<MandrillUsersRequest, JsonElement>("users/ping2.json",
-                new MandrillUsersRequest()).ConfigureAwait(false)).GetProperty("PING").GetString()!;
-        }
+    internal class UsersPingRequest : MandrillRequestBase
+    {
+    }
 
-        public Task<IList<MandrillSenderDemographics>> SendersAsync()
-        {
-            return MandrillApi.PostAsync<MandrillUsersRequest, IList<MandrillSenderDemographics>>("users/senders.json", new MandrillUsersRequest());
-        }
-
-        public Task<MandrillUserInfo> InfoAsync()
-        {
-            return MandrillApi.PostAsync<MandrillUsersRequest, MandrillUserInfo>("users/info.json", new MandrillUsersRequest());
-        }
+    internal class UsersPing2Request : MandrillRequestBase
+    {
     }
 }

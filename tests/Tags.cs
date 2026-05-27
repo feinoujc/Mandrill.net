@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -8,44 +9,33 @@ namespace Tests
 {
     [Trait("Category", "tags")]
     [Collection("tags")]
-    public class Tags : IntegrationTest
+    public class Tags(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        public Tags(ITestOutputHelper output) : base(output)
-        {
-        }
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual Task DisposeAsync() => Task.CompletedTask;
 
         [Trait("Category", "tags/list.json")]
-        public class List : Tags
+        public class List(MandrillFixture fixture, ITestOutputHelper output) : Tags(fixture, output)
         {
-            public List(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_list_all()
             {
                 var results = await Api.Tags.ListAsync();
 
-                //the api doesn't return results immediately, it may return no results
                 var found = results.OrderBy(x => x.Tag).FirstOrDefault();
                 if (found != null)
-                {
                     results.Count.Should().BeGreaterOrEqualTo(1);
-                }
                 else
-                {
                     Output.WriteLine("no tags found.");
-                }
             }
         }
 
         [Trait("Category", "tags/info.json")]
-        public class Info : Tags
+        public class Info(MandrillFixture fixture, ITestOutputHelper output) : Tags(fixture, output)
         {
-            public Info(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_retrieve_info()
             {
@@ -64,12 +54,8 @@ namespace Tests
         }
 
         [Trait("Category", "tags/delete.json")]
-        public class Delete : Tags
+        public class Delete(MandrillFixture fixture, ITestOutputHelper output) : Tags(fixture, output)
         {
-            public Delete(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_delete_tag()
             {
@@ -88,12 +74,8 @@ namespace Tests
         }
 
         [Trait("Category", "tags/time_series.json")]
-        public class TimeSeries : Tags
+        public class TimeSeries(MandrillFixture fixture, ITestOutputHelper output) : Tags(fixture, output)
         {
-            public TimeSeries(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_get_tag_time_series()
             {
@@ -102,16 +84,11 @@ namespace Tests
                 {
                     var results = await Api.Tags.TimeSeriesAsync(tag.Tag);
 
-                    //the api doesn't return results immediately, it may return no results
                     var found = results.OrderBy(x => x.Time).FirstOrDefault();
                     if (found != null)
-                    {
                         results.Count.Should().BeGreaterOrEqualTo(1);
-                    }
                     else
-                    {
                         Output.WriteLine("no time series found.");
-                    }
                 }
                 else
                 {
@@ -121,27 +98,18 @@ namespace Tests
         }
 
         [Trait("Category", "tags/all_time_series.json")]
-        public class AllTimeSeries : Tags
+        public class AllTimeSeries(MandrillFixture fixture, ITestOutputHelper output) : Tags(fixture, output)
         {
-            public AllTimeSeries(ITestOutputHelper output) : base(output)
-            {
-            }
-
             [Fact]
             public async Task Can_get_tag_all_time_series()
             {
                 var results = await Api.Tags.AllTimeSeriesAsync();
 
-                //the api doesn't return results immediately, it may return no results
                 var found = results.OrderBy(x => x.Time).FirstOrDefault();
                 if (found != null)
-                {
                     results.Count.Should().BeGreaterOrEqualTo(1);
-                }
                 else
-                {
                     Output.WriteLine("no time series found.");
-                }
             }
         }
     }
