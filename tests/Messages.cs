@@ -85,7 +85,7 @@ namespace Tests
             [Fact]
             public async Task Can_retrieve_content()
             {
-                var results = await Api.Messages.SearchAsync(null, DateTime.Today.AddDays(-1));
+                var results = await Api.Messages.SearchAsync(null, DateOnly.FromDateTime(DateTime.Today.AddDays(-1)));
 
                 //the api doesn't return results immediately, it may return no results.
                 //Also, the content may not be around > 24 hrs
@@ -271,8 +271,8 @@ To: Mr Smith
             public async Task Can_search_all_params()
             {
                 var results = await Api.Messages.SearchAsync("email:mandrilldotnet.org",
-                    DateTime.Today.AddDays(-1),
-                    DateTime.Today.AddDays(1),
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
                     new string[0],
                     new[] { FromEmail },
                     new[] { ApiKey },
@@ -322,8 +322,8 @@ To: Mr Smith
             public async Task Can_search_all_params()
             {
                 var results = await Api.Messages.SearchTimeSeriesAsync("email:mandrilldotnet.org",
-                    DateTime.Today.AddDays(-1),
-                    DateTime.Today.AddDays(1),
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
                     new string[0],
                     new[] { FromEmail });
 

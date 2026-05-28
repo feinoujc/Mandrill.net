@@ -144,8 +144,8 @@ namespace Tests
             public async Task Can_export_activity()
             {
                 string notifyEmail = string.Empty;
-                DateTime? dateFrom = null;
-                DateTime? dateTo = null;
+                DateOnly? dateFrom = null;
+                DateOnly? dateTo = null;
                 IList<string> tags = null;
                 IList<string> senders = null;
                 IList<string> states = null;

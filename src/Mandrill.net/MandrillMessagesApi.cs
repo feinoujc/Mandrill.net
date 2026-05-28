@@ -9,7 +9,6 @@ namespace Mandrill
     internal partial class MandrillMessagesApi : IMandrillMessagesApi
     {
         private const string SendAtDateFormat = "yyyy-MM-dd HH:mm:ss";
-        private const string SearchDateFormat = "yyyy-MM-dd";
 
         internal MandrillMessagesApi(MandrillApi mandrillApi)
         {
@@ -87,16 +86,16 @@ namespace Mandrill
         }
 
 
-        public Task<IList<MandrillMessageInfo>> SearchAsync(string query, DateTime? dateFrom = null,
-            DateTime? dateTo = null, IList<string> tags = null, IList<string> senders = null,
+        public Task<IList<MandrillMessageInfo>> SearchAsync(string query, DateOnly? dateFrom = null,
+            DateOnly? dateTo = null, IList<string> tags = null, IList<string> senders = null,
             IList<string> apiKeys = null, int? limit = null)
         {
             return
                 MandrillApi.PostAsync<MandrillMessageSearchRequest, IList<MandrillMessageInfo>>("messages/search.json",
                     new MandrillMessageSearchRequest
                     {
-                        DateFrom = dateFrom?.ToString(SearchDateFormat),
-                        DateTo = dateTo?.ToString(SearchDateFormat),
+                        DateFrom = dateFrom,
+                        DateTo = dateTo,
                         Query = query,
                         Tags = tags?.ToList(),
                         Senders = senders?.ToList(),
@@ -106,8 +105,8 @@ namespace Mandrill
         }
 
 
-        public Task<IList<MandrillMessageTimeSeries>> SearchTimeSeriesAsync(string query, DateTime? dateFrom = null,
-            DateTime? dateTo = null, IList<string> tags = null,
+        public Task<IList<MandrillMessageTimeSeries>> SearchTimeSeriesAsync(string query, DateOnly? dateFrom = null,
+            DateOnly? dateTo = null, IList<string> tags = null,
             IList<string> senders = null)
         {
             return
@@ -115,8 +114,8 @@ namespace Mandrill
                     "messages/search-time-series.json",
                     new MandrillMessageSearchRequest
                     {
-                        DateFrom = dateFrom?.ToString(SearchDateFormat),
-                        DateTo = dateTo?.ToString(SearchDateFormat),
+                        DateFrom = dateFrom,
+                        DateTo = dateTo,
                         Query = query,
                         Tags = tags?.ToList(),
                         Senders = senders?.ToList()

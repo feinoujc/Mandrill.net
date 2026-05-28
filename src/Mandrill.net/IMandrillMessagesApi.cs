@@ -18,12 +18,12 @@ namespace Mandrill
             string fromName = null, IList<string> to = null, bool? async = null,
             string ipPool = null, DateTime? sendAtUtc = null, string returnPathDomain = null);
 
-        Task<IList<MandrillMessageInfo>> SearchAsync(string query, DateTime? dateFrom = null, DateTime? dateTo = null,
+        Task<IList<MandrillMessageInfo>> SearchAsync(string query, DateOnly? dateFrom = null, DateOnly? dateTo = null,
             IList<string> tags = null, IList<string> senders = null,
             IList<string> apiKeys = null, int? limit = null);
 
-        Task<IList<MandrillMessageTimeSeries>> SearchTimeSeriesAsync(string query, DateTime? dateFrom = null,
-            DateTime? dateTo = null, IList<string> tags = null,
+        Task<IList<MandrillMessageTimeSeries>> SearchTimeSeriesAsync(string query, DateOnly? dateFrom = null,
+            DateOnly? dateTo = null, IList<string> tags = null,
             IList<string> senders = null);
 
         Task<MandrillMessageInfo> InfoAsync(string id);

@@ -8,7 +8,6 @@ namespace Mandrill
 {
     internal partial class MandrillExportsApi : IMandrillExportsApi
     {
-        private const string ActivityDateFormat = "yyyy-MM-dd";
 
         public MandrillExportsApi(MandrillApi mandrillApi)
         {
@@ -50,8 +49,8 @@ namespace Mandrill
         }
 
         public Task<MandrillExportInfo> ActivityAsync(string notifyEmail,
-            DateTime? dateFrom = null,
-            DateTime? dateTo = null,
+            DateOnly? dateFrom = null,
+            DateOnly? dateTo = null,
             IList<string> tags = null,
             IList<string> senders = null,
             IList<string> states = null,
@@ -61,8 +60,8 @@ namespace Mandrill
                 new MandrillExportRequest
                 {
                     NotifyEmail = notifyEmail,
-                    DateFrom = dateFrom?.ToString(ActivityDateFormat),
-                    DateTo = dateTo?.ToString(ActivityDateFormat),
+                    DateFrom = dateFrom,
+                    DateTo = dateTo,
                     Tags = tags?.ToList(),
                     Senders = senders?.ToList(),
                     States = states?.ToList(),
