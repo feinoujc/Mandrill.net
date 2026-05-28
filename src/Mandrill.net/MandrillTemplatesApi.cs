@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,8 +17,8 @@ namespace Mandrill
 
         public MandrillApi MandrillApi { get; private set; }
 
-        public Task<MandrillTemplateInfo> AddAsync(string templateName, string code, string text, bool publish, string fromEmail = null,
-            string fromName = null, string subject = null, string[] labels = null)
+        public Task<MandrillTemplateInfo> AddAsync(string templateName, string code, string text, bool publish, string? fromEmail = null,
+            string? fromName = null, string? subject = null, string[]? labels = null)
         {
             return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/add.json", new MandrillTemplateRequest
             {
@@ -32,8 +33,8 @@ namespace Mandrill
             });
         }
 
-        public Task<MandrillTemplateInfo> UpdateAsync(string templateName, string code, string text, bool publish, string fromEmail = null,
-        string fromName = null, string subject = null, string[] labels = null)
+        public Task<MandrillTemplateInfo> UpdateAsync(string templateName, string code, string text, bool publish, string? fromEmail = null,
+            string? fromName = null, string? subject = null, string[]? labels = null)
         {
             return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/update.json", new MandrillTemplateRequest
             {
@@ -57,7 +58,7 @@ namespace Mandrill
             });
         }
 
-        public Task<IList<MandrillTemplateInfo>> ListAsync(string label = null)
+        public Task<IList<MandrillTemplateInfo>> ListAsync(string? label = null)
         {
             return MandrillApi.PostAsync<MandrillTemplateListRequest, IList<MandrillTemplateInfo>>("templates/list.json", new MandrillTemplateListRequest
             {

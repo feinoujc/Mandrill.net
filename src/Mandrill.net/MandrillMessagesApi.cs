@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace Mandrill
         public MandrillApi MandrillApi { get; private set; }
 
         public Task<IList<MandrillSendMessageResponse>> SendAsync(MandrillMessage message, bool async = false,
-            string ipPool = null, DateTime? sendAtUtc = null)
+            string? ipPool = null, DateTime? sendAtUtc = null)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
@@ -39,8 +40,8 @@ namespace Mandrill
         }
 
         public Task<IList<MandrillSendMessageResponse>> SendTemplateAsync(MandrillMessage message, string templateName,
-            IList<MandrillTemplateContent> templateContent = null, bool async = false,
-            string ipPool = null, DateTime? sendAtUtc = null)
+            IList<MandrillTemplateContent>? templateContent = null, bool async = false,
+            string? ipPool = null, DateTime? sendAtUtc = null)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
             if (templateName == null) throw new ArgumentNullException(nameof(templateName));
@@ -64,9 +65,9 @@ namespace Mandrill
                     });
         }
 
-        public Task<IList<MandrillSendMessageResponse>> SendRawAsync(string rawMessage, string fromEmail = null,
-            string fromName = null, IList<string> to = null, bool? async = null,
-            string ipPool = null, DateTime? sendAtUtc = null, string returnPathDomain = null)
+        public Task<IList<MandrillSendMessageResponse>> SendRawAsync(string rawMessage, string? fromEmail = null,
+            string? fromName = null, IList<string>? to = null, bool? async = null,
+            string? ipPool = null, DateTime? sendAtUtc = null, string? returnPathDomain = null)
         {
             if (rawMessage == null) throw new ArgumentNullException(nameof(rawMessage));
             return
@@ -85,10 +86,9 @@ namespace Mandrill
                     });
         }
 
-
         public Task<IList<MandrillMessageInfo>> SearchAsync(string query, DateOnly? dateFrom = null,
-            DateOnly? dateTo = null, IList<string> tags = null, IList<string> senders = null,
-            IList<string> apiKeys = null, int? limit = null)
+            DateOnly? dateTo = null, IList<string>? tags = null, IList<string>? senders = null,
+            IList<string>? apiKeys = null, int? limit = null)
         {
             return
                 MandrillApi.PostAsync<MandrillMessageSearchRequest, IList<MandrillMessageInfo>>("messages/search.json",
@@ -104,10 +104,9 @@ namespace Mandrill
                     });
         }
 
-
         public Task<IList<MandrillMessageTimeSeries>> SearchTimeSeriesAsync(string query, DateOnly? dateFrom = null,
-            DateOnly? dateTo = null, IList<string> tags = null,
-            IList<string> senders = null)
+            DateOnly? dateTo = null, IList<string>? tags = null,
+            IList<string>? senders = null)
         {
             return
                 MandrillApi.PostAsync<MandrillMessageSearchRequest, IList<MandrillMessageTimeSeries>>(
@@ -151,7 +150,7 @@ namespace Mandrill
                 });
         }
 
-        public Task<IList<MandrillMessageScheduleInfo>> ListScheduledAsync(string to = null)
+        public Task<IList<MandrillMessageScheduleInfo>> ListScheduledAsync(string? to = null)
         {
             return
                 MandrillApi.PostAsync<MandrillScheduleRequest, IList<MandrillMessageScheduleInfo>>(

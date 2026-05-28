@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace Mandrill
         }
 
         public MandrillApi MandrillApi { get; private set; }
-        public Task<MandrillRejectAddResponse> AddAsync(string email, string comment = null, string subaccount = null)
+        public Task<MandrillRejectAddResponse> AddAsync(string email, string? comment = null, string? subaccount = null)
         {
             if (email == null) throw new ArgumentNullException(nameof(email));
             return MandrillApi.PostAsync<MandrillRejectRequest, MandrillRejectAddResponse>("rejects/add.json",
@@ -25,8 +26,7 @@ namespace Mandrill
                 });
         }
 
-
-        public Task<MandrillRejectDeleteResponse> DeleteAsync(string email, string subaccount = null)
+        public Task<MandrillRejectDeleteResponse> DeleteAsync(string email, string? subaccount = null)
         {
             if (email == null) throw new ArgumentNullException(nameof(email));
             return MandrillApi.PostAsync<MandrillRejectRequest, MandrillRejectDeleteResponse>("rejects/delete.json",
@@ -37,7 +37,7 @@ namespace Mandrill
                 });
         }
 
-        public Task<IList<MandrillRejectInfo>> ListAsync(string email = null, bool? includeExpired = null, string subaccount = null)
+        public Task<IList<MandrillRejectInfo>> ListAsync(string? email = null, bool? includeExpired = null, string? subaccount = null)
         {
             return MandrillApi.PostAsync<MandrillRejectRequest, IList<MandrillRejectInfo>>("rejects/list.json",
                 new MandrillRejectRequest

@@ -1,3 +1,4 @@
+#nullable enable
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Mandrill.Model;
@@ -13,7 +14,7 @@ namespace Mandrill
 
         public MandrillApi MandrillApi { get; private set; }
 
-        public Task<IList<MandrillSubaccountResponse>> ListAsync(string q = null)
+        public Task<IList<MandrillSubaccountResponse>> ListAsync(string? q = null)
         {
             return MandrillApi.PostAsync<MandrillSubaccountsRequest, IList<MandrillSubaccountResponse>>("subaccounts/list.json", new MandrillSubaccountsRequest()
             {
@@ -21,7 +22,7 @@ namespace Mandrill
             });
         }
 
-        public Task<MandrillSubaccountResponse> AddAsync(string id, string name = null, string notes = null, int? customQuota = null)
+        public Task<MandrillSubaccountResponse> AddAsync(string id, string? name = null, string? notes = null, int? customQuota = null)
         {
             return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/add.json", new MandrillSubaccountsRequest()
             {
@@ -40,7 +41,7 @@ namespace Mandrill
             });
         }
 
-        public Task<MandrillSubaccountResponse> UpdateAsync(string id, string name = null, string notes = null, int? customQuota = null)
+        public Task<MandrillSubaccountResponse> UpdateAsync(string id, string? name = null, string? notes = null, int? customQuota = null)
         {
             return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/update.json", new MandrillSubaccountsRequest()
             {

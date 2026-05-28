@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace Mandrill
                 new MandrillWebHookRequest());
         }
 
-        public Task<MandrillWebHookInfo> AddAsync(Uri url, string description = null, IList<MandrillWebHookEventType> events = null)
+        public Task<MandrillWebHookInfo> AddAsync(Uri url, string? description = null, IList<MandrillWebHookEventType>? events = null)
         {
             return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/add.json",
                 new MandrillWebHookRequest()
@@ -39,7 +40,7 @@ namespace Mandrill
                 });
         }
 
-        public Task<MandrillWebHookInfo> UpdateAsync(int id, Uri url, string description = null, IList<MandrillWebHookEventType> events = null)
+        public Task<MandrillWebHookInfo> UpdateAsync(int id, Uri url, string? description = null, IList<MandrillWebHookEventType>? events = null)
         {
             return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/update.json",
                 new MandrillWebHookRequest()

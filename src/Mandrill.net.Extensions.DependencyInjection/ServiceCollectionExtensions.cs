@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
                 // validation
                 if (string.IsNullOrWhiteSpace(options.ApiKey))
                 {
-                    throw new ArgumentNullException(nameof(options.ApiKey));
+                    throw new ArgumentNullException(nameof(options.ApiKey), "Mandrill API key cannot be null or empty.");
                 }
             });
 
