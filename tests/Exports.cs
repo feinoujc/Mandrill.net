@@ -95,9 +95,7 @@ namespace Tests
             [Fact]
             public async Task Can_export_info()
             {
-                // notifyEmail is an optional field that will
-                // be emailed when the export is done compiling. omitting for test purposes.
-                string notifyEmail = string.Empty;
+                string notifyEmail = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 try
                 {
                     var result = await HandleExportThrottleError(Api.Exports.RejectsAsync(notifyEmail));
@@ -119,9 +117,8 @@ namespace Tests
             [Fact]
             public async Task Can_export_info()
             {
-                // notifyEmail is an optional field that will
-                // be emailed when the export is done compiling. omitting for test purposes.
-                string notifyEmail = string.Empty;
+                
+                string notifyEmail = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 try
                 {
                     var result = await HandleExportThrottleError(Api.Exports.WhitelistAsync(notifyEmail));
@@ -143,7 +140,7 @@ namespace Tests
             [Fact]
             public async Task Can_export_activity()
             {
-                string notifyEmail = string.Empty;
+                string notifyEmail = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 DateOnly? dateFrom = null;
                 DateOnly? dateTo = null;
                 IList<string> tags = null;

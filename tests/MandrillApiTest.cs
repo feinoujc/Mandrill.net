@@ -20,7 +20,7 @@ namespace Tests
 
             using (var api = new MandrillApi("api_key", client))
             {
-                api.HttpClient.BaseAddress.OriginalString.Should().Be("https://mandrillapp.com/api/1.0/");
+                api.HttpClient.BaseAddress.OriginalString.Should().Be("https://mandrillapp.com/api/1.4/");
                 api.HttpClient.DefaultRequestHeaders.Accept.Count.Should().Be(1);
             }
         }
