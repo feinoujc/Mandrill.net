@@ -1,21 +1,21 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Mandrill;
+using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
-using FluentAssertions;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Mandrill.Model;
 
 namespace Tests
 {
     [Trait("Category", "exports")]
     [Collection("exports")]
-    public class Exports : IntegrationTest
+    public class Exports(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        public Exports(ITestOutputHelper output) : base(output)
-        {
-        }
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
 
         class ExportThrottledTestException : Exception
         {
@@ -41,20 +41,19 @@ namespace Tests
             }
         }
 
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual Task DisposeAsync() => Task.CompletedTask;
+
         [Trait("Category", "exports/list.json")]
         public class List : Exports
         {
-            public List(ITestOutputHelper output) : base(output)
-            {
-            }
+            public List(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_list_all()
             {
                 var results = await Api.Exports.ListAsync();
-
-                //the api doesn't return results immediately, it may return no results
-                var found = results.OrderBy(x => x.Id).FirstOrDefault();
+                var found = results.Cast<MandrillExportInfo>().OrderBy(x => x.Id).FirstOrDefault();
                 if (found != null)
                 {
                     results.Count.Should().BeGreaterOrEqualTo(1);
@@ -69,14 +68,12 @@ namespace Tests
         [Trait("Category", "exports/info.json")]
         public class Info : Exports
         {
-            public Info(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Info(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_retrieve_info()
             {
-                var export = (await Api.Exports.ListAsync()).LastOrDefault();
+                var export = (await Api.Exports.ListAsync()).Cast<MandrillExportInfo>().LastOrDefault();
                 if (export != null)
                 {
                     var result = await Api.Exports.InfoAsync(export.Id);
@@ -93,9 +90,7 @@ namespace Tests
         [Trait("Category", "exports/rejects.json")]
         public class Rejects : Exports
         {
-            public Rejects(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Rejects(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_export_info()
@@ -119,9 +114,7 @@ namespace Tests
         [Trait("Category", "exports/whitelist.json")]
         public class Whitelist : Exports
         {
-            public Whitelist(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Whitelist(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_export_info()
@@ -145,9 +138,7 @@ namespace Tests
         [Trait("Category", "exports/activity.json")]
         public class Activity : Exports
         {
-            public Activity(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Activity(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_export_activity()

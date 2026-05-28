@@ -6,6 +6,7 @@
   </Configurations>
   <Folder Name="/Solution Items/">
     <File Path=".github/workflows/build.yaml" />
+    <File Path="Directory.Build.props" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Mandrill.net.Extensions.DependencyInjection/Mandrill.net.Extensions.DependencyInjection.csproj" />

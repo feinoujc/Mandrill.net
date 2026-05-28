@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Mandrill;
 using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
@@ -10,29 +12,25 @@ namespace Tests
 {
     [Trait("Category", "subaccounts")]
     [Collection("subaccounts")]
-    public class Subaccounts : IntegrationTest
+    public class Subaccounts(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        HashSet<string> _added = new HashSet<string>();
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+        private HashSet<string> _added = new();
 
-        public Subaccounts(ITestOutputHelper output) : base(output)
-        {
-        }
-
-        public override void Dispose()
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual async Task DisposeAsync()
         {
             foreach (var id in _added)
             {
-                var result = Api.Subaccounts.DeleteAsync(id).GetAwaiter().GetResult();
+                await Api.Subaccounts.DeleteAsync(id);
             }
-            base.Dispose();
         }
 
         [Trait("Category", "subaccounts/add.json")]
         public class Add : Subaccounts
         {
-            public Add(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Add(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_add_subaccount()
@@ -48,9 +46,7 @@ namespace Tests
         [Trait("Category", "subaccounts/list.json")]
         public class List : Subaccounts
         {
-            public List(ITestOutputHelper output) : base(output)
-            {
-            }
+            public List(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_list_subaccount()
@@ -69,9 +65,7 @@ namespace Tests
         [Trait("Category", "subaccounts/update.json")]
         public class Update : Subaccounts
         {
-            public Update(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Update(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_update_subaccount()
@@ -90,9 +84,7 @@ namespace Tests
         [Trait("Category", "subaccounts/pause.json")]
         public class Pause : Subaccounts
         {
-            public Pause(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Pause(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_pause_subaccount()
@@ -111,9 +103,7 @@ namespace Tests
         [Trait("Category", "subaccounts/resume.json")]
         public class Resume : Subaccounts
         {
-            public Resume(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Resume(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_resume_subaccount()
@@ -135,9 +125,7 @@ namespace Tests
         [Trait("Category", "subaccounts/delete.json")]
         public class Delete : Subaccounts
         {
-            public Delete(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Delete(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_delete_subaccount()
@@ -155,9 +143,7 @@ namespace Tests
         [Trait("Category", "subaccounts/info.json")]
         public class Info : Subaccounts
         {
-            public Info(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Info(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_get_info_subaccount()

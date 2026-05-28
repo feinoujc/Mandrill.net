@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using System.Text.Json;
+using Mandrill;
 using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
@@ -14,15 +15,15 @@ namespace Tests
 {
     [Trait("Category", "messages")]
     [Collection("messages")]
-    public class Messages : IntegrationTest
+    public class Messages(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+        protected string ApiKey => fixture.ApiKey;
+        public string FromEmail => "mandrill.net@" + (Environment.GetEnvironmentVariable("MANDRILL_SENDING_DOMAIN") ?? "test.mandrillapp.com");
 
-        public string FromEmail => "mandrill.net@" +
-                            (Environment.GetEnvironmentVariable("MANDRILL_SENDING_DOMAIN") ?? "test.mandrillapp.com");
-
-        public Messages(ITestOutputHelper output) : base(output)
-        {
-        }
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual Task DisposeAsync() => Task.CompletedTask;
 
         void AssertResults(IEnumerable<MandrillSendMessageResponse> result)
         {
@@ -32,8 +33,7 @@ namespace Tests
                 {
                     Assert.Fail("invalid email: " + response.RejectReason);
                 }
-                if (response.Status == MandrillSendMessageResponseStatus.Rejected &&
-        response.RejectReason == "unsigned")
+                if (response.Status == MandrillSendMessageResponseStatus.Rejected && response.RejectReason == "unsigned")
                 {
                     Output.WriteLine("unsigned sending domain");
                     break;
@@ -41,15 +41,11 @@ namespace Tests
                 if (response.Status == MandrillSendMessageResponseStatus.Rejected)
                 {
                     Assert.Fail("rejected email: " + response.RejectReason);
-
                 }
-
-                if (response.Status == MandrillSendMessageResponseStatus.Queued ||
-                    response.Status == MandrillSendMessageResponseStatus.Sent)
+                if (response.Status == MandrillSendMessageResponseStatus.Queued || response.Status == MandrillSendMessageResponseStatus.Sent)
                 {
                     break;
                 }
-
                 Assert.Fail("Unexptected status:" + response.Status);
             }
         }
@@ -57,7 +53,7 @@ namespace Tests
         [Trait("Category", "messages/cancel_scheduled.json")]
         public class CancelScheduled : Messages
         {
-            public CancelScheduled(ITestOutputHelper output) : base(output)
+            public CancelScheduled(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -82,7 +78,7 @@ namespace Tests
         [Trait("Category", "messages/content.json")]
         public class Content : Messages
         {
-            public Content(ITestOutputHelper output) : base(output)
+            public Content(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -129,7 +125,7 @@ namespace Tests
         [Trait("Category", "messages/info.json")]
         public class Info : Messages
         {
-            public Info(ITestOutputHelper output) : base(output)
+            public Info(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -164,7 +160,7 @@ namespace Tests
         [Trait("Category", "messages/list_scheduled.json")]
         public class ListScheduled : Messages
         {
-            public ListScheduled(ITestOutputHelper output) : base(output)
+            public ListScheduled(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -180,7 +176,7 @@ namespace Tests
         [Trait("Category", "messages/parse.json")]
         public class Parse : Messages
         {
-            public Parse(ITestOutputHelper output) : base(output)
+            public Parse(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -228,7 +224,7 @@ To: Mr Smith
         [Trait("Category", "messages/reschedule.json")]
         public class Reschedule : Messages
         {
-            public Reschedule(ITestOutputHelper output) : base(output)
+            public Reschedule(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -267,7 +263,7 @@ To: Mr Smith
         [Trait("Category", "messages/search.json")]
         public class Search : Messages
         {
-            public Search(ITestOutputHelper output) : base(output)
+            public Search(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -318,7 +314,7 @@ To: Mr Smith
         [Trait("Category", "messages/search_time_series.json")]
         public class SearchTimeSeries : Messages
         {
-            public SearchTimeSeries(ITestOutputHelper output) : base(output)
+            public SearchTimeSeries(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -362,7 +358,7 @@ To: Mr Smith
         [Trait("Category", "messages/send.json")]
         public class Send : Messages
         {
-            public Send(ITestOutputHelper output) : base(output)
+            public Send(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -488,7 +484,7 @@ To: Mr Smith
         [Trait("Category", "messages/send_raw.json")]
         public class SendRaw : Messages
         {
-            public SendRaw(ITestOutputHelper output) : base(output)
+            public SendRaw(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -518,16 +514,10 @@ To: Mr Smith
         {
             protected string TestTemplateName;
 
-            public SendTemplate(ITestOutputHelper output) : base(output)
+            public SendTemplate(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
                 TestTemplateName = Guid.NewGuid().ToString();
                 var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.Code, TemplateContent.Text, true).GetAwaiter().GetResult();
-                result.Should().NotBeNull();
-            }
-
-            public override void Dispose()
-            {
-                var result = Api.Templates.DeleteAsync(TestTemplateName).GetAwaiter().GetResult();
                 result.Should().NotBeNull();
             }
 
@@ -582,18 +572,11 @@ To: Mr Smith
         {
             protected string TestTemplateName;
 
-            public SendTemplate_Handlebars(ITestOutputHelper output) : base(output)
+            public SendTemplate_Handlebars(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
                 TestTemplateName = Guid.NewGuid().ToString();
                 var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.HandleBarCode, null, true).GetAwaiter().GetResult();
                 result.Should().NotBeNull();
-            }
-
-            public override void Dispose()
-            {
-                var result = Api.Templates.DeleteAsync(TestTemplateName).GetAwaiter().GetResult();
-                result.Should().NotBeNull();
-                base.Dispose();
             }
 
             [Fact]

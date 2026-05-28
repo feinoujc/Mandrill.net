@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -10,30 +11,26 @@ namespace Tests
 {
     [Trait("Category", "inbound")]
     [Collection("inbound")]
-    public class Inbound : IntegrationTest
+    public class Inbound(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        private HashSet<string> _added = new HashSet<string>();
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+        private HashSet<string> _added = new();
 
-        public Inbound(ITestOutputHelper output) : base(output)
-        {
-        }
-
-        public override void Dispose()
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual async Task DisposeAsync()
         {
             foreach (var id in _added)
             {
-                Api.Inbound.DeleteDomainAsync(id).GetAwaiter().GetResult();
-                Output.WriteLine("inbound domain deleted: " + id);
+                await Api.Inbound.DeleteDomainAsync(id);
+                Output.WriteLine($"inbound domain deleted: {id}");
             }
-            base.Dispose();
         }
 
         [Trait("Category", "inbound/domains")]
         public class Domains : Inbound
         {
-            public Domains(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Domains(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_get_domains()
@@ -82,17 +79,11 @@ namespace Tests
         {
             protected Uri WebhookUri { get; set; }
 
-            public Routes(ITestOutputHelper output) : base(output)
+            public Routes(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
                 var configuredWebHook = Environment.GetEnvironmentVariable("MANDRILL_INBOUND_WEBHOOK") ?? "https://httpbin.org/status/200";
 
                 WebhookUri = new UriBuilder(configuredWebHook) { Query = "id=" + Guid.NewGuid().ToString("N") }.Uri;
-            }
-            public override void Dispose()
-            {
-                var webhook = Api.WebHooks.ListAsync().GetAwaiter().GetResult().Single(x => x.Url == WebhookUri).Id;
-                Api.WebHooks.DeleteAsync(webhook).GetAwaiter().GetResult();
-                base.Dispose();
             }
 
             public string SendingDomain { get; set; }

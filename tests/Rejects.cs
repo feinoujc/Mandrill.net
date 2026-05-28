@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -9,28 +10,25 @@ namespace Tests
 {
     [Trait("Category", "rejects")]
     [Collection("rejects")]
-    public class Rejects : IntegrationTest
+    public class Rejects(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        private HashSet<string> _added = new HashSet<string>();
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+        private HashSet<string> _added = new();
 
-        public Rejects(ITestOutputHelper output) : base(output)
-        {
-        }
-
-        public override void Dispose()
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual async Task DisposeAsync()
         {
             foreach (var id in _added)
             {
-                var result = Api.Rejects.DeleteAsync(id).GetAwaiter().GetResult();
+                await Api.Rejects.DeleteAsync(id);
             }
         }
 
         [Trait("Category", "rejects/add.json")]
         public class Add : Rejects
         {
-            public Add(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Add(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_add_email_to_rejects()
@@ -45,9 +43,7 @@ namespace Tests
         [Trait("Category", "rejects/delete.json")]
         public class Delete : Rejects
         {
-            public Delete(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Delete(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_delete_email_from_rejects()
@@ -62,9 +58,7 @@ namespace Tests
         [Trait("Category", "rejects/list.json")]
         public class List : Rejects
         {
-            public List(ITestOutputHelper output) : base(output)
-            {
-            }
+            public List(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_list_filter_by_email()

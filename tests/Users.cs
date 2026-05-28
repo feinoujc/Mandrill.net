@@ -9,27 +9,26 @@ using Xunit.Abstractions;
 namespace Tests
 {
     [Trait("Category", "users")]
-    public class Users : IntegrationTest
+    [Collection("users")]
+    public class Users(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        public Users(ITestOutputHelper output) : base(output)
-        {
-        }
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual Task DisposeAsync() => Task.CompletedTask;
 
         [Trait("Category", "users/info.json")]
         public class Info : Users
         {
-            public Info(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Info(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_get_info()
             {
                 var result = await Api.Users.InfoAsync();
-
                 result.CreatedAt.Should().BeBefore(DateTime.UtcNow);
                 result.Username.Should().NotBeNullOrEmpty();
-
                 result.Stats.Should().NotBeNull();
                 result.Stats.Today.Should().NotBeNull();
                 result.Stats.Last7Days.Should().NotBeNull();
@@ -43,9 +42,7 @@ namespace Tests
         [Trait("Category", "users/ping2.json")]
         public class Ping : Users
         {
-            public Ping(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Ping(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_ping()
@@ -66,20 +63,16 @@ namespace Tests
         [Trait("Category", "users/senders.json")]
         public class Senders : Users
         {
-            public Senders(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Senders(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_list_senders()
             {
                 var results = await Api.Users.SendersAsync();
-
                 if (results.Count == 0)
                 {
                     Output.WriteLine("No senders returned");
                 }
-
                 foreach (var sender in results)
                 {
                     sender.Address.Should().NotBeNullOrEmpty();

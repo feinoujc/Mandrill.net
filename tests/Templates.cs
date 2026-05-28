@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Mandrill;
 using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
@@ -11,9 +12,11 @@ namespace Tests
 {
     [Trait("Category", "templates")]
     [Collection("templates")]
-    public class Templates : IntegrationTest
+    public class Templates(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        protected HashSet<string> TemplatesToCleanup;
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+        protected HashSet<string> TemplatesToCleanup = new();
 
         protected string AddToBeDeleted(string templateName)
         {
@@ -21,27 +24,23 @@ namespace Tests
             return templateName;
         }
 
-        public Templates(ITestOutputHelper output) : base(output)
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual async Task DisposeAsync()
         {
-            TemplatesToCleanup = new HashSet<string>();
-        }
-
-        public override void Dispose()
-        {
-            foreach (var templateName in TemplatesToCleanup)
+            if (TemplatesToCleanup != null)
             {
-                var result = Api.Templates.DeleteAsync(templateName).GetAwaiter().GetResult();
+                foreach (var templateName in TemplatesToCleanup)
+                {
+                    await Api.Templates.DeleteAsync(templateName);
+                }
+                TemplatesToCleanup = null;
             }
-            TemplatesToCleanup = null;
-            base.Dispose();
         }
 
         [Trait("Category", "templates/add.json")]
         public class Add : Templates
         {
-            public Add(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Add(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_add_template()
@@ -59,9 +58,7 @@ namespace Tests
         [Trait("Category", "templates/add.json")]
         public class Info : Templates
         {
-            public Info(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Info(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_get_template_info()
@@ -80,9 +77,7 @@ namespace Tests
         [Trait("Category", "templates/list.json")]
         public class List : Templates
         {
-            public List(ITestOutputHelper output) : base(output)
-            {
-            }
+            public List(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_list_all_templates()
@@ -125,9 +120,7 @@ namespace Tests
         [Trait("Category", "templates/add.json")]
         public class Publish : Templates
         {
-            public Publish(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Publish(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_publish_template()
@@ -146,9 +139,7 @@ namespace Tests
         [Trait("Category", "templates/render.json")]
         public class Render : Templates
         {
-            public Render(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Render(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_render()
@@ -178,9 +169,7 @@ namespace Tests
         [Trait("Category", "templates/time_series.json")]
         public class TimeSeries : Templates
         {
-            public TimeSeries(ITestOutputHelper output) : base(output)
-            {
-            }
+            public TimeSeries(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_get_time_series()
@@ -199,9 +188,7 @@ namespace Tests
         [Trait("Category", "templates/update.json")]
         public class Update : Templates
         {
-            public Update(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Update(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_update()

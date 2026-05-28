@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -11,25 +11,23 @@ namespace Tests
 {
     [Trait("Category", "senders")]
     [Collection("senders")]
-    public class Senders : IntegrationTest
+    public class Senders(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        public Senders(ITestOutputHelper output) : base(output)
-        {
-        }
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual Task DisposeAsync() => Task.CompletedTask;
 
         [Trait("Category", "senders/list.json")]
         public class List : Senders
         {
-            public List(ITestOutputHelper output) : base(output)
-            {
-            }
+            public List(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_list_all()
             {
                 var results = await Api.Senders.ListAsync();
-
-                //the api doesn't return results immediately, it may return no results
                 var found = results.OrderBy(x => x.Address).FirstOrDefault();
                 if (found != null)
                 {
@@ -45,9 +43,7 @@ namespace Tests
         [Trait("Category", "senders/domains.json")]
         public class Domains : Senders
         {
-            public Domains(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Domains(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_list_sender_domains()
@@ -70,9 +66,7 @@ namespace Tests
         [Trait("Category", "senders/add_domain.json")]
         public class Add : Senders
         {
-            public Add(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Add(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact(Skip = "no way to delete an added domain")]
             public async Task Can_add_domain()
@@ -86,9 +80,7 @@ namespace Tests
         [Trait("Category", "senders/check_domain.json")]
         public class Check : Senders
         {
-            public Check(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Check(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact(Skip = "No way to delete an added domain")]
             public async Task Can_check_domain()
@@ -103,9 +95,7 @@ namespace Tests
         [Trait("Category", "senders/verify_domain.json")]
         public class Verify : Senders
         {
-            public Verify(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Verify(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact(Skip = "No way to delete an added domain")]
             public async Task Can_verify_domain()
@@ -124,9 +114,7 @@ namespace Tests
         [Trait("Category", "senders/info.json")]
         public class Info : Senders
         {
-            public Info(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Info(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_retrieve_info()
@@ -148,9 +136,7 @@ namespace Tests
         [Trait("Category", "senders/time_series.json")]
         public class TimeSeries : Senders
         {
-            public TimeSeries(ITestOutputHelper output) : base(output)
-            {
-            }
+            public TimeSeries(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_get_sender_time_series()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -10,26 +11,29 @@ namespace Tests
 {
     [Trait("Category", "allowlists")]
     [Collection("allowlists")]
-    public class Allowlists : IntegrationTest
+    public class Allowlists(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        private HashSet<string> _added = new HashSet<string>();
 
-        public Allowlists(ITestOutputHelper output) : base(output)
-        {
-        }
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
 
-        public override void Dispose()
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+
+        public virtual async Task DisposeAsync()
         {
             foreach (var email in _added)
             {
-                var result = Api.Allowlists.DeleteAsync(email).GetAwaiter().GetResult();
+                var result = await Api.Allowlists.DeleteAsync(email);
             }
+          
         }
+
+        private HashSet<string> _added = new HashSet<string>();
 
         [Trait("Category", "allowlists/list.json")]
         public class List : Allowlists
         {
-            public List(ITestOutputHelper output) : base(output)
+            public List(MandrillFixture fixture, ITestOutputHelper output): base(fixture, output)
             {
             }
 
@@ -76,7 +80,7 @@ namespace Tests
         [Trait("Category", "allowlists/add.json")]
         public class Add : Allowlists
         {
-            public Add(ITestOutputHelper output) : base(output)
+            public Add(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -93,7 +97,7 @@ namespace Tests
         [Trait("Category", "allowlists/delete.json")]
         public class Delete : Allowlists
         {
-            public Delete(ITestOutputHelper output) : base(output)
+            public Delete(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
