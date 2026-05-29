@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
@@ -26,11 +25,11 @@ namespace Tests
             public async Task Can_list_templates()
             {
                 var results = await Api.McTemplates.ListAsync();
-                results.Should().NotBeNull();
+                Assert.NotNull(results);
                 var found = results.FirstOrDefault();
                 if (found != null)
                 {
-                    found.McTemplateName.Should().NotBeNullOrEmpty();
+                    Assert.False(string.IsNullOrEmpty(found.McTemplateName));
                 }
                 else
                 {
@@ -42,8 +41,8 @@ namespace Tests
             public async Task Can_list_with_search_query()
             {
                 var results = await Api.McTemplates.ListAsync(searchQuery: "nonexistent-template-xyz");
-                results.Should().NotBeNull();
-                results.Count.Should().Be(0);
+                Assert.NotNull(results);
+                Assert.Empty(results);
             }
         }
 
@@ -60,9 +59,9 @@ namespace Tests
                 if (first != null)
                 {
                     var result = await Api.McTemplates.InfoAsync(first.McTemplateId);
-                    result.Should().NotBeNull();
-                    result.McTemplateId.Should().Be(first.McTemplateId);
-                    result.McTemplateName.Should().Be(first.McTemplateName);
+                    Assert.NotNull(result);
+                    Assert.Equal(first.McTemplateId, result.McTemplateId);
+                    Assert.Equal(first.McTemplateName, result.McTemplateName);
                 }
                 else
                 {
@@ -84,7 +83,7 @@ namespace Tests
                 if (first != null)
                 {
                     var results = await Api.McTemplates.TimeSeriesAsync(first.McTemplateId);
-                    results.Should().NotBeNull();
+                    Assert.NotNull(results);
                 }
                 else
                 {

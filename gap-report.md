@@ -281,9 +281,11 @@ New SMS-specific models needed:
 Text: string                      // text (required)
 To: List<string>                  // to — E.164 phone numbers
 From: string                      // from
-Consent: MandrillSmsDetailsConsentType                   // consent — "onetime"|"recurring"|"recurring-no-confirm"
+Consent: MandrillSmsDetailsConsent                   // consent — "onetime"|"recurring"|"recurring-no-confirm"
 TrackClicks: bool?                // track_clicks
 ```
+
+Add enum MandrillSmsDetailsConsent with values `Onetime`, `Recurring`, `RecurringNoConfirm`. Use `[JsonConverter(typeof(JsonStringEnumConverter))]` to serialize as strings. and `[JsonPropertyName("onetime")]` etc to match the spec values.
 
 `MandrillSmsMessage`:
 
@@ -311,13 +313,13 @@ New method on `IMandrillMessagesApi`/`MandrillMessagesApi`:
 ```csharp
 Task<IList<MandrillSendMessageResponse>> SendMcTemplateAsync(MandrillMessage message,
     int mcTemplateId,
-    string? mcTemplateVersion = null,
+    MandrillMcTemplateVersion? mcTemplateVersion = null,
     bool async = false,
     string? ipPool = null,
     DateTime? sendAtUtc = null);
 ```
 
-New request POCO `MandrillSendMcTemplateRequest : MandrillSendMessageRequest` with additional fields `McTemplateId: int` and `McTemplateVersion: string?`.
+New request POCO `MandrillSendMcTemplateRequest : MandrillSendMessageRequest` with additional fields `McTemplateId: int` and `McTemplateVersion: MandrillMcTemplateVersion?`.
 
 ---
 

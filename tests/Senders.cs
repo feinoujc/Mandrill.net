@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
@@ -31,7 +30,7 @@ namespace Tests
                 var found = results.OrderBy(x => x.Address).FirstOrDefault();
                 if (found != null)
                 {
-                    results.Count.Should().BeGreaterOrEqualTo(1);
+                    Assert.True(results.Count >= 1);
                 }
                 else
                 {
@@ -54,7 +53,7 @@ namespace Tests
                 var found = results.OrderBy(x => x.CreatedAt).FirstOrDefault();
                 if (found != null)
                 {
-                    results.Count.Should().BeGreaterOrEqualTo(1);
+                    Assert.True(results.Count >= 1);
                 }
                 else
                 {
@@ -73,7 +72,7 @@ namespace Tests
             {
                 var domain = Guid.NewGuid().ToString("N") + "mandrilldotnet.org";
                 var result = await Api.Senders.AddDomainAsync(domain);
-                result.Domain.Should().Contain(domain);
+                Assert.Contains(domain, result.Domain);
             }
         }
 
@@ -88,7 +87,7 @@ namespace Tests
                 var domain = Guid.NewGuid().ToString("N") + "mandrilldotnet.org";
                 await Api.Senders.AddDomainAsync(domain);
                 var result = await Api.Senders.CheckDomainAsync(domain);
-                result.Domain.Should().Contain(domain);
+                Assert.Contains(domain, result.Domain);
             }
         }
 
@@ -107,7 +106,7 @@ namespace Tests
                 var mailbox = "testmailbox";
                 await Api.Senders.AddDomainAsync(domain);
                 var result = await Api.Senders.VerifyDomainAsync(domain, mailbox);
-                result.Domain.Should().Contain(domain);
+                Assert.Contains(domain, result.Domain);
             }
         }
 
@@ -123,8 +122,8 @@ namespace Tests
                 if (address != null)
                 {
                     var result = await Api.Senders.InfoAsync(address.Address);
-                    result.Should().NotBeNull();
-                    result.Address.Should().Be(address.Address);
+                    Assert.NotNull(result);
+                    Assert.Equal(address.Address, result.Address);
                 }
                 else
                 {
@@ -146,7 +145,7 @@ namespace Tests
                 if (domain != null)
                 {
                     var result = await Api.Senders.DeleteDomainAsync(domain.Domain);
-                    result.Domain.Should().Be(domain.Domain);
+                    Assert.Equal(domain.Domain, result.Domain);
                 }
                 else
                 {
@@ -172,7 +171,7 @@ namespace Tests
                     var found = results.OrderBy(x => x.Time).FirstOrDefault();
                     if (found != null)
                     {
-                        results.Count.Should().BeGreaterOrEqualTo(1);
+                        Assert.True(results.Count >= 1);
                     }
                     else
                     {

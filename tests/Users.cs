@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Mandrill;
 using Mandrill.Model;
 using Xunit;
@@ -27,15 +26,15 @@ namespace Tests
             public async Task Can_get_info()
             {
                 var result = await Api.Users.InfoAsync();
-                result.CreatedAt.Should().BeBefore(DateTime.UtcNow);
-                result.Username.Should().NotBeNullOrEmpty();
-                result.Stats.Should().NotBeNull();
-                result.Stats.Today.Should().NotBeNull();
-                result.Stats.Last7Days.Should().NotBeNull();
-                result.Stats.Last30Days.Should().NotBeNull();
-                result.Stats.Last60Days.Should().NotBeNull();
-                result.Stats.Last90Days.Should().NotBeNull();
-                result.Stats.AllTime.Should().NotBeNull();
+                Assert.True(result.CreatedAt < DateTime.UtcNow);
+                Assert.False(string.IsNullOrEmpty(result.Username));
+                Assert.NotNull(result.Stats);
+                Assert.NotNull(result.Stats.Today);
+                Assert.NotNull(result.Stats.Last7Days);
+                Assert.NotNull(result.Stats.Last30Days);
+                Assert.NotNull(result.Stats.Last60Days);
+                Assert.NotNull(result.Stats.Last90Days);
+                Assert.NotNull(result.Stats.AllTime);
             }
         }
 
@@ -48,15 +47,15 @@ namespace Tests
             public async Task Can_ping()
             {
                 var ping = await Api.Users.PingAsync();
-                ping.Should().Be("PONG!");
+                Assert.Equal("PONG!", ping);
             }
 
             [Fact]
             public async Task Can_ping2()
             {
                 var result = await Api.Users.Ping2Async();
-                result.Should().NotBeNull();
-                result.Ping.Should().Be("PONG!");
+                Assert.NotNull(result);
+                Assert.Equal("PONG!", result.Ping);
             }
 
             [Fact]
@@ -64,7 +63,7 @@ namespace Tests
             {
                 var badApi = new MandrillApi(Guid.NewGuid().ToString("N"));
                 var mandrillExpection = await Assert.ThrowsAsync<MandrillException>(() => badApi.Users.PingAsync());
-                mandrillExpection.Name.Should().Be("Invalid_Key");
+                Assert.Equal("Invalid_Key", mandrillExpection.Name);
             }
         }
 
@@ -83,8 +82,8 @@ namespace Tests
                 }
                 foreach (var sender in results)
                 {
-                    sender.Address.Should().NotBeNullOrEmpty();
-                    sender.CreatedAt.Should().BeBefore(DateTime.UtcNow);
+                    Assert.False(string.IsNullOrEmpty(sender.Address));
+                    Assert.True(sender.CreatedAt < DateTime.UtcNow);
                 }
             }
         }

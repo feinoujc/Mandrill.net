@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-using FluentAssertions;
 using Mandrill.Model;
 using Mandrill.Serialization;
 using Xunit;
@@ -45,7 +44,7 @@ namespace Tests
 
             var json = Serialize(model);
 
-            json.GetProperty("ts").GetInt64().Should().Be(expected);
+            Assert.Equal(expected, json.GetProperty("ts").GetInt64());
         }
 
         [Fact]
@@ -56,8 +55,8 @@ namespace Tests
 
             var json = Serialize(message);
 
-            json.GetProperty("global_merge_vars").GetArrayLength().Should().BeGreaterThan(0);
-            json.GetProperty("global_merge_vars")[0].GetProperty("content").GetString().Should().Be("some content");
+            Assert.True(json.GetProperty("global_merge_vars").GetArrayLength() > 0);
+            Assert.Equal("some content", json.GetProperty("global_merge_vars")[0].GetProperty("content").GetString());
         }
 
         [Fact]
@@ -75,14 +74,14 @@ namespace Tests
 
             var json = Serialize(message);
 
-            json.GetProperty("global_merge_vars").GetArrayLength().Should().BeGreaterThan(0);
+            Assert.True(json.GetProperty("global_merge_vars").GetArrayLength() > 0);
             var contentRaw = json.GetProperty("global_merge_vars")[0].GetProperty("content").GetRawText();
             var result = JsonSerializer.Deserialize<List<Dictionary<string, JsonNode>>>(contentRaw, MandrillSerializer.Instance);
 
-            result[0]["sku"].GetValue<string>().Should().Be("apples");
-            result[0]["unit_price"].GetValue<double>().Should().Be(0.20);
-            result[1]["sku"].GetValue<string>().Should().Be("oranges");
-            result[1]["unit_price"].GetValue<double>().Should().Be(0.40);
+            Assert.Equal("apples", result[0]["sku"].GetValue<string>());
+            Assert.Equal(0.20, result[0]["unit_price"].GetValue<double>());
+            Assert.Equal("oranges", result[1]["sku"].GetValue<string>());
+            Assert.Equal(0.40, result[1]["unit_price"].GetValue<double>());
         }
 
         [Fact]
@@ -95,14 +94,14 @@ namespace Tests
 
             var json = Serialize(message);
 
-            json.GetProperty("global_merge_vars").GetArrayLength().Should().BeGreaterThan(0);
+            Assert.True(json.GetProperty("global_merge_vars").GetArrayLength() > 0);
             var result = json.GetProperty("global_merge_vars")[0].GetProperty("content");
 
-            result.GetProperty("first_name").GetString().Should().Be("test");
-            result.TryGetProperty("last_name", out var lastName).Should().BeTrue();
-            lastName.ValueKind.Should().Be(JsonValueKind.Null);
-            result.TryGetProperty("items", out var items).Should().BeTrue();
-            items.GetArrayLength().Should().Be(0);
+            Assert.Equal("test", result.GetProperty("first_name").GetString());
+            Assert.True(result.TryGetProperty("last_name", out var lastName));
+            Assert.Equal(JsonValueKind.Null, lastName.ValueKind);
+            Assert.True(result.TryGetProperty("items", out var items));
+            Assert.Equal(0, items.GetArrayLength());
         }
 
         [Fact]
@@ -115,12 +114,12 @@ namespace Tests
 
             var json = Serialize(message);
 
-            json.GetProperty("global_merge_vars").GetArrayLength().Should().BeGreaterThan(0);
+            Assert.True(json.GetProperty("global_merge_vars").GetArrayLength() > 0);
             var result = json.GetProperty("global_merge_vars")[0].GetProperty("content");
 
-            result.GetProperty("FirstName").GetString().Should().Be("test");
-            result.TryGetProperty("LastName", out var lastName).Should().BeTrue();
-            lastName.ValueKind.Should().Be(JsonValueKind.Null);
+            Assert.Equal("test", result.GetProperty("FirstName").GetString());
+            Assert.True(result.TryGetProperty("LastName", out var lastName));
+            Assert.Equal(JsonValueKind.Null, lastName.ValueKind);
         }
 
         [Fact]
@@ -133,11 +132,11 @@ namespace Tests
 
             var json = Serialize(message);
 
-            json.GetProperty("global_merge_vars").GetArrayLength().Should().BeGreaterThan(0);
+            Assert.True(json.GetProperty("global_merge_vars").GetArrayLength() > 0);
             var result = json.GetProperty("global_merge_vars")[0].GetProperty("content");
 
             Output.WriteLine(JsonSerializer.Serialize(message, new JsonSerializerOptions(MandrillSerializer.Instance) { WriteIndented = true }));
-            result.ValueKind.Should().Be(JsonValueKind.Null);
+            Assert.Equal(JsonValueKind.Null, result.ValueKind);
         }
 
         [Fact]
@@ -147,7 +146,7 @@ namespace Tests
 
             var json = Serialize(model);
 
-            json.GetProperty("some_property_name").GetString().Should().Be("foo");
+            Assert.Equal("foo", json.GetProperty("some_property_name").GetString());
         }
 
         [Fact]
@@ -157,7 +156,7 @@ namespace Tests
 
             var json = Serialize(model);
 
-            json.TryGetProperty("list1", out _).Should().BeFalse();
+            Assert.False(json.TryGetProperty("list1", out _));
         }
 
         [Fact]
@@ -176,7 +175,7 @@ namespace Tests
 
             var items = JsonSerializer.Deserialize<IList<TestSubModel>>(
                 json.GetProperty("list2").GetRawText(), MandrillSerializer.Instance);
-            items.Should().HaveCount(2);
+            Assert.Equal(2, items.Count);
         }
 
         [Fact]
@@ -195,7 +194,7 @@ namespace Tests
 
             var items = JsonSerializer.Deserialize<IList<TestSubModel>>(
                 json.GetProperty("list2").GetRawText(), MandrillSerializer.Instance);
-            items.Should().HaveCount(2);
+            Assert.Equal(2, items.Count);
         }
 
         [Fact]
@@ -205,7 +204,7 @@ namespace Tests
 
             var json = Serialize(model);
 
-            json.GetProperty("_id").GetString().Should().Be(model.Id);
+            Assert.Equal(model.Id, json.GetProperty("_id").GetString());
         }
 
         [Fact]
@@ -215,7 +214,7 @@ namespace Tests
 
             var json = Serialize(model);
 
-            json.TryGetProperty("value1", out _).Should().BeFalse();
+            Assert.False(json.TryGetProperty("value1", out _));
         }
 
         [Fact]
@@ -225,8 +224,8 @@ namespace Tests
 
             var json = Serialize(model);
 
-            json[0].GetProperty("enum").GetString().Should().Be("reject");
-            json[1].GetProperty("enum").GetString().Should().Be("soft_bounce");
+            Assert.Equal("reject", json[0].GetProperty("enum").GetString());
+            Assert.Equal("soft_bounce", json[1].GetProperty("enum").GetString());
         }
 
         [Fact]
@@ -236,7 +235,7 @@ namespace Tests
 
             var json = Serialize(model);
 
-            json.TryGetProperty("dictionary", out _).Should().BeFalse();
+            Assert.False(json.TryGetProperty("dictionary", out _));
         }
 
         [Fact]
@@ -249,10 +248,10 @@ namespace Tests
 
             var json = Serialize(model);
 
-            json.TryGetProperty("dictionary", out var dictEl).Should().BeTrue();
+            Assert.True(json.TryGetProperty("dictionary", out var dictEl));
             var dictionary = JsonSerializer.Deserialize<Dictionary<string, string>>(dictEl.GetRawText());
-            dictionary["key1"].Should().Be("value1");
-            dictionary["key2"].Should().Be("value2");
+            Assert.Equal("value1", dictionary["key1"]);
+            Assert.Equal("value2", dictionary["key2"]);
         }
 
         [Fact]
@@ -345,43 +344,43 @@ namespace Tests
             json = JsonSerializer.Serialize(message, MandrillSerializer.Instance);
             message = Deserialize<MandrillMessage>(json);
 
-            message.Html.Should().Be("<p>Example HTML content</p>");
-            message.Text.Should().Be("Example text content");
-            message.Subject.Should().Be("example subject");
-            message.FromEmail.Should().Be("message.from_email@mandrilldotnet.org");
-            message.FromName.Should().Be("Example Name");
-            message.To.Should().HaveCount(1);
-            message.To[0].Email.Should().Be("recipient.email@mandrilldotnet.org");
-            message.To[0].Name.Should().Be("Recipient Name");
-            message.To[0].Type.Should().Be(MandrillMailAddressType.To);
-            message.Headers.Should().HaveCount(1);
-            message.Headers["Reply-To"].Should().Be("message.reply@mandrilldotnet.org");
-            message.Important.Should().BeFalse();
-            message.BccAddress.Should().Be("message.bcc_address@mandrilldotnet.org");
-            message.Merge.Should().BeTrue();
-            message.MergeLanguage.Should().Be(MandrillMessageMergeLanguage.Mailchimp);
-            message.GlobalMergeVars.Should().HaveCount(1);
-            message.GlobalMergeVars[0].Name.Should().Be("merge1");
-            ((string)message.GlobalMergeVars[0].Content).Should().Be("merge1 content");
-            message.RecipientMetadata.Should().HaveCount(1);
-            message.RecipientMetadata[0].Rcpt.Should().Be("recipient.email@mandrilldotnet.org");
-            message.RecipientMetadata[0].Values.Should().HaveCount(1);
+            Assert.Equal("<p>Example HTML content</p>", message.Html);
+            Assert.Equal("Example text content", message.Text);
+            Assert.Equal("example subject", message.Subject);
+            Assert.Equal("message.from_email@mandrilldotnet.org", message.FromEmail);
+            Assert.Equal("Example Name", message.FromName);
+            Assert.Single(message.To);
+            Assert.Equal("recipient.email@mandrilldotnet.org", message.To[0].Email);
+            Assert.Equal("Recipient Name", message.To[0].Name);
+            Assert.Equal(MandrillMailAddressType.To, message.To[0].Type);
+            Assert.Single(message.Headers);
+            Assert.Equal("message.reply@mandrilldotnet.org", message.Headers["Reply-To"]);
+            Assert.Equal(false, message.Important);
+            Assert.Equal("message.bcc_address@mandrilldotnet.org", message.BccAddress);
+            Assert.Equal(true, message.Merge);
+            Assert.Equal(MandrillMessageMergeLanguage.Mailchimp, message.MergeLanguage);
+            Assert.Single(message.GlobalMergeVars);
+            Assert.Equal("merge1", message.GlobalMergeVars[0].Name);
+            Assert.Equal("merge1 content", (string)message.GlobalMergeVars[0].Content);
+            Assert.Single(message.RecipientMetadata);
+            Assert.Equal("recipient.email@mandrilldotnet.org", message.RecipientMetadata[0].Rcpt);
+            Assert.Single(message.RecipientMetadata[0].Values);
             message.RecipientMetadata[0].Values["user_id"] = "123456";
-            message.Tags.Should().HaveCount(1);
-            message.Tags[0].Should().Be("password-resets");
-            message.Subaccount.Should().Be("customer-123");
-            message.GoogleAnalyticsDomains.Should().HaveCount(1);
-            message.GoogleAnalyticsDomains[0].Should().Be("example.com");
-            message.Metadata.Should().HaveCount(1);
-            message.Metadata["website"].Should().Be("www.example.com");
-            message.Attachments.Should().HaveCount(1);
-            message.Attachments[0].Content.Should().NotBeNullOrEmpty();
-            message.Attachments[0].Name.Should().Be("myfile.txt");
-            Convert.ToBase64String(message.Attachments[0].Content).Should().Be("bWFuZHJpbGwubmV0");
-            message.Images.Should().HaveCount(1);
-            message.Images[0].Content.Should().NotBeNullOrEmpty();
-            message.Images[0].Name.Should().Be("IMAGECID");
-            Convert.ToBase64String(message.Images[0].Content).Should().Be("bWFuZHJpbGwubmV0");
+            Assert.Single(message.Tags);
+            Assert.Equal("password-resets", message.Tags[0]);
+            Assert.Equal("customer-123", message.Subaccount);
+            Assert.Single(message.GoogleAnalyticsDomains);
+            Assert.Equal("example.com", message.GoogleAnalyticsDomains[0]);
+            Assert.Single(message.Metadata);
+            Assert.Equal("www.example.com", message.Metadata["website"]);
+            Assert.Single(message.Attachments);
+            Assert.NotEmpty(message.Attachments[0].Content);
+            Assert.Equal("myfile.txt", message.Attachments[0].Name);
+            Assert.Equal("bWFuZHJpbGwubmV0", Convert.ToBase64String(message.Attachments[0].Content));
+            Assert.Single(message.Images);
+            Assert.NotEmpty(message.Images[0].Content);
+            Assert.Equal("IMAGECID", message.Images[0].Name);
+            Assert.Equal("bWFuZHJpbGwubmV0", Convert.ToBase64String(message.Images[0].Content));
         }
 
         [Fact]
@@ -391,8 +390,9 @@ namespace Tests
 
             var events = MandrillMessageEvent.ParseMandrillEvents(json);
 
-            events.Should().NotBeNullOrEmpty();
-            events.Should().HaveCount(14);
+            Assert.NotNull(events);
+            Assert.NotEmpty(events);
+            Assert.Equal(14, events.Count);
 
             Output.WriteLine(JsonSerializer.Serialize(events, MandrillSerializer.Instance));
         }
@@ -404,20 +404,21 @@ namespace Tests
 
             var events = MandrillMessageEvent.ParseMandrillEvents(json);
 
-            events.Should().NotBeNullOrEmpty();
-            events.Should().HaveCount(2);
+            Assert.NotNull(events);
+            Assert.NotEmpty(events);
+            Assert.Equal(2, events.Count);
 
             Assert.Collection(events,
                 e =>
                 {
-                    e.Msg.Metadata.Should().NotBeNull();
-                    e.Msg.Metadata.Should().HaveCount(0);
+                    Assert.NotNull(e.Msg.Metadata);
+                    Assert.Empty(e.Msg.Metadata);
                 },
                 e =>
                 {
-                    e.Msg.Metadata.Should().NotBeNull();
-                    e.Msg.Metadata.Should().HaveCount(1);
-                    e.Msg.Metadata["user_id"].Should().Be("111");
+                    Assert.NotNull(e.Msg.Metadata);
+                    Assert.Single(e.Msg.Metadata);
+                    Assert.Equal("111", e.Msg.Metadata["user_id"]);
                 });
 
             Output.WriteLine(JsonSerializer.Serialize(events, MandrillSerializer.Instance));
@@ -430,8 +431,9 @@ namespace Tests
 
             var events = MandrillMessageEvent.ParseMandrillEvents(json);
 
-            events.Should().NotBeNullOrEmpty();
-            events.Should().HaveCount(14);
+            Assert.NotNull(events);
+            Assert.NotEmpty(events);
+            Assert.Equal(14, events.Count);
 
             Output.WriteLine(JsonSerializer.Serialize(events, MandrillSerializer.Instance));
         }
@@ -443,24 +445,25 @@ namespace Tests
 
             var events = MandrillInboundEvent.ParseMandrillEvents(json);
 
-            events.Should().NotBeNullOrEmpty();
-            events.Should().HaveCount(2);
+            Assert.NotNull(events);
+            Assert.NotEmpty(events);
+            Assert.Equal(2, events.Count);
 
-            events[0].Msg.Headers.Should().NotBeEmpty();
-            events[0].Msg.Headers["Content-Type"].Should()
-                .Be("multipart/alternative; boundary=\"_av-7r7zDhHxVEAo2yMWasfuFw\"");
+            Assert.NotEmpty(events[0].Msg.Headers);
+            Assert.Equal("multipart/alternative; boundary=\"_av-7r7zDhHxVEAo2yMWasfuFw\"",
+                events[0].Msg.Headers["Content-Type"]);
 
-            events[0].Msg.To[0][0].Should().Be("test@inbound.example.com");
+            Assert.Equal("test@inbound.example.com", events[0].Msg.To[0][0]);
 
-            events[0].Msg.Cc[0][0].Should().Be("testCc@inbound.example.com");
+            Assert.Equal("testCc@inbound.example.com", events[0].Msg.Cc[0][0]);
 
-            events[1].Msg.Attachments.Count.Should().Be(1);
-            events[1].Msg.Attachments.First().Value.Content.Should().NotBeEmpty();
-            events[1].Msg.Images.Count.Should().Be(1);
-            events[1].Msg.Images.First().Value.Content.Length.Should().BeGreaterThan(0);
+            Assert.Single(events[1].Msg.Attachments);
+            Assert.NotEmpty(events[1].Msg.Attachments.First().Value.Content);
+            Assert.Single(events[1].Msg.Images);
+            Assert.True(events[1].Msg.Images.First().Value.Content.Length > 0);
 
-            events[0].Msg.FromName.Should().Be("Example Sender");
-            events[1].Msg.FromName.Should().BeNullOrEmpty();
+            Assert.Equal("Example Sender", events[0].Msg.FromName);
+            Assert.True(string.IsNullOrEmpty(events[1].Msg.FromName));
 
             Output.WriteLine(JsonSerializer.Serialize(events, MandrillSerializer.Instance));
         }
@@ -472,10 +475,10 @@ namespace Tests
 
             var events = MandrillInboundEvent.ParseMandrillEvents(json);
 
-            events.Should().NotBeNullOrEmpty();
-            events.Should().HaveCount(1);
+            Assert.NotNull(events);
+            Assert.Single(events);
 
-            events[0].Msg.Headers.Should().BeEmpty();
+            Assert.Empty(events[0].Msg.Headers);
 
             Output.WriteLine(JsonSerializer.Serialize(events, MandrillSerializer.Instance));
         }
@@ -487,11 +490,11 @@ namespace Tests
 
             var events = MandrillSyncEvent.ParseSyncEvents(json);
 
-            events.Should().NotBeNullOrEmpty();
-            events.Should().HaveCount(1);
+            Assert.NotNull(events);
+            Assert.Single(events);
 
-            events[0].Action.Should().Be(MandrillSyncAction.Add);
-            events[0].Type.Should().Be(MandrillSyncType.Blacklist);
+            Assert.Equal(MandrillSyncAction.Add, events[0].Action);
+            Assert.Equal(MandrillSyncType.Blacklist, events[0].Type);
         }
 
         [Fact]
@@ -501,12 +504,13 @@ namespace Tests
 
             var events = MandrillInboundEvent.ParseMandrillEvents(json);
 
-            events.Should().NotBeNullOrEmpty();
-            events.Should().HaveCount(2);
+            Assert.NotNull(events);
+            Assert.NotEmpty(events);
+            Assert.Equal(2, events.Count);
 
-            events[0].Msg.Headers.Should().NotBeEmpty();
-            events[0].Msg.Headers["Content-Type"].Should().NotBeNull();
-            events[0].Msg.Headers["Content-Type"].Should().Be(events[0].Msg.Headers["CONTENT-TYPE"]);
+            Assert.NotEmpty(events[0].Msg.Headers);
+            Assert.NotNull(events[0].Msg.Headers["Content-Type"]);
+            Assert.Equal(events[0].Msg.Headers["CONTENT-TYPE"], events[0].Msg.Headers["Content-Type"]);
         }
 
         [Fact]

@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
@@ -26,11 +25,11 @@ namespace Tests
             public async Task Can_list_ips()
             {
                 var results = await Api.Ips.ListAsync();
-                results.Should().NotBeNull();
+                Assert.NotNull(results);
                 var found = results.FirstOrDefault();
                 if (found != null)
                 {
-                    found.Ip.Should().NotBeNullOrEmpty();
+                    Assert.False(string.IsNullOrEmpty(found.Ip));
                 }
                 else
                 {
@@ -48,11 +47,11 @@ namespace Tests
             public async Task Can_list_pools()
             {
                 var results = await Api.Ips.ListPoolsAsync();
-                results.Should().NotBeNull();
+                Assert.NotNull(results);
                 var found = results.FirstOrDefault();
                 if (found != null)
                 {
-                    found.Name.Should().NotBeNullOrEmpty();
+                    Assert.False(string.IsNullOrEmpty(found.Name));
                 }
                 else
                 {
@@ -70,7 +69,7 @@ namespace Tests
             public async Task Can_provision_ip()
             {
                 var result = await Api.Ips.ProvisionAsync(warmup: true);
-                result.Should().NotBeNull();
+                Assert.NotNull(result);
             }
         }
 
@@ -83,8 +82,8 @@ namespace Tests
             public async Task Can_create_pool()
             {
                 var result = await Api.Ips.CreatePoolAsync("test-pool");
-                result.Should().NotBeNull();
-                result.Name.Should().Be("test-pool");
+                Assert.NotNull(result);
+                Assert.Equal("test-pool", result.Name);
             }
         }
     }

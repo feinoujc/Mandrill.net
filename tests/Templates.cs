@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Mandrill;
 using Mandrill.Model;
 using Xunit;
@@ -48,10 +47,10 @@ namespace Tests
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
                 var result = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
 
-                result.Name.Should().Be(name);
-                result.Code.Should().Be(TemplateContent.Code);
-                result.Slug.Should().Be(name);
-                result.Text.Should().Be(TemplateContent.Text);
+                Assert.Equal(name, result.Name);
+                Assert.Equal(TemplateContent.Code, result.Code);
+                Assert.Equal(name, result.Slug);
+                Assert.Equal(TemplateContent.Text, result.Text);
             }
         }
 
@@ -67,10 +66,10 @@ namespace Tests
                 var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
                 var result = await Api.Templates.InfoAsync(added.Name);
 
-                result.Name.Should().Be(name);
-                result.Code.Should().Be(TemplateContent.Code);
-                result.Slug.Should().Be(name);
-                result.Text.Should().Be(TemplateContent.Text);
+                Assert.Equal(name, result.Name);
+                Assert.Equal(TemplateContent.Code, result.Code);
+                Assert.Equal(name, result.Slug);
+                Assert.Equal(TemplateContent.Text, result.Text);
             }
         }
 
@@ -91,8 +90,8 @@ namespace Tests
 
                 var results = await Api.Templates.ListAsync(testLabel);
 
-                results.Count.Should().BeGreaterOrEqualTo(10);
-                results.Where(info => templates.Contains(info.Name)).Should().HaveCount(10);
+                Assert.True(results.Count >= 10);
+                Assert.Equal(10, results.Where(info => templates.Contains(info.Name)).Count());
             }
 
             [Fact]
@@ -107,13 +106,13 @@ namespace Tests
 
                 var results = await Api.Templates.ListAsync(testLabel);
 
-                results.Should().HaveCount(10);
-                results.All(x =>
+                Assert.Equal(10, results.Count);
+                foreach (var x in results)
                 {
-                    x.Labels.Should().NotBeNullOrEmpty();
-                    x.Labels[0].Should().Be(testLabel);
-                    return true;
-                }).Should().BeTrue();
+                    Assert.NotNull(x.Labels);
+                    Assert.NotEmpty(x.Labels);
+                    Assert.Equal(testLabel, x.Labels[0]);
+                }
             }
         }
 
@@ -132,7 +131,7 @@ namespace Tests
                 var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
                 var result = await Api.Templates.PublishAsync(added.Name);
 
-                result.PublishedAt.Should().BeOnOrAfter(skew);
+                Assert.True(result.PublishedAt >= skew);
             }
         }
 
@@ -159,10 +158,10 @@ namespace Tests
                 };
                 var result = await Api.Templates.RenderAsync(name, templateContent, mergeVars);
 
-                result.Html.Should().NotBeNullOrWhiteSpace();
-                result.Html.Should().Contain("Joe");
-                result.Html.Should().Contain("11/28/2014");
-                result.Html.Should().Contain("Lorem ipsum dolor sit amet");
+                Assert.False(string.IsNullOrWhiteSpace(result.Html));
+                Assert.Contains("Joe", result.Html);
+                Assert.Contains("11/28/2014", result.Html);
+                Assert.Contains("Lorem ipsum dolor sit amet", result.Html);
             }
         }
 
@@ -197,10 +196,10 @@ namespace Tests
                 await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
                 var result = await Api.Templates.UpdateAsync(name, TemplateContent.Code.Replace("footer", "booger"), null, false,
                     "update@mandrilldotnet.org");
-                result.Name.Should().Be(name);
-                result.Code.Should().Contain("booger");
-                result.Slug.Should().Be(name);
-                result.FromEmail.Should().Be("update@mandrilldotnet.org");
+                Assert.Equal(name, result.Name);
+                Assert.Contains("booger", result.Code);
+                Assert.Equal(name, result.Slug);
+                Assert.Equal("update@mandrilldotnet.org", result.FromEmail);
             }
         }
     }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
@@ -36,7 +35,7 @@ namespace Tests
             public async Task Can_get_domains()
             {
                 var results = await Api.Inbound.DomainsAsync();
-                results.Count.Should().BeGreaterOrEqualTo(0);
+                Assert.True(results.Count >= 0);
             }
 
 
@@ -47,7 +46,7 @@ namespace Tests
                 var results = await Api.Inbound.AddDomainAsync(domain);
                 _added.Add(results.Domain);
 
-                results.Domain.Should().Be(domain);
+                Assert.Equal(domain, results.Domain);
             }
 
             [Fact]
@@ -59,7 +58,7 @@ namespace Tests
 
                 var result = await Api.Inbound.CheckDomainAsync(domain);
 
-                result.ValidMx.Should().Be(false);
+                Assert.False(result.ValidMx);
 
             }
 
@@ -70,7 +69,7 @@ namespace Tests
                 await Api.Inbound.AddDomainAsync(domain);
 
                 var results = await Api.Inbound.DeleteDomainAsync(domain);
-                results.Domain.Should().Be(domain);
+                Assert.Equal(domain, results.Domain);
             }
         }
 
@@ -98,8 +97,8 @@ namespace Tests
                 var route = await Api.Inbound.AddRouteAsync(domain, domain, WebhookUri);
 
                 var results = await Api.Inbound.RoutesAsync(domain);
-                results.Should().NotBeEmpty();
-                results[0].Id.Should().Be(route.Id);
+                Assert.NotEmpty(results);
+                Assert.Equal(route.Id, results[0].Id);
             }
 
             [Fact]
@@ -111,8 +110,8 @@ namespace Tests
 
                 var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri);
 
-                result.Id.Should().NotBeNull();
-                result.Url.Should().Be(WebhookUri);
+                Assert.NotNull(result.Id);
+                Assert.Equal(WebhookUri, result.Url);
             }
 
             [Fact]
@@ -123,15 +122,15 @@ namespace Tests
                 _added.Add(domain);
 
                 var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri);
-                result.Id.Should().NotBeNull();
-                result.Url.Should().Be(WebhookUri);
+                Assert.NotNull(result.Id);
+                Assert.Equal(WebhookUri, result.Url);
                 var id = result.Id;
 
                 var newpattern = string.Format("{0:N}-*", Guid.NewGuid());
 
                 result = await Api.Inbound.UpdateRouteAsync(id, newpattern, WebhookUri);
-                result.Id.Should().Be(id);
-                result.Pattern.Should().Be(newpattern);
+                Assert.Equal(id, result.Id);
+                Assert.Equal(newpattern, result.Pattern);
             }
 
 
@@ -143,13 +142,13 @@ namespace Tests
                 _added.Add(domain);
 
                 var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri);
-                result.Id.Should().NotBeNull();
-                result.Url.Should().Be(WebhookUri);
+                Assert.NotNull(result.Id);
+                Assert.Equal(WebhookUri, result.Url);
                 var id = result.Id;
 
 
                 result = await Api.Inbound.DeleteRouteAsync(id);
-                result.Id.Should().Be(id);
+                Assert.Equal(id, result.Id);
             }
 
             [Fact]
@@ -162,8 +161,8 @@ namespace Tests
                 var id = Guid.NewGuid().ToString("N");
                 var pattern = string.Format("{0}-*", id);
                 var result = await Api.Inbound.AddRouteAsync(domain, pattern, WebhookUri);
-                result.Id.Should().NotBeNull();
-                result.Url.Should().Be(WebhookUri);
+                Assert.NotNull(result.Id);
+                Assert.Equal(WebhookUri, result.Url);
 
 
                 var email = string.Format(id + "-@" + domain);
@@ -171,10 +170,10 @@ namespace Tests
 
                 var responses = await Api.Inbound.SendRawAsync(raw, new[] { email });
 
-                responses.Should().NotBeEmpty();
-                responses[0].Email.Should().EndWith(domain);
-                responses[0].Url.Should().Be(WebhookUri);
-                responses[0].Pattern.Should().Be(pattern);
+                Assert.NotEmpty(responses);
+                Assert.EndsWith(domain, responses[0].Email);
+                Assert.Equal(WebhookUri, responses[0].Url);
+                Assert.Equal(pattern, responses[0].Pattern);
             }
         }
     }

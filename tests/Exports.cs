@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Mandrill;
 using Mandrill.Model;
 using Xunit;
@@ -56,7 +55,7 @@ namespace Tests
                 var found = results.Cast<MandrillExportInfo>().OrderBy(x => x.Id).FirstOrDefault();
                 if (found != null)
                 {
-                    results.Count.Should().BeGreaterOrEqualTo(1);
+                    Assert.True(results.Count >= 1);
                 }
                 else
                 {
@@ -77,8 +76,8 @@ namespace Tests
                 if (export != null)
                 {
                     var result = await Api.Exports.InfoAsync(export.Id);
-                    result.Should().NotBeNull();
-                    result.Id.Should().Be(export.Id);
+                    Assert.NotNull(result);
+                    Assert.Equal(export.Id, result.Id);
                 }
                 else
                 {
@@ -99,9 +98,9 @@ namespace Tests
                 try
                 {
                     var result = await HandleExportThrottleError(Api.Exports.RejectsAsync(notifyEmail));
-                    result.Should().NotBeNull();
-                    result.Type.Should().Be("reject");
-                    result.State.Should().Be("waiting");
+                    Assert.NotNull(result);
+                    Assert.Equal("reject", result.Type);
+                    Assert.Equal("waiting", result.State);
                 }
                 catch (ExportThrottledTestException)
                 {
@@ -122,9 +121,9 @@ namespace Tests
                 try
                 {
                     var result = await HandleExportThrottleError(Api.Exports.WhitelistAsync(notifyEmail));
-                    result.Should().NotBeNull();
-                    result.Type.Should().Be("whitelist");
-                    result.State.Should().Be("waiting");
+                    Assert.NotNull(result);
+                    Assert.Equal("whitelist", result.Type);
+                    Assert.Equal("waiting", result.State);
                 }
                 catch (ExportThrottledTestException)
                 {
@@ -144,9 +143,9 @@ namespace Tests
                 try
                 {
                     var result = await HandleExportThrottleError(Api.Exports.AllowlistAsync(notifyEmail));
-                    result.Should().NotBeNull();
-                    result.Type.Should().Be("allowlist");
-                    result.State.Should().Be("waiting");
+                    Assert.NotNull(result);
+                    Assert.Equal("whitelist", result.Type);
+                    Assert.Equal("waiting", result.State);
                 }
                 catch (ExportThrottledTestException)
                 {
@@ -179,9 +178,9 @@ namespace Tests
                         senders,
                         states,
                         apiKeys));
-                    result.Should().NotBeNull();
-                    result.Type.Should().Be("activity");
-                    result.State.Should().Be("waiting");
+                    Assert.NotNull(result);
+                    Assert.Equal("activity", result.Type);
+                    Assert.Equal("waiting", result.State);
                 }
                 catch (ExportThrottledTestException)
                 {

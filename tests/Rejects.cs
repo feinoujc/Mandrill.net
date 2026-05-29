@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
@@ -35,7 +34,7 @@ namespace Tests
             {
                 var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 var result = await Api.Rejects.AddAsync(email, comment: "test", subaccount: null);
-                result.Added.Should().BeTrue();
+                Assert.True(result.Added);
                 _added.Add(email);
             }
         }
@@ -51,7 +50,7 @@ namespace Tests
                 var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 await Api.Rejects.AddAsync(email, comment: "test", subaccount: null);
                 var result = await Api.Rejects.DeleteAsync(email, subaccount: null);
-                result.Deleted.Should().BeTrue();
+                Assert.True(result.Deleted);
             }
         }
 
@@ -64,7 +63,7 @@ namespace Tests
             public async Task Can_add_phone_to_sms_rejects()
             {
                 var result = await Api.Rejects.AddSmsAsync("+10000000000", comment: "test");
-                result.Added.Should().BeTrue();
+                Assert.True(result.Added);
             }
         }
 
@@ -78,7 +77,7 @@ namespace Tests
             {
                 await Api.Rejects.AddSmsAsync("+10000000000");
                 var result = await Api.Rejects.DeleteSmsAsync("+10000000000");
-                result.Deleted.Should().BeTrue();
+                Assert.True(result.Deleted);
             }
         }
 
@@ -91,7 +90,7 @@ namespace Tests
             public async Task Can_list_sms_rejects()
             {
                 var results = await Api.Rejects.ListSmsAsync();
-                results.Should().NotBeNull();
+                Assert.NotNull(results);
             }
         }
 
@@ -106,8 +105,8 @@ namespace Tests
                 var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 await Api.Rejects.AddAsync(email, comment: "test", subaccount: null);
                 var results = await Api.Rejects.ListAsync(email, subaccount: null);
-                results.Should().Contain(x => x.Email == email);
-                results.Count.Should().Be(1);
+                Assert.Contains(results, x => x.Email == email);
+                Assert.Single(results);
                 _added.Add(email);
             }
 
@@ -118,8 +117,8 @@ namespace Tests
                 var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 await Api.Rejects.AddAsync(email, comment: "test", subaccount: null);
                 var results = await Api.Rejects.ListAsync(null, subaccount: null);
-                results.Should().Contain(x => x.Email == email);
-                results.Count.Should().BeGreaterOrEqualTo(1);
+                Assert.Contains(results, x => x.Email == email);
+                Assert.True(results.Count >= 1);
                 _added.Add(email);
             }
         }

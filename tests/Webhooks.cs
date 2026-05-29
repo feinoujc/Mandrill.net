@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Mandrill;
 using Mandrill.Model;
 using Xunit;
@@ -31,11 +30,11 @@ namespace Tests
         public async Task Can_add()
         {
             var result = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, });
-            result.Should().NotBeNull();
+            Assert.NotNull(result);
             _added.Add(result.Id);
 
-            result.Events.Should().NotBeEmpty();
-            result.Events[0].Should().Be(MandrillWebHookEventType.Unsub);
+            Assert.NotEmpty(result.Events);
+            Assert.Equal(MandrillWebHookEventType.Unsub, result.Events[0]);
         }
 
         [Fact]
@@ -48,7 +47,7 @@ namespace Tests
         public async Task Can_list()
         {
             var result = await Api.WebHooks.ListAsync();
-            result.Count.Should().BeGreaterOrEqualTo(0);
+            Assert.True(result.Count >= 0);
         }
 
         [Fact]
@@ -58,7 +57,7 @@ namespace Tests
             _added.Add(added.Id);
 
             var result = await Api.WebHooks.DeleteAsync(added.Id);
-            result.Id.Should().Be(added.Id);
+            Assert.Equal(added.Id, result.Id);
             _added.Remove(result.Id);
         }
 
@@ -69,7 +68,7 @@ namespace Tests
             _added.Add(added.Id);
 
             var result = await Api.WebHooks.InfoAsync(added.Id);
-            result.Id.Should().Be(added.Id);
+            Assert.Equal(added.Id, result.Id);
         }
 
         [Fact]
@@ -79,7 +78,7 @@ namespace Tests
             _added.Add(added.Id);
 
             var result = await Api.WebHooks.UpdateAsync(added.Id, WebhookUri, description: "An updated description", events: new[] { MandrillWebHookEventType.Unsub, });
-            result.Id.Should().Be(added.Id);
+            Assert.Equal(added.Id, result.Id);
         }
     }
 }

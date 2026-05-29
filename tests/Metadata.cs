@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
@@ -44,12 +43,12 @@ namespace Tests
             public async Task Can_list_metadata()
             {
                 var results = await Api.Metadata.ListAsync();
-                results.Should().NotBeNull();
+                Assert.NotNull(results);
                 var found = results.FirstOrDefault();
                 if (found != null)
                 {
-                    found.Name.Should().NotBeNullOrEmpty();
-                    found.State.Should().NotBeNullOrEmpty();
+                    Assert.False(string.IsNullOrEmpty(found.Name));
+                    Assert.False(string.IsNullOrEmpty(found.State));
                 }
                 else
                 {
@@ -69,9 +68,9 @@ namespace Tests
                 var name = "test_" + Guid.NewGuid().ToString("N")[..8];
                 var result = await Api.Metadata.AddAsync(name);
                 _added.Add(name);
-                result.Should().NotBeNull();
-                result.Name.Should().Be(name);
-                result.State.Should().NotBeNullOrEmpty();
+                Assert.NotNull(result);
+                Assert.Equal(name, result.Name);
+                Assert.False(string.IsNullOrEmpty(result.State));
             }
         }
 
@@ -88,8 +87,8 @@ namespace Tests
                 _added.Add(name);
 
                 var result = await Api.Metadata.UpdateAsync(name, "<a>{{value}}</a>");
-                result.Should().NotBeNull();
-                result.Name.Should().Be(name);
+                Assert.NotNull(result);
+                Assert.Equal(name, result.Name);
             }
         }
 
@@ -105,8 +104,8 @@ namespace Tests
                 await Api.Metadata.AddAsync(name);
 
                 var result = await Api.Metadata.DeleteAsync(name);
-                result.Should().NotBeNull();
-                result.Name.Should().Be(name);
+                Assert.NotNull(result);
+                Assert.Equal(name, result.Name);
             }
         }
     }

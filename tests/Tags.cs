@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
@@ -31,7 +30,7 @@ namespace Tests
                 var found = results.OrderBy(x => x.Tag).FirstOrDefault();
                 if (found != null)
                 {
-                    results.Count.Should().BeGreaterOrEqualTo(1);
+                    Assert.True(results.Count >= 1);
                 }
                 else
                 {
@@ -52,8 +51,8 @@ namespace Tests
                 if (tag != null)
                 {
                     var result = await Api.Tags.InfoAsync(tag.Tag);
-                    result.Should().NotBeNull();
-                    result.Tag.Should().Be(tag.Tag);
+                    Assert.NotNull(result);
+                    Assert.Equal(tag.Tag, result.Tag);
                 }
                 else
                 {
@@ -74,8 +73,8 @@ namespace Tests
                 if (tag != null)
                 {
                     var result = await Api.Tags.DeleteAsync(tag.Tag);
-                    result.Should().NotBeNull();
-                    result.Tag.Should().Be(tag.Tag);
+                    Assert.NotNull(result);
+                    Assert.Equal(tag.Tag, result.Tag);
                 }
                 else
                 {
@@ -101,7 +100,7 @@ namespace Tests
                     var found = results.OrderBy(x => x.Time).FirstOrDefault();
                     if (found != null)
                     {
-                        results.Count.Should().BeGreaterOrEqualTo(1);
+                        Assert.True(results.Count >= 1);
                     }
                     else
                     {
@@ -129,7 +128,7 @@ namespace Tests
                 var found = results.OrderBy(x => x.Time).FirstOrDefault();
                 if (found != null)
                 {
-                    results.Count.Should().BeGreaterOrEqualTo(1);
+                    Assert.True(results.Count >= 1);
                 }
                 else
                 {

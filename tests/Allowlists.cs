@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Mandrill;
 using Mandrill.Model;
 using Xunit;
@@ -47,7 +46,7 @@ namespace Tests
                 var found = results.OrderBy(x => x.CreatedAt).FirstOrDefault();
                 if (found != null)
                 {
-                    results.Count.Should().BeGreaterOrEqualTo(1);
+                    Assert.True(results.Count >= 1);
                 }
                 else
                 {
@@ -67,8 +66,8 @@ namespace Tests
                 {
                     var result = await Api.Allowlists.ListAsync(found.Email);
                     string allowlistemail = result.FirstOrDefault().Email;
-                    allowlistemail.Should().NotBeNullOrEmpty();
-                    allowlistemail.Should().Be(found.Email);
+                    Assert.False(string.IsNullOrEmpty(allowlistemail));
+                    Assert.Equal(found.Email, allowlistemail);
                 }
                 else
                 {
@@ -89,7 +88,7 @@ namespace Tests
             {
                 var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 var result = await Api.Allowlists.AddAsync(email);
-                result.Added.Should().BeTrue();
+                Assert.True(result.Added);
                 _added.Add(result.Email);
             }
         }
@@ -108,7 +107,7 @@ namespace Tests
                 await Api.Allowlists.AddAsync(email);
 
                 var result = await Api.Allowlists.DeleteAsync(email);
-                result.Deleted.Should().BeTrue();
+                Assert.True(result.Deleted);
             }
         }
     }

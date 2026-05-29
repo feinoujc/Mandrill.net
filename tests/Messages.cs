@@ -4,7 +4,6 @@ using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
 using System.Text.Json;
 using Mandrill;
 using Mandrill.Model;
@@ -66,7 +65,7 @@ namespace Tests
                 if (schedule != null)
                 {
                     var result = await Api.Messages.CancelScheduledAsync(schedule.Id);
-                    result.Id.Should().Be(schedule.Id);
+                    Assert.Equal(schedule.Id, result.Id);
                 }
                 else
                 {
@@ -96,9 +95,9 @@ namespace Tests
                 {
                     var result = await Api.Messages.ContentAsync(found.Id);
 
-                    result.Should().NotBeNull();
+                    Assert.NotNull(result);
                     var content = result.Html ?? result.Text;
-                    content.Should().NotBeNullOrWhiteSpace();
+                    Assert.False(string.IsNullOrWhiteSpace(content));
                 }
                 else
                 {
@@ -110,14 +109,14 @@ namespace Tests
             public async Task Throws_when_not_found()
             {
                 var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
-                mandrillException.Name.Should().Be("Unknown_Message");
+                Assert.Equal("Unknown_Message", mandrillException.Name);
             }
 
             [Fact]
             public async Task Throws_when_not_found_sync()
             {
                 var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
-                mandrillException.Name.Should().Be("Unknown_Message");
+                Assert.Equal("Unknown_Message", mandrillException.Name);
                 Output.WriteLine(mandrillException.ToString());
             }
         }
@@ -140,8 +139,8 @@ namespace Tests
                 {
                     var result = await Api.Messages.InfoAsync(found.Id);
 
-                    result.Should().NotBeNull();
-                    result.Id.Should().Be(found.Id);
+                    Assert.NotNull(result);
+                    Assert.Equal(found.Id, result.Id);
                 }
                 else
                 {
@@ -153,7 +152,7 @@ namespace Tests
             public async Task Throws_when_not_found()
             {
                 var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.InfoAsync(Guid.NewGuid().ToString("N")));
-                mandrillException.Name.Should().Be("Unknown_Message");
+                Assert.Equal("Unknown_Message", mandrillException.Name);
             }
         }
 
@@ -168,8 +167,8 @@ namespace Tests
             public async Task Can_list_scheduled()
             {
                 var result = await Api.Messages.ListScheduledAsync();
-                result.Should().NotBeNull();
-                result.Count.Should().BeGreaterOrEqualTo(0);
+                Assert.NotNull(result);
+                Assert.True(result.Count >= 0);
             }
         }
 
@@ -185,11 +184,11 @@ namespace Tests
             {
                 var rawMessage = $"From: {FromEmail}\nTo: recipient.email@mandrilldotnet.org\nSubject: Some Subject\n\nSome content.";
                 var result = await Api.Messages.ParseAsync(rawMessage);
-                result.Should().NotBeNull();
-                result.FromEmail.Should().Be(FromEmail);
-                result.To[0].Email.Should().Be("recipient.email@mandrilldotnet.org");
-                result.Subject.Should().Be("Some Subject");
-                result.Text.Should().Be("Some content.");
+                Assert.NotNull(result);
+                Assert.Equal(FromEmail, result.FromEmail);
+                Assert.Equal("recipient.email@mandrilldotnet.org", result.To[0].Email);
+                Assert.Equal("Some Subject", result.Subject);
+                Assert.Equal("Some content.", result.Text);
             }
 
 
@@ -210,14 +209,14 @@ To: Mr Smith
 ";
                 var result = await Api.Messages.ParseAsync(rawMessage);
 
-                result.Should().NotBeNull();
-                result.Headers["Received"].Should().BeOfType<JsonElement>();
+                Assert.NotNull(result);
+                Assert.IsType<JsonElement>(result.Headers["Received"]);
                 var received = (JsonElement)result.Headers["Received"];
-                received.ValueKind.Should().Be(JsonValueKind.Array);
-                received.GetArrayLength().Should().Be(3);
-                result.Headers["Delivered-To"].Should().BeOfType<string>();
-                result.Headers["Delivered-To"].Should().Be("MrSmith@gmail.com");
-                result.ReplyTo.Should().Be("MrsJohnson@gmail.com");
+                Assert.Equal(JsonValueKind.Array, received.ValueKind);
+                Assert.Equal(3, received.GetArrayLength());
+                Assert.IsType<string>(result.Headers["Delivered-To"]);
+                Assert.Equal("MrSmith@gmail.com", result.Headers["Delivered-To"]);
+                Assert.Equal("MrsJohnson@gmail.com", result.ReplyTo);
             }
         }
 
@@ -239,7 +238,7 @@ To: Mr Smith
                     var sendAtUtc = DateTime.UtcNow.AddHours(1);
                     sendAtUtc = new DateTime(sendAtUtc.Year, sendAtUtc.Month, sendAtUtc.Day, sendAtUtc.Hour, sendAtUtc.Minute, sendAtUtc.Second, 0, DateTimeKind.Utc);
                     var result = await Api.Messages.RescheduleAsync(schedule.Id, sendAtUtc);
-                    result.SendAt.Should().Be(sendAtUtc);
+                    Assert.Equal(sendAtUtc, result.SendAt);
                 }
                 else
                 {
@@ -279,11 +278,11 @@ To: Mr Smith
                     10);
 
                 //the api doesn't return results immediately, it may return no results
-                results.Count.Should().BeLessOrEqualTo(10);
+                Assert.True(results.Count <= 10);
 
                 foreach (var result in results)
                 {
-                    result.Id.Should().NotBeEmpty();
+                    Assert.NotEmpty(result.Id);
                 }
 
                 if (results.Count == 0)
@@ -298,11 +297,11 @@ To: Mr Smith
                 var results = await Api.Messages.SearchAsync("email:mandrilldotnet.org", limit: 1);
 
                 //the api doesn't return results immediately, it may return no results
-                results.Count.Should().BeLessOrEqualTo(1);
+                Assert.True(results.Count <= 1);
 
                 foreach (var result in results)
                 {
-                    result.Id.Should().NotBeEmpty();
+                    Assert.NotEmpty(result.Id);
                 }
                 if (results.Count == 0)
                 {
@@ -329,7 +328,7 @@ To: Mr Smith
 
                 foreach (var result in results)
                 {
-                    result.Clicks.Should().BeGreaterOrEqualTo(0);
+                    Assert.True(result.Clicks >= 0);
                 }
 
                 if (results.Count == 0)
@@ -345,7 +344,7 @@ To: Mr Smith
 
                 foreach (var result in results)
                 {
-                    result.Clicks.Should().BeGreaterOrEqualTo(0);
+                    Assert.True(result.Clicks >= 0);
                 }
 
                 if (results.Count == 0)
@@ -392,7 +391,7 @@ To: Mr Smith
 
                 var result = await Api.Messages.SendAsync(message);
 
-                result.Should().HaveCount(2);
+                Assert.Equal(2, result.Count);
                 AssertResults(result);
             }
 
@@ -414,9 +413,9 @@ To: Mr Smith
                 };
 
                 var result = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.SendAsync(message));
-                result.Should().NotBeNull();
-                result.Name.Should().Be("Unknown_Subaccount");
-                result.Message.Should().Contain(invalidSubaccount);
+                Assert.NotNull(result);
+                Assert.Equal("Unknown_Subaccount", result.Name);
+                Assert.Contains(invalidSubaccount, result.Message);
             }
 
             [Fact]
@@ -435,7 +434,7 @@ To: Mr Smith
                 };
                 var result = await Api.Messages.SendAsync(message, true);
 
-                result.Should().HaveCount(1);
+                Assert.Single(result);
                 AssertResults(result);
 
             }
@@ -464,9 +463,9 @@ To: Mr Smith
                 var sendAtUtc = DateTime.UtcNow.AddHours(1);
                 var result = await Api.Messages.SendAsync(message, sendAtUtc: sendAtUtc);
 
-                result.Should().HaveCount(1);
-                result[0].Email.Should().Be("test1@mandrilldotnet.org");
-                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Scheduled);
+                Assert.Single(result);
+                Assert.Equal("test1@mandrilldotnet.org", result[0].Email);
+                Assert.Equal(MandrillSendMessageResponseStatus.Scheduled, result[0].Status);
             }
 
             [Fact]
@@ -477,7 +476,7 @@ To: Mr Smith
                 var sendAtLocal = DateTime.SpecifyKind(DateTime.Now.AddHours(1), DateTimeKind.Local);
                 var result = await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.SendAsync(message, sendAtUtc: sendAtLocal));
 
-                result.ParamName.Should().Be("sendAtUtc");
+                Assert.Equal("sendAtUtc", result.ParamName);
             }
         }
 
@@ -503,7 +502,7 @@ To: Mr Smith
 
                 var result = await Api.Messages.SendRawAsync(rawMessage, fromEmail, fromName, to, async, ipPool, sendAt, returnPathDomain);
 
-                result.Should().HaveCount(1);
+                Assert.Single(result);
                 AssertResults(result);
 
             }
@@ -518,7 +517,7 @@ To: Mr Smith
             {
                 TestTemplateName = Guid.NewGuid().ToString();
                 var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.Code, TemplateContent.Text, true).GetAwaiter().GetResult();
-                result.Should().NotBeNull();
+                Assert.NotNull(result);
             }
 
             [Fact]
@@ -542,7 +541,7 @@ To: Mr Smith
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
-                result.Should().HaveCount(2);
+                Assert.Equal(2, result.Count);
                 AssertResults(result);
 
             }
@@ -576,7 +575,7 @@ To: Mr Smith
             {
                 TestTemplateName = Guid.NewGuid().ToString();
                 var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.HandleBarCode, null, true).GetAwaiter().GetResult();
-                result.Should().NotBeNull();
+                Assert.NotNull(result);
             }
 
             [Fact]
@@ -650,7 +649,7 @@ To: Mr Smith
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
-                result.Should().HaveCount(2);
+                Assert.Equal(2, result.Count);
                 AssertResults(result);
             }
 
@@ -725,7 +724,7 @@ To: Mr Smith
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
-                result.Should().HaveCount(2);
+                Assert.Equal(2, result.Count);
                 AssertResults(result);
 
             }
@@ -772,7 +771,7 @@ To: Mr Smith
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
-                result.Should().HaveCount(2);
+                Assert.Equal(2, result.Count);
                 AssertResults(result);
             }
         }
@@ -793,8 +792,8 @@ To: Mr Smith
                     Consent = MandrillSmsDetailsConsent.Onetime
                 };
                 var results = await Api.Messages.SendSmsAsync(sms);
-                results.Should().NotBeNull();
-                results.Count.Should().Be(1);
+                Assert.NotNull(results);
+                Assert.Single(results);
             }
         }
 
@@ -815,7 +814,7 @@ To: Mr Smith
                 }
                 var message = new MandrillMessage(FromEmail, FromEmail, "MC Template Test", null);
                 var results = await Api.Messages.SendMcTemplateAsync(message, template.McTemplateId);
-                results.Should().NotBeNull();
+                Assert.NotNull(results);
                 AssertResults(results);
             }
         }

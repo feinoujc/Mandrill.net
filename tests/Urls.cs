@@ -1,6 +1,5 @@
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
@@ -26,11 +25,11 @@ namespace Tests
             public async Task Can_list_tracking_domains()
             {
                 var results = await Api.Urls.TrackingDomainsAsync();
-                results.Should().NotBeNull();
+                Assert.NotNull(results);
                 var found = results.FirstOrDefault();
                 if (found != null)
                 {
-                    found.Domain.Should().NotBeNullOrEmpty();
+                    Assert.False(string.IsNullOrEmpty(found.Domain));
                 }
                 else
                 {
@@ -48,8 +47,8 @@ namespace Tests
             public async Task Can_add_tracking_domain()
             {
                 var result = await Api.Urls.AddTrackingDomainAsync("tracking.mandrilldotnet.org");
-                result.Should().NotBeNull();
-                result.Domain.Should().Be("tracking.mandrilldotnet.org");
+                Assert.NotNull(result);
+                Assert.Equal("tracking.mandrilldotnet.org", result.Domain);
             }
         }
 
@@ -66,8 +65,8 @@ namespace Tests
                 if (first != null)
                 {
                     var result = await Api.Urls.CheckTrackingDomainAsync(first.Domain);
-                    result.Should().NotBeNull();
-                    result.Domain.Should().Be(first.Domain);
+                    Assert.NotNull(result);
+                    Assert.Equal(first.Domain, result.Domain);
                 }
                 else
                 {
