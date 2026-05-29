@@ -2,6 +2,6 @@
     <PropertyGroup>
         <LangVersion>latest</LangVersion>
         <VersionPrefix>10.0.0</VersionPrefix>
-        <VersionSuffix>prerelease.1</VersionSuffix>
+        <VersionSuffix>prerelease.2</VersionSuffix>
     </PropertyGroup>
 </Project>
