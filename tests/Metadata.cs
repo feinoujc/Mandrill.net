@@ -15,7 +15,15 @@ namespace Tests
         protected IMandrillApi Api => fixture.Api;
         protected ITestOutputHelper Output => output;
 
-        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual async Task InitializeAsync()
+        {
+            var existing = await Api.Metadata.ListAsync();
+            foreach (var field in existing.Where(f => f.Name.StartsWith("test_")))
+            {
+                try { await Api.Metadata.DeleteAsync(field.Name); }
+                catch { /* best-effort orphan sweep */ }
+            }
+        }
 
         public virtual async Task DisposeAsync()
         {
@@ -103,8 +111,10 @@ namespace Tests
             {
                 var name = "test_" + Guid.NewGuid().ToString("N")[..8];
                 await Api.Metadata.AddAsync(name);
+                _added.Add(name);
 
                 var result = await Api.Metadata.DeleteAsync(name);
+                _added.Remove(name);
                 Assert.NotNull(result);
                 Assert.Equal(name, result.Name);
             }
