@@ -27,6 +27,7 @@ namespace Tests
                 }
                 catch
                 {
+                    Output.WriteLine($"failed to delete metadata field '{name}'");
                     // best-effort cleanup
                 }
             }
