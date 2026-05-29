@@ -87,6 +87,10 @@ namespace Tests
         [InlineData(typeof(IMandrillTemplatesApi))]
         [InlineData(typeof(IMandrillUsersApi))]
         [InlineData(typeof(IMandrillWebHooksApi))]
+        [InlineData(typeof(IMandrillIpsApi))]
+        [InlineData(typeof(IMandrillMcTemplatesApi))]
+        [InlineData(typeof(IMandrillMetadataApi))]
+        [InlineData(typeof(IMandrillUrlsApi))]
         public void TestAddMandrillCanResolveMandrillService(Type service)
         {
             // Arrange

@@ -117,7 +117,7 @@ namespace Tests
             [Fact]
             public async Task Can_export_info()
             {
-                
+
                 string notifyEmail = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 try
                 {

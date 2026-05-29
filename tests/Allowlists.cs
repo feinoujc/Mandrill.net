@@ -25,7 +25,7 @@ namespace Tests
             {
                 var result = await Api.Allowlists.DeleteAsync(email);
             }
-          
+
         }
 
         private HashSet<string> _added = new HashSet<string>();
@@ -33,7 +33,7 @@ namespace Tests
         [Trait("Category", "allowlists/list.json")]
         public class List : Allowlists
         {
-            public List(MandrillFixture fixture, ITestOutputHelper output): base(fixture, output)
+            public List(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
