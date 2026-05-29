@@ -139,11 +139,11 @@ namespace Mandrill
                 });
         }
 
-        public Task<MandrillMessage> ParseAsync(string rawMessage)
+        public Task<MandrillParsedMessage> ParseAsync(string rawMessage)
         {
             if (rawMessage == null) throw new ArgumentNullException(nameof(rawMessage));
 
-            return MandrillApi.PostAsync<MandrillSendRawMessageRequest, MandrillMessage>("messages/parse.json",
+            return MandrillApi.PostAsync<MandrillSendRawMessageRequest, MandrillParsedMessage>("messages/parse.json",
                 new MandrillSendRawMessageRequest
                 {
                     RawMessage = rawMessage

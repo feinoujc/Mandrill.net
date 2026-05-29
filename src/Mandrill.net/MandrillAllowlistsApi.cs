@@ -21,18 +21,18 @@ namespace Mandrill
                 });
         }
 
-        public Task<MandrillAllowlistInfo> AddAsync(string email)
+        public Task<MandrillAllowlistAddResponse> AddAsync(string email)
         {
-            return MandrillApi.PostAsync<MandrillAllowlistRequest, MandrillAllowlistInfo>("allowlists/add.json",
+            return MandrillApi.PostAsync<MandrillAllowlistRequest, MandrillAllowlistAddResponse>("allowlists/add.json",
                 new MandrillAllowlistRequest
                 {
                     Email = email
                 });
         }
 
-        public Task<MandrillAllowlistInfo> DeleteAsync(string email)
+        public Task<MandrillAllowlistDeleteResponse> DeleteAsync(string email)
         {
-            return MandrillApi.PostAsync<MandrillAllowlistRequest, MandrillAllowlistInfo>("allowlists/delete.json",
+            return MandrillApi.PostAsync<MandrillAllowlistRequest, MandrillAllowlistDeleteResponse>("allowlists/delete.json",
                 new MandrillAllowlistRequest
                 {
                     Email = email

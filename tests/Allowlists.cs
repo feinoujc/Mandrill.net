@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Mandrill;
+using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,9 +24,8 @@ namespace Tests
         {
             foreach (var email in _added)
             {
-                var result = await Api.Allowlists.DeleteAsync(email);
+                await Api.Allowlists.DeleteAsync(email);
             }
-
         }
 
         private HashSet<string> _added = new HashSet<string>();

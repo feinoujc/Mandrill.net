@@ -29,7 +29,7 @@ namespace Mandrill
 
         Task<MandrillMessageInfo> InfoAsync(string id);
         Task<MandrillMessageContent> ContentAsync(string id);
-        Task<MandrillMessage> ParseAsync(string rawMessage);
+        Task<MandrillParsedMessage> ParseAsync(string rawMessage);
         Task<IList<MandrillMessageScheduleInfo>> ListScheduledAsync(string? to = null);
         Task<MandrillMessageScheduleInfo> RescheduleAsync(string id, DateTime sendAtUtc);
         Task<MandrillMessageScheduleInfo> CancelScheduledAsync(string id);

@@ -7,7 +7,7 @@ namespace Mandrill
     public partial interface IMandrillAllowlistsApi
     {
         Task<IList<MandrillAllowlistInfo>> ListAsync(string email);
-        Task<MandrillAllowlistInfo> AddAsync(string email);
-        Task<MandrillAllowlistInfo> DeleteAsync(string email);
+        Task<MandrillAllowlistAddResponse> AddAsync(string email);
+        Task<MandrillAllowlistDeleteResponse> DeleteAsync(string email);
     }
 }

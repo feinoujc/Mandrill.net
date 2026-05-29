@@ -12,9 +12,5 @@ namespace Mandrill.Model
 
         [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime CreatedAt { get; set; }
-
-        public bool Added { get; set; }
-
-        public bool Deleted { get; set; }
     }
 }
