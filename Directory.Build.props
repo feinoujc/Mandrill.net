@@ -1,5 +1,7 @@
 <Project>
     <PropertyGroup>
         <LangVersion>latest</LangVersion>
+        <VersionPrefix>10.0.0</VersionPrefix>
+        <VersionSuffix>beta.1</VersionSuffix>
     </PropertyGroup>
 </Project>
