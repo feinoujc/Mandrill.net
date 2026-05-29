@@ -11,12 +11,12 @@ namespace Mandrill.Model
         [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime CreatedAt { get; set; }
 
-        public string Type { get; set; }
+        public MandrillExportType Type { get; set; }
 
         [JsonConverter(typeof(IsoDateTimeConverter))]
-        public DateTime FinishedAt { get; set; }
+        public DateTime? FinishedAt { get; set; }
 
-        public string State { get; set; }
+        public MandrillExportState State { get; set; }
 
         public string ResultUrl { get; set; }
     }

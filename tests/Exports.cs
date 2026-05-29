@@ -16,6 +16,8 @@ namespace Tests
         protected IMandrillApi Api => fixture.Api;
         protected ITestOutputHelper Output => output;
 
+        protected string GenerateUniqueNotifyEmail() => $"test_{Guid.NewGuid():N}"[..13] + "@mandrilldotnet.org";
+
         class ExportThrottledTestException : Exception
         {
             public ExportThrottledTestException() { }
@@ -32,6 +34,10 @@ namespace Tests
             }
             catch (MandrillException mex)
             {
+                if (mex.Code == 429 && mex.Name == "RequestLimitExceeded")
+                {
+                    throw new ExportThrottledTestException(mex.Message, mex);
+                }
                 if (mex.Code == -99 && mex.Name == "UserError")
                 {
                     throw new ExportThrottledTestException(mex.Message, mex);
@@ -41,6 +47,7 @@ namespace Tests
         }
 
         public virtual Task InitializeAsync() => Task.CompletedTask;
+
         public virtual Task DisposeAsync() => Task.CompletedTask;
 
         [Trait("Category", "exports/list.json")]
@@ -94,13 +101,12 @@ namespace Tests
             [Fact]
             public async Task Can_export_info()
             {
-                string notifyEmail = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 try
                 {
-                    var result = await HandleExportThrottleError(Api.Exports.RejectsAsync(notifyEmail));
+                    var result = await HandleExportThrottleError(Api.Exports.RejectsAsync(GenerateUniqueNotifyEmail()));
                     Assert.NotNull(result);
-                    Assert.Equal("reject", result.Type);
-                    Assert.Equal("waiting", result.State);
+                    Assert.Equal(MandrillExportType.Reject, result.Type);
+                    Assert.Equal(MandrillExportState.Waiting, result.State);
                 }
                 catch (ExportThrottledTestException)
                 {
@@ -117,13 +123,12 @@ namespace Tests
             public async Task Can_export_info()
             {
 
-                string notifyEmail = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 try
                 {
-                    var result = await HandleExportThrottleError(Api.Exports.WhitelistAsync(notifyEmail));
+                    var result = await HandleExportThrottleError(Api.Exports.WhitelistAsync(GenerateUniqueNotifyEmail()));
                     Assert.NotNull(result);
-                    Assert.Equal("whitelist", result.Type);
-                    Assert.Equal("waiting", result.State);
+                    Assert.Equal(MandrillExportType.Whitelist, result.Type);
+                    Assert.Equal(MandrillExportState.Waiting, result.State);
                 }
                 catch (ExportThrottledTestException)
                 {
@@ -139,13 +144,12 @@ namespace Tests
             [Fact]
             public async Task Can_export_allowlist()
             {
-                string notifyEmail = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 try
                 {
-                    var result = await HandleExportThrottleError(Api.Exports.AllowlistAsync(notifyEmail));
+                    var result = await HandleExportThrottleError(Api.Exports.AllowlistAsync(GenerateUniqueNotifyEmail()));
                     Assert.NotNull(result);
-                    Assert.Equal("whitelist", result.Type);
-                    Assert.Equal("waiting", result.State);
+                    Assert.Equal(MandrillExportType.Whitelist, result.Type);
+                    Assert.Equal(MandrillExportState.Waiting, result.State);
                 }
                 catch (ExportThrottledTestException)
                 {
@@ -161,7 +165,7 @@ namespace Tests
             [Fact]
             public async Task Can_export_activity()
             {
-                string notifyEmail = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
+                string notifyEmail = GenerateUniqueNotifyEmail();
                 DateOnly? dateFrom = null;
                 DateOnly? dateTo = null;
                 IList<string> tags = null;
@@ -179,8 +183,8 @@ namespace Tests
                         states,
                         apiKeys));
                     Assert.NotNull(result);
-                    Assert.Equal("activity", result.Type);
-                    Assert.Equal("waiting", result.State);
+                    Assert.Equal(MandrillExportType.Activity, result.Type);
+                    Assert.Equal(MandrillExportState.Waiting, result.State);
                 }
                 catch (ExportThrottledTestException)
                 {
