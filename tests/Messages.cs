@@ -4,7 +4,6 @@ using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Text.Json;
 using Mandrill;
 using Mandrill.Model;
 using Xunit;
@@ -210,11 +209,9 @@ To: Mr Smith
                 var result = await Api.Messages.ParseAsync(rawMessage);
 
                 Assert.NotNull(result);
-                Assert.IsType<JsonElement>(result.Headers["Received"]);
-                var received = (JsonElement)result.Headers["Received"];
-                Assert.Equal(JsonValueKind.Array, received.ValueKind);
-                Assert.Equal(3, received.GetArrayLength());
-                Assert.IsType<string>(result.Headers["Delivered-To"]);
+                Assert.True(result.Headers["Received"].HasMultipleValues);
+                Assert.Equal(3, result.Headers["Received"].Values.Count);
+                Assert.False(result.Headers["Delivered-To"].HasMultipleValues);
                 Assert.Equal("MrSmith@gmail.com", result.Headers["Delivered-To"]);
                 Assert.Equal("MrsJohnson@gmail.com", result.ReplyTo);
             }

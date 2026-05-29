@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using Mandrill.Serialization;
 
@@ -48,7 +47,7 @@ namespace Mandrill.Model
         public List<MandrillMailAddress> To { get; set; } = new List<MandrillMailAddress>();
 
         [JsonConverter(typeof(EmptyArrayOrDictionaryConverter))]
-        public Dictionary<string, object> Headers { get; set; } = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        public Dictionary<string, MandrillHeaderValue> Headers { get; set; } = new Dictionary<string, MandrillHeaderValue>(StringComparer.OrdinalIgnoreCase);
 
         public bool? Important { get; set; }
         public bool? TrackOpens { get; set; }
@@ -82,24 +81,8 @@ namespace Mandrill.Model
         [JsonIgnore]
         public string ReplyTo
         {
-            get
-            {
-                if (Headers.TryGetValue("Reply-To", out var value))
-                {
-                    if (value is string text)
-                    {
-                        return text;
-                    }
-
-                    if (value is JsonElement element && element.ValueKind == JsonValueKind.String)
-                    {
-                        return element.GetString();
-                    }
-                }
-
-                return null;
-            }
-            set { Headers["Reply-To"] = value; }
+            get => Headers.TryGetValue("Reply-To", out var value) ? value.Value : null;
+            set => Headers["Reply-To"] = value;
         }
 
         public void AddTo(string email) => AddTo(email, null, null);
@@ -156,6 +139,6 @@ namespace Mandrill.Model
         }
 
         public void AddHeader(string key, string value) => Headers[key] = value;
-        public void AddHeader(string key, IEnumerable<string> values) => Headers[key] = values.ToArray();
+        public void AddHeader(string key, IEnumerable<string> values) => Headers[key] = new MandrillHeaderValue(values);
     }
 }

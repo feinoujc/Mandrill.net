@@ -118,7 +118,7 @@ namespace Tests
 
                 model.AddHeader("X-MY-HEADER", new[] { "foo", "bar" });
 
-                Assert.Equal(new[] { "foo", "bar" }, (string[])model.Headers["x-my-header"]);
+                Assert.Equal(new[] { "foo", "bar" }, model.Headers["x-my-header"].Values);
             }
 
             [Fact]

@@ -19,7 +19,7 @@ namespace Mandrill.Model
         public List<string> Tags { get; set; } = new List<string>();
 
         [JsonConverter(typeof(EmptyArrayOrDictionaryConverter))]
-        public Dictionary<string, object> Headers { get; set; } = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        public Dictionary<string, MandrillHeaderValue> Headers { get; set; } = new Dictionary<string, MandrillHeaderValue>(StringComparer.OrdinalIgnoreCase);
 
         public string Text { get; set; }
         public string Html { get; set; }

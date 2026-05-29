@@ -13,7 +13,7 @@ namespace Mandrill.Model
         public string FromName { get; set; }
 
         [JsonConverter(typeof(EmptyArrayOrDictionaryConverter))]
-        public Dictionary<string, object> Headers { get; set; } = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        public Dictionary<string, MandrillHeaderValue> Headers { get; set; } = new Dictionary<string, MandrillHeaderValue>(StringComparer.OrdinalIgnoreCase);
 
         public string Html { get; set; }
         public string RawMsg { get; set; }

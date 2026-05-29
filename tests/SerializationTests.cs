@@ -509,7 +509,7 @@ namespace Tests
             Assert.Equal(2, events.Count);
 
             Assert.NotEmpty(events[0].Msg.Headers);
-            Assert.NotNull(events[0].Msg.Headers["Content-Type"]);
+            Assert.NotEmpty(events[0].Msg.Headers["Content-Type"].Values);
             Assert.Equal(events[0].Msg.Headers["CONTENT-TYPE"], events[0].Msg.Headers["Content-Type"]);
         }
 
