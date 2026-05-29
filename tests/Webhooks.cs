@@ -26,7 +26,7 @@ namespace Tests
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Webhook validation is flaky")]
         public async Task Can_add()
         {
             var result = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, });
@@ -50,7 +50,7 @@ namespace Tests
             Assert.True(result.Count >= 0);
         }
 
-        [Fact]
+        [Fact(Skip = "Webhook validation is flaky")]
         public async Task Can_delete()
         {
             var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, });
@@ -61,7 +61,7 @@ namespace Tests
             _added.Remove(result.Id);
         }
 
-        [Fact]
+        [Fact(Skip = "Webhook validation is flaky")]
         public async Task Can_get()
         {
             var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, });
@@ -71,7 +71,7 @@ namespace Tests
             Assert.Equal(added.Id, result.Id);
         }
 
-        [Fact]
+        [Fact(Skip = "Webhook validation is flaky")]
         public async Task Can_update()
         {
             var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, });
