@@ -15,25 +15,25 @@ namespace Mandrill
 
         public Task<IList<MandrillTrackingDomain>> TrackingDomainsAsync()
         {
-            return MandrillApi.PostAsync<MandrillTrackingDomainRequest, IList<MandrillTrackingDomain>>("urls/tracking-domains.json",
+            return MandrillApi.PostAsync<MandrillTrackingDomainRequest, IList<MandrillTrackingDomain>>("urls/tracking-domains",
                 new MandrillTrackingDomainRequest());
         }
 
         public Task<MandrillTrackingDomain> AddTrackingDomainAsync(string domain)
         {
-            return MandrillApi.PostAsync<MandrillTrackingDomainRequest, MandrillTrackingDomain>("urls/add-tracking-domain.json",
+            return MandrillApi.PostAsync<MandrillTrackingDomainRequest, MandrillTrackingDomain>("urls/add-tracking-domain",
                 new MandrillTrackingDomainRequest { Domain = domain });
         }
 
         public Task<MandrillTrackingDomain> CheckTrackingDomainAsync(string domain)
         {
-            return MandrillApi.PostAsync<MandrillTrackingDomainRequest, MandrillTrackingDomain>("urls/check-tracking-domain.json",
+            return MandrillApi.PostAsync<MandrillTrackingDomainRequest, MandrillTrackingDomain>("urls/check-tracking-domain",
                 new MandrillTrackingDomainRequest { Domain = domain });
         }
 
         public Task<MandrillTrackingDomain> DeleteTrackingDomainAsync(string domain)
         {
-            return MandrillApi.PostAsync<MandrillTrackingDomainRequest, MandrillTrackingDomain>("urls/delete-tracking-domain.json",
+            return MandrillApi.PostAsync<MandrillTrackingDomainRequest, MandrillTrackingDomain>("urls/delete-tracking-domain",
                 new MandrillTrackingDomainRequest { Domain = domain });
         }
     }

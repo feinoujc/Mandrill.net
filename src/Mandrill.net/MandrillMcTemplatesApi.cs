@@ -16,19 +16,19 @@ namespace Mandrill
 
         public Task<MandrillMcTemplate> InfoAsync(int mcTemplateId)
         {
-            return MandrillApi.PostAsync<MandrillMcTemplateRequest, MandrillMcTemplate>("mctemplates/info.json",
+            return MandrillApi.PostAsync<MandrillMcTemplateRequest, MandrillMcTemplate>("mctemplates/info",
                 new MandrillMcTemplateRequest { McTemplateId = mcTemplateId });
         }
 
         public Task<IList<MandrillMcTemplate>> ListAsync(string? searchQuery = null)
         {
-            return MandrillApi.PostAsync<MandrillMcTemplateListRequest, IList<MandrillMcTemplate>>("mctemplates/list.json",
+            return MandrillApi.PostAsync<MandrillMcTemplateListRequest, IList<MandrillMcTemplate>>("mctemplates/list",
                 new MandrillMcTemplateListRequest { SearchQuery = searchQuery });
         }
 
         public Task<MandrillTemplateRenderResponse> RenderAsync(int mcTemplateId, MandrillMcTemplateVersion? mcTemplateVersion = null, List<MandrillMergeVar>? mergeVars = null)
         {
-            return MandrillApi.PostAsync<MandrillMcTemplateRenderRequest, MandrillTemplateRenderResponse>("mctemplates/render.json",
+            return MandrillApi.PostAsync<MandrillMcTemplateRenderRequest, MandrillTemplateRenderResponse>("mctemplates/render",
                 new MandrillMcTemplateRenderRequest
                 {
                     McTemplateId = mcTemplateId,
@@ -39,7 +39,7 @@ namespace Mandrill
 
         public Task<IList<MandrillMcTemplateTimeSeries>> TimeSeriesAsync(int mcTemplateId)
         {
-            return MandrillApi.PostAsync<MandrillMcTemplateRequest, IList<MandrillMcTemplateTimeSeries>>("mctemplates/time-series.json",
+            return MandrillApi.PostAsync<MandrillMcTemplateRequest, IList<MandrillMcTemplateTimeSeries>>("mctemplates/time-series",
                 new MandrillMcTemplateRequest { McTemplateId = mcTemplateId });
         }
     }

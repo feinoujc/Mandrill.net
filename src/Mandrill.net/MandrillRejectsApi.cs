@@ -17,7 +17,7 @@ namespace Mandrill
         public Task<MandrillRejectAddResponse> AddAsync(string email, string? comment = null, string? subaccount = null)
         {
             if (email == null) throw new ArgumentNullException(nameof(email));
-            return MandrillApi.PostAsync<MandrillRejectRequest, MandrillRejectAddResponse>("rejects/add.json",
+            return MandrillApi.PostAsync<MandrillRejectRequest, MandrillRejectAddResponse>("rejects/add",
                 new MandrillRejectRequest
                 {
                     Email = email,
@@ -29,7 +29,7 @@ namespace Mandrill
         public Task<MandrillRejectDeleteResponse> DeleteAsync(string email, string? subaccount = null)
         {
             if (email == null) throw new ArgumentNullException(nameof(email));
-            return MandrillApi.PostAsync<MandrillRejectRequest, MandrillRejectDeleteResponse>("rejects/delete.json",
+            return MandrillApi.PostAsync<MandrillRejectRequest, MandrillRejectDeleteResponse>("rejects/delete",
                 new MandrillRejectRequest
                 {
                     Email = email,
@@ -39,7 +39,7 @@ namespace Mandrill
 
         public Task<IList<MandrillRejectInfo>> ListAsync(string? email = null, bool? includeExpired = null, string? subaccount = null)
         {
-            return MandrillApi.PostAsync<MandrillRejectRequest, IList<MandrillRejectInfo>>("rejects/list.json",
+            return MandrillApi.PostAsync<MandrillRejectRequest, IList<MandrillRejectInfo>>("rejects/list",
                 new MandrillRejectRequest
                 {
                     Email = email,
@@ -51,7 +51,7 @@ namespace Mandrill
         public Task<MandrillSmsReject> AddSmsAsync(string phone, string? comment = null, string? subaccount = null)
         {
             if (phone == null) throw new ArgumentNullException(nameof(phone));
-            return MandrillApi.PostAsync<MandrillSmsRejectRequest, MandrillSmsReject>("rejects/add-sms.json",
+            return MandrillApi.PostAsync<MandrillSmsRejectRequest, MandrillSmsReject>("rejects/add-sms",
                 new MandrillSmsRejectRequest
                 {
                     Phone = phone,
@@ -63,7 +63,7 @@ namespace Mandrill
         public Task<MandrillSmsReject> DeleteSmsAsync(string phone, string? subaccount = null)
         {
             if (phone == null) throw new ArgumentNullException(nameof(phone));
-            return MandrillApi.PostAsync<MandrillSmsRejectRequest, MandrillSmsReject>("rejects/delete-sms.json",
+            return MandrillApi.PostAsync<MandrillSmsRejectRequest, MandrillSmsReject>("rejects/delete-sms",
                 new MandrillSmsRejectRequest
                 {
                     Phone = phone,
@@ -73,7 +73,7 @@ namespace Mandrill
 
         public Task<IList<MandrillSmsRejectInfo>> ListSmsAsync(string? phone = null, bool? includeExpired = null, string? subaccount = null)
         {
-            return MandrillApi.PostAsync<MandrillSmsRejectRequest, IList<MandrillSmsRejectInfo>>("rejects/list-sms.json",
+            return MandrillApi.PostAsync<MandrillSmsRejectRequest, IList<MandrillSmsRejectInfo>>("rejects/list-sms",
                 new MandrillSmsRejectRequest
                 {
                     Phone = phone,

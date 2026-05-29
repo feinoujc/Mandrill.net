@@ -18,13 +18,13 @@ namespace Mandrill
 
         public Task<IList<MandrillExportInfo>> ListAsync()
         {
-            return MandrillApi.PostAsync<MandrillExportRequest, IList<MandrillExportInfo>>("exports/list.json",
+            return MandrillApi.PostAsync<MandrillExportRequest, IList<MandrillExportInfo>>("exports/list",
                 new MandrillExportRequest());
         }
 
         public Task<MandrillExportInfo> InfoAsync(string id)
         {
-            return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/info.json",
+            return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/info",
                 new MandrillExportRequest
                 {
                     Id = id
@@ -33,7 +33,7 @@ namespace Mandrill
 
         public Task<MandrillExportInfo> RejectsAsync(string notifyEmail)
         {
-            return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/rejects.json",
+            return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/rejects",
                 new MandrillExportRequest
                 {
                     NotifyEmail = notifyEmail
@@ -42,7 +42,7 @@ namespace Mandrill
 
         public Task<MandrillExportInfo> AllowlistAsync(string? notifyEmail = null)
         {
-            return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/allowlist.json",
+            return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/allowlist",
                 new MandrillExportRequest
                 {
                     NotifyEmail = notifyEmail
@@ -51,7 +51,7 @@ namespace Mandrill
 
         public Task<MandrillExportInfo> WhitelistAsync(string notifyEmail)
         {
-            return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/whitelist.json",
+            return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/whitelist",
                 new MandrillExportRequest
                 {
                     NotifyEmail = notifyEmail

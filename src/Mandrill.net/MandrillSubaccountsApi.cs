@@ -16,7 +16,7 @@ namespace Mandrill
 
         public Task<IList<MandrillSubaccountResponse>> ListAsync(string? q = null)
         {
-            return MandrillApi.PostAsync<MandrillSubaccountsRequest, IList<MandrillSubaccountResponse>>("subaccounts/list.json", new MandrillSubaccountsRequest()
+            return MandrillApi.PostAsync<MandrillSubaccountsRequest, IList<MandrillSubaccountResponse>>("subaccounts/list", new MandrillSubaccountsRequest()
             {
                 Q = q
             });
@@ -24,7 +24,7 @@ namespace Mandrill
 
         public Task<MandrillSubaccountResponse> AddAsync(string id, string? name = null, string? notes = null, int? customQuota = null)
         {
-            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/add.json", new MandrillSubaccountsRequest()
+            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/add", new MandrillSubaccountsRequest()
             {
                 Id = id,
                 Name = name,
@@ -35,7 +35,7 @@ namespace Mandrill
 
         public Task<MandrillSubaccountInfo> InfoAsync(string id)
         {
-            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountInfo>("subaccounts/info.json", new MandrillSubaccountsRequest()
+            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountInfo>("subaccounts/info", new MandrillSubaccountsRequest()
             {
                 Id = id,
             });
@@ -43,7 +43,7 @@ namespace Mandrill
 
         public Task<MandrillSubaccountResponse> UpdateAsync(string id, string? name = null, string? notes = null, int? customQuota = null)
         {
-            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/update.json", new MandrillSubaccountsRequest()
+            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/update", new MandrillSubaccountsRequest()
             {
                 Id = id,
                 Name = name,
@@ -54,7 +54,7 @@ namespace Mandrill
 
         public Task<MandrillSubaccountResponse> DeleteAsync(string id)
         {
-            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/delete.json", new MandrillSubaccountsRequest()
+            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/delete", new MandrillSubaccountsRequest()
             {
                 Id = id,
             });
@@ -62,7 +62,7 @@ namespace Mandrill
 
         public Task<MandrillSubaccountResponse> PauseAsync(string id)
         {
-            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/pause.json", new MandrillSubaccountsRequest()
+            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/pause", new MandrillSubaccountsRequest()
             {
                 Id = id,
             });
@@ -70,7 +70,7 @@ namespace Mandrill
 
         public Task<MandrillSubaccountResponse> ResumeAsync(string id)
         {
-            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/resume.json", new MandrillSubaccountsRequest()
+            return MandrillApi.PostAsync<MandrillSubaccountsRequest, MandrillSubaccountResponse>("subaccounts/resume", new MandrillSubaccountsRequest()
             {
                 Id = id,
             });

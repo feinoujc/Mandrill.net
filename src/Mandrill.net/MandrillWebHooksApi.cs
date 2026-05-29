@@ -16,13 +16,13 @@ namespace Mandrill
 
         public Task<IList<MandrillWebHookInfo>> ListAsync()
         {
-            return MandrillApi.PostAsync<MandrillWebHookRequest, IList<MandrillWebHookInfo>>("webhooks/list.json",
+            return MandrillApi.PostAsync<MandrillWebHookRequest, IList<MandrillWebHookInfo>>("webhooks/list",
                 new MandrillWebHookRequest());
         }
 
         public Task<MandrillWebHookInfo> AddAsync(Uri url, string? description = null, IList<MandrillWebHookEventType>? events = null)
         {
-            return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/add.json",
+            return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/add",
                 new MandrillWebHookRequest()
                 {
                     Url = url,
@@ -33,7 +33,7 @@ namespace Mandrill
 
         public Task<MandrillWebHookInfo> InfoAsync(int id)
         {
-            return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/info.json",
+            return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/info",
                 new MandrillWebHookRequest()
                 {
                     Id = id
@@ -42,7 +42,7 @@ namespace Mandrill
 
         public Task<MandrillWebHookInfo> UpdateAsync(int id, Uri url, string? description = null, IList<MandrillWebHookEventType>? events = null)
         {
-            return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/update.json",
+            return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/update",
                 new MandrillWebHookRequest()
                 {
                     Id = id,
@@ -54,7 +54,7 @@ namespace Mandrill
 
         public Task<MandrillWebHookInfo> DeleteAsync(int id)
         {
-            return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/delete.json",
+            return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/delete",
                 new MandrillWebHookRequest()
                 {
                     Id = id,

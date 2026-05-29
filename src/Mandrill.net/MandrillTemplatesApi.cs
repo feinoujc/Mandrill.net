@@ -20,7 +20,7 @@ namespace Mandrill
         public Task<MandrillTemplateInfo> AddAsync(string templateName, string code, string text, bool publish, string? fromEmail = null,
             string? fromName = null, string? subject = null, string[]? labels = null)
         {
-            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/add.json", new MandrillTemplateRequest
+            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/add", new MandrillTemplateRequest
             {
                 Name = templateName,
                 Code = code,
@@ -36,7 +36,7 @@ namespace Mandrill
         public Task<MandrillTemplateInfo> UpdateAsync(string templateName, string code, string text, bool publish, string? fromEmail = null,
             string? fromName = null, string? subject = null, string[]? labels = null)
         {
-            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/update.json", new MandrillTemplateRequest
+            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/update", new MandrillTemplateRequest
             {
                 Name = templateName,
                 Code = code,
@@ -52,7 +52,7 @@ namespace Mandrill
         public Task<MandrillTemplateInfo> DeleteAsync(string templateName)
         {
             if (templateName == null) throw new ArgumentNullException(nameof(templateName));
-            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/delete.json", new MandrillTemplateRequest
+            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/delete", new MandrillTemplateRequest
             {
                 Name = templateName,
             });
@@ -60,7 +60,7 @@ namespace Mandrill
 
         public Task<IList<MandrillTemplateInfo>> ListAsync(string? label = null)
         {
-            return MandrillApi.PostAsync<MandrillTemplateListRequest, IList<MandrillTemplateInfo>>("templates/list.json", new MandrillTemplateListRequest
+            return MandrillApi.PostAsync<MandrillTemplateListRequest, IList<MandrillTemplateInfo>>("templates/list", new MandrillTemplateListRequest
             {
                 Label = label,
             });
@@ -70,7 +70,7 @@ namespace Mandrill
         {
             if (templateName == null) throw new ArgumentNullException(nameof(templateName));
 
-            return MandrillApi.PostAsync<MandrillTemplateRenderRequest, MandrillTemplateRenderResponse>("templates/render.json",
+            return MandrillApi.PostAsync<MandrillTemplateRenderRequest, MandrillTemplateRenderResponse>("templates/render",
                 new MandrillTemplateRenderRequest
                 {
                     TemplateName = templateName,
@@ -82,7 +82,7 @@ namespace Mandrill
         public Task<MandrillTemplateInfo> InfoAsync(string templateName)
         {
             if (templateName == null) throw new ArgumentNullException(nameof(templateName));
-            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/info.json", new MandrillTemplateRequest
+            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/info", new MandrillTemplateRequest
             {
                 Name = templateName,
             });
@@ -91,7 +91,7 @@ namespace Mandrill
         public Task<MandrillTemplateInfo> PublishAsync(string templateName)
         {
             if (templateName == null) throw new ArgumentNullException(nameof(templateName));
-            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/publish.json", new MandrillTemplateRequest
+            return MandrillApi.PostAsync<MandrillTemplateRequest, MandrillTemplateInfo>("templates/publish", new MandrillTemplateRequest
             {
                 Name = templateName,
             });
@@ -100,7 +100,7 @@ namespace Mandrill
         public Task<IList<MandrillMessageTimeSeries>> TimeSeriesAsync(string templateName)
         {
             if (templateName == null) throw new ArgumentNullException(nameof(templateName));
-            return MandrillApi.PostAsync<MandrillTemplateRequest, IList<MandrillMessageTimeSeries>>("templates/time-series.json", new MandrillTemplateRequest
+            return MandrillApi.PostAsync<MandrillTemplateRequest, IList<MandrillMessageTimeSeries>>("templates/time-series", new MandrillTemplateRequest
             {
                 Name = templateName,
             });

@@ -16,24 +16,24 @@ namespace Mandrill
 
         public async Task<string> PingAsync()
         {
-            return (await MandrillApi.PostAsync<MandrillUsersRequest, JsonElement>("users/ping2.json",
+            return (await MandrillApi.PostAsync<MandrillUsersRequest, JsonElement>("users/ping2",
                 new MandrillUsersRequest()).ConfigureAwait(false)).GetProperty("PING").GetString()!;
         }
 
         public Task<MandrillPing2Response> Ping2Async()
         {
-            return MandrillApi.PostAsync<MandrillUsersRequest, MandrillPing2Response>("users/ping2.json",
+            return MandrillApi.PostAsync<MandrillUsersRequest, MandrillPing2Response>("users/ping2",
                 new MandrillUsersRequest());
         }
 
         public Task<IList<MandrillSenderDemographics>> SendersAsync()
         {
-            return MandrillApi.PostAsync<MandrillUsersRequest, IList<MandrillSenderDemographics>>("users/senders.json", new MandrillUsersRequest());
+            return MandrillApi.PostAsync<MandrillUsersRequest, IList<MandrillSenderDemographics>>("users/senders", new MandrillUsersRequest());
         }
 
         public Task<MandrillUserInfo> InfoAsync()
         {
-            return MandrillApi.PostAsync<MandrillUsersRequest, MandrillUserInfo>("users/info.json", new MandrillUsersRequest());
+            return MandrillApi.PostAsync<MandrillUsersRequest, MandrillUserInfo>("users/info", new MandrillUsersRequest());
         }
     }
 }

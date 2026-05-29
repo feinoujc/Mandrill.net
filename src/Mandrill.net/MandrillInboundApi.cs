@@ -17,7 +17,7 @@ namespace Mandrill
 
         public Task<IList<MandrillInboundInfo>> DomainsAsync()
         {
-            return MandrillApi.PostAsync<MandrillInboundRequest, IList<MandrillInboundInfo>>("inbound/domains.json",
+            return MandrillApi.PostAsync<MandrillInboundRequest, IList<MandrillInboundInfo>>("inbound/domains",
                 new MandrillInboundRequest());
         }
 
@@ -25,21 +25,21 @@ namespace Mandrill
         public Task<MandrillInboundInfo> AddDomainAsync(string domain)
         {
             if (domain == null) throw new ArgumentNullException(nameof(domain));
-            return MandrillApi.PostAsync<MandrillInboundRequest, MandrillInboundInfo>("inbound/add-domain.json",
+            return MandrillApi.PostAsync<MandrillInboundRequest, MandrillInboundInfo>("inbound/add-domain",
                 new MandrillInboundRequest() { Domain = domain });
         }
 
         public Task<MandrillInboundInfo> CheckDomainAsync(string domain)
         {
             if (domain == null) throw new ArgumentNullException(nameof(domain));
-            return MandrillApi.PostAsync<MandrillInboundRequest, MandrillInboundInfo>("inbound/check-domain.json",
+            return MandrillApi.PostAsync<MandrillInboundRequest, MandrillInboundInfo>("inbound/check-domain",
                 new MandrillInboundRequest() { Domain = domain });
         }
 
         public Task<MandrillInboundInfo> DeleteDomainAsync(string domain)
         {
             if (domain == null) throw new ArgumentNullException(nameof(domain));
-            return MandrillApi.PostAsync<MandrillInboundRequest, MandrillInboundInfo>("inbound/delete-domain.json",
+            return MandrillApi.PostAsync<MandrillInboundRequest, MandrillInboundInfo>("inbound/delete-domain",
                 new MandrillInboundRequest() { Domain = domain });
         }
 
@@ -47,7 +47,7 @@ namespace Mandrill
         {
             if (domain == null) throw new ArgumentNullException(nameof(domain));
             return MandrillApi.PostAsync<MandrillInboundRouteRequest, IList<MandrillInboundRoute>>(
-                "inbound/routes.json",
+                "inbound/routes",
                 new MandrillInboundRouteRequest() { Domain = domain });
         }
 
@@ -56,7 +56,7 @@ namespace Mandrill
             if (domain == null) throw new ArgumentNullException(nameof(domain));
             if (pattern == null) throw new ArgumentNullException(nameof(pattern));
             if (url == null) throw new ArgumentNullException(nameof(url));
-            return MandrillApi.PostAsync<MandrillInboundRouteRequest, MandrillInboundRoute>("inbound/add-route.json",
+            return MandrillApi.PostAsync<MandrillInboundRouteRequest, MandrillInboundRoute>("inbound/add-route",
                 new MandrillInboundRouteRequest()
                 {
                     Domain = domain,
@@ -70,7 +70,7 @@ namespace Mandrill
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (pattern == null) throw new ArgumentNullException(nameof(pattern));
             if (url == null) throw new ArgumentNullException(nameof(url));
-            return MandrillApi.PostAsync<MandrillInboundRouteRequest, MandrillInboundRoute>("inbound/update-route.json",
+            return MandrillApi.PostAsync<MandrillInboundRouteRequest, MandrillInboundRoute>("inbound/update-route",
                 new MandrillInboundRouteRequest()
                 {
                     Id = id,
@@ -82,7 +82,7 @@ namespace Mandrill
         public Task<MandrillInboundRoute> DeleteRouteAsync(string id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
-            return MandrillApi.PostAsync<MandrillInboundRouteRequest, MandrillInboundRoute>("inbound/delete-route.json",
+            return MandrillApi.PostAsync<MandrillInboundRouteRequest, MandrillInboundRoute>("inbound/delete-route",
                 new MandrillInboundRouteRequest()
                 {
                     Id = id,
@@ -95,7 +95,7 @@ namespace Mandrill
             if (rawMessage == null) throw new ArgumentNullException(nameof(rawMessage));
             return
                 MandrillApi.PostAsync<MandrillInboundSendRawRequest, IList<MandrillInboundSendResponse>>(
-                    "inbound/send-raw.json",
+                    "inbound/send-raw",
                     new MandrillInboundSendRawRequest()
                     {
                         RawMessage = rawMessage,

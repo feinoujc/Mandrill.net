@@ -16,13 +16,13 @@ namespace Mandrill
 
         public Task<IList<MandrillTagInfo>> ListAsync()
         {
-            return MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagInfo>>("tags/list.json",
+            return MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagInfo>>("tags/list",
                 new MandrillTagRequest());
         }
 
         public Task<MandrillTagInfo> InfoAsync(string tag)
         {
-            return MandrillApi.PostAsync<MandrillTagRequest, MandrillTagInfo>("tags/info.json",
+            return MandrillApi.PostAsync<MandrillTagRequest, MandrillTagInfo>("tags/info",
                 new MandrillTagRequest
                 {
                     Tag = tag
@@ -31,7 +31,7 @@ namespace Mandrill
 
         public Task<MandrillTagInfo> DeleteAsync(string tag)
         {
-            return MandrillApi.PostAsync<MandrillTagRequest, MandrillTagInfo>("tags/delete.json",
+            return MandrillApi.PostAsync<MandrillTagRequest, MandrillTagInfo>("tags/delete",
                 new MandrillTagRequest
                 {
                     Tag = tag
@@ -40,7 +40,7 @@ namespace Mandrill
 
         public Task<IList<MandrillTagTimeSeries>> TimeSeriesAsync(string tag)
         {
-            return MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/time-series.json",
+            return MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/time-series",
                 new MandrillTagRequest
                 {
                     Tag = tag
@@ -49,7 +49,7 @@ namespace Mandrill
 
         public Task<IList<MandrillTagTimeSeries>> AllTimeSeriesAsync()
         {
-            return MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/all-time-series.json",
+            return MandrillApi.PostAsync<MandrillTagRequest, IList<MandrillTagTimeSeries>>("tags/all-time-series",
                 new MandrillTagRequest());
         }
     }

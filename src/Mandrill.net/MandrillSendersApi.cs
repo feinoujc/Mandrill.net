@@ -14,19 +14,19 @@ namespace Mandrill
 
         public Task<IList<MandrillSenderInfo>> ListAsync()
         {
-            return MandrillApi.PostAsync<MandrillSenderRequest, IList<MandrillSenderInfo>>("senders/list.json",
+            return MandrillApi.PostAsync<MandrillSenderRequest, IList<MandrillSenderInfo>>("senders/list",
                 new MandrillSenderRequest());
         }
 
         public Task<IList<MandrillSenderDomain>> DomainsAsync()
         {
-            return MandrillApi.PostAsync<MandrillSenderRequest, IList<MandrillSenderDomain>>("senders/domains.json",
+            return MandrillApi.PostAsync<MandrillSenderRequest, IList<MandrillSenderDomain>>("senders/domains",
                 new MandrillSenderRequest());
         }
 
         public Task<MandrillSenderDomain> AddDomainAsync(string domain)
         {
-            return MandrillApi.PostAsync<MandrillSenderRequest, MandrillSenderDomain>("senders/add-domain.json",
+            return MandrillApi.PostAsync<MandrillSenderRequest, MandrillSenderDomain>("senders/add-domain",
                 new MandrillSenderRequest
                 {
                     Domain = domain
@@ -35,7 +35,7 @@ namespace Mandrill
 
         public Task<MandrillSenderDomain> CheckDomainAsync(string domain)
         {
-            return MandrillApi.PostAsync<MandrillSenderRequest, MandrillSenderDomain>("senders/check-domain.json",
+            return MandrillApi.PostAsync<MandrillSenderRequest, MandrillSenderDomain>("senders/check-domain",
                 new MandrillSenderRequest
                 {
                     Domain = domain
@@ -44,7 +44,7 @@ namespace Mandrill
 
         public Task<MandrillSenderVerifyDomain> VerifyDomainAsync(string domain, string mailbox)
         {
-            return MandrillApi.PostAsync<MandrillSenderVerifyDomainRequest, MandrillSenderVerifyDomain>("senders/verify-domain.json",
+            return MandrillApi.PostAsync<MandrillSenderVerifyDomainRequest, MandrillSenderVerifyDomain>("senders/verify-domain",
                 new MandrillSenderVerifyDomainRequest
                 {
                     Domain = domain,
@@ -54,7 +54,7 @@ namespace Mandrill
 
         public Task<MandrillSenderInfo> InfoAsync(string address)
         {
-            return MandrillApi.PostAsync<MandrillSenderRequest, MandrillSenderInfo>("senders/info.json",
+            return MandrillApi.PostAsync<MandrillSenderRequest, MandrillSenderInfo>("senders/info",
                 new MandrillSenderRequest
                 {
                     Address = address
@@ -63,7 +63,7 @@ namespace Mandrill
 
         public Task<IList<MandrillSenderTimeSeries>> TimeSeriesAsync(string address)
         {
-            return MandrillApi.PostAsync<MandrillSenderRequest, IList<MandrillSenderTimeSeries>>("senders/time-series.json",
+            return MandrillApi.PostAsync<MandrillSenderRequest, IList<MandrillSenderTimeSeries>>("senders/time-series",
                 new MandrillSenderRequest
                 {
                     Address = address
@@ -72,7 +72,7 @@ namespace Mandrill
 
         public Task<MandrillSenderDomain> DeleteDomainAsync(string domain)
         {
-            return MandrillApi.PostAsync<MandrillSenderRequest, MandrillSenderDomain>("senders/delete-domain.json",
+            return MandrillApi.PostAsync<MandrillSenderRequest, MandrillSenderDomain>("senders/delete-domain",
                 new MandrillSenderRequest
                 {
                     Domain = domain
