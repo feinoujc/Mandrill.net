@@ -12,6 +12,7 @@ namespace Mandrill
         Task<MandrillExportInfo> InfoAsync(string id);
         Task<MandrillExportInfo> RejectsAsync(string notifyEmail);
         Task<MandrillExportInfo> WhitelistAsync(string notifyEmail);
+        Task<MandrillExportInfo> AllowlistAsync(string? notifyEmail = null);
         Task<MandrillExportInfo> ActivityAsync(string notifyEmail,
             DateOnly? dateFrom = null,
             DateOnly? dateTo = null,

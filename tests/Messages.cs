@@ -776,5 +776,48 @@ To: Mr Smith
                 AssertResults(result);
             }
         }
+
+        [Trait("Category", "messages/send-sms.json")]
+        public class SendSms : Messages
+        {
+            public SendSms(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
+
+            [Fact(Skip = "Requires SMS feature enabled on account")]
+            public async Task Can_send_sms()
+            {
+                var sms = new MandrillSmsDetails
+                {
+                    Text = "Hello from Mandrill SMS!",
+                    To = new List<string> { "+10000000000" },
+                    From = "+10000000001",
+                    Consent = MandrillSmsDetailsConsent.Onetime
+                };
+                var results = await Api.Messages.SendSmsAsync(sms);
+                results.Should().NotBeNull();
+                results.Count.Should().Be(1);
+            }
+        }
+
+        [Trait("Category", "messages/send-mc-template.json")]
+        public class SendMcTemplate : Messages
+        {
+            public SendMcTemplate(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
+
+            [Fact(Skip = "Requires a Mailchimp campaign template on the account")]
+            public async Task Can_send_mc_template()
+            {
+                var templates = await Api.McTemplates.ListAsync();
+                var template = templates.FirstOrDefault();
+                if (template == null)
+                {
+                    Output.WriteLine("no MC templates found.");
+                    return;
+                }
+                var message = new MandrillMessage(FromEmail, FromEmail, "MC Template Test", null);
+                var results = await Api.Messages.SendMcTemplateAsync(message, template.McTemplateId);
+                results.Should().NotBeNull();
+                AssertResults(results);
+            }
+        }
     }
 }

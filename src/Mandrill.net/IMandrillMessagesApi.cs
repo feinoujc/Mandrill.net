@@ -33,5 +33,17 @@ namespace Mandrill
         Task<IList<MandrillMessageScheduleInfo>> ListScheduledAsync(string? to = null);
         Task<MandrillMessageScheduleInfo> RescheduleAsync(string id, DateTime sendAtUtc);
         Task<MandrillMessageScheduleInfo> CancelScheduledAsync(string id);
+
+        Task<IList<MandrillSmsMessage>> SendSmsAsync(MandrillSmsDetails sms,
+            IList<MandrillRcptMergeVar>? mergeVars = null,
+            IList<MandrillMergeVar>? globalMergeVars = null,
+            bool? async = null);
+
+        Task<IList<MandrillSendMessageResponse>> SendMcTemplateAsync(MandrillMessage message,
+            int mcTemplateId,
+            MandrillMcTemplateVersion? mcTemplateVersion = null,
+            bool async = false,
+            string? ipPool = null,
+            DateTime? sendAtUtc = null);
     }
 }

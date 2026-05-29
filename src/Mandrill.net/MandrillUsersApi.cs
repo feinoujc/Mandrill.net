@@ -20,6 +20,12 @@ namespace Mandrill
                 new MandrillUsersRequest()).ConfigureAwait(false)).GetProperty("PING").GetString()!;
         }
 
+        public Task<MandrillPing2Response> Ping2Async()
+        {
+            return MandrillApi.PostAsync<MandrillUsersRequest, MandrillPing2Response>("users/ping2.json",
+                new MandrillUsersRequest());
+        }
+
         public Task<IList<MandrillSenderDemographics>> SendersAsync()
         {
             return MandrillApi.PostAsync<MandrillUsersRequest, IList<MandrillSenderDemographics>>("users/senders.json", new MandrillUsersRequest());

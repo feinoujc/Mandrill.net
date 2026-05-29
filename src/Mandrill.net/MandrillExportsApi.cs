@@ -40,6 +40,15 @@ namespace Mandrill
                 });
         }
 
+        public Task<MandrillExportInfo> AllowlistAsync(string? notifyEmail = null)
+        {
+            return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/allowlist.json",
+                new MandrillExportRequest
+                {
+                    NotifyEmail = notifyEmail
+                });
+        }
+
         public Task<MandrillExportInfo> WhitelistAsync(string notifyEmail)
         {
             return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/whitelist.json",

@@ -69,5 +69,14 @@ namespace Mandrill
                     Address = address
                 });
         }
+
+        public Task<MandrillSenderDomain> DeleteDomainAsync(string domain)
+        {
+            return MandrillApi.PostAsync<MandrillSenderRequest, MandrillSenderDomain>("senders/delete-domain.json",
+                new MandrillSenderRequest
+                {
+                    Domain = domain
+                });
+        }
     }
 }

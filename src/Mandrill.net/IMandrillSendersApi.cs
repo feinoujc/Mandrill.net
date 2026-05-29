@@ -13,5 +13,6 @@ namespace Mandrill
         Task<MandrillSenderVerifyDomain> VerifyDomainAsync(string domain, string mailbox);
         Task<MandrillSenderInfo> InfoAsync(string address);
         Task<IList<MandrillSenderTimeSeries>> TimeSeriesAsync(string address);
+        Task<MandrillSenderDomain> DeleteDomainAsync(string domain);
     }
 }

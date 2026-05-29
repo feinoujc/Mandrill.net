@@ -52,6 +52,14 @@ namespace Tests
             }
 
             [Fact]
+            public async Task Can_ping2()
+            {
+                var result = await Api.Users.Ping2Async();
+                result.Should().NotBeNull();
+                result.Ping.Should().Be("PONG!");
+            }
+
+            [Fact]
             public async Task Throws_when_invalid_key()
             {
                 var badApi = new MandrillApi(Guid.NewGuid().ToString("N"));

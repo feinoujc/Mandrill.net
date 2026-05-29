@@ -55,6 +55,46 @@ namespace Tests
             }
         }
 
+        [Trait("Category", "rejects/add-sms.json")]
+        public class AddSms : Rejects
+        {
+            public AddSms(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
+
+            [Fact(Skip = "Requires SMS feature enabled on account")]
+            public async Task Can_add_phone_to_sms_rejects()
+            {
+                var result = await Api.Rejects.AddSmsAsync("+10000000000", comment: "test");
+                result.Added.Should().BeTrue();
+            }
+        }
+
+        [Trait("Category", "rejects/delete-sms.json")]
+        public class DeleteSms : Rejects
+        {
+            public DeleteSms(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
+
+            [Fact(Skip = "Requires SMS feature enabled on account")]
+            public async Task Can_delete_phone_from_sms_rejects()
+            {
+                await Api.Rejects.AddSmsAsync("+10000000000");
+                var result = await Api.Rejects.DeleteSmsAsync("+10000000000");
+                result.Deleted.Should().BeTrue();
+            }
+        }
+
+        [Trait("Category", "rejects/list-sms.json")]
+        public class ListSms : Rejects
+        {
+            public ListSms(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
+
+            [Fact(Skip = "Requires SMS feature enabled on account")]
+            public async Task Can_list_sms_rejects()
+            {
+                var results = await Api.Rejects.ListSmsAsync();
+                results.Should().NotBeNull();
+            }
+        }
+
         [Trait("Category", "rejects/list.json")]
         public class List : Rejects
         {

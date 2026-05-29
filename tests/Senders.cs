@@ -133,6 +133,28 @@ namespace Tests
             }
         }
 
+        [Trait("Category", "senders/delete_domain.json")]
+        public class DeleteDomain : Senders
+        {
+            public DeleteDomain(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
+
+            [Fact(Skip = "Requires an existing domain and cannot be re-added without sending a verification email")]
+            public async Task Can_delete_domain()
+            {
+                var domains = await Api.Senders.DomainsAsync();
+                var domain = domains.FirstOrDefault();
+                if (domain != null)
+                {
+                    var result = await Api.Senders.DeleteDomainAsync(domain.Domain);
+                    result.Domain.Should().Be(domain.Domain);
+                }
+                else
+                {
+                    Output.WriteLine("no sender domains found.");
+                }
+            }
+        }
+
         [Trait("Category", "senders/time_series.json")]
         public class TimeSeries : Senders
         {

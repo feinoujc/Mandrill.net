@@ -47,5 +47,39 @@ namespace Mandrill
                     Subaccount = subaccount
                 });
         }
+
+        public Task<MandrillSmsReject> AddSmsAsync(string phone, string? comment = null, string? subaccount = null)
+        {
+            if (phone == null) throw new ArgumentNullException(nameof(phone));
+            return MandrillApi.PostAsync<MandrillSmsRejectRequest, MandrillSmsReject>("rejects/add-sms.json",
+                new MandrillSmsRejectRequest
+                {
+                    Phone = phone,
+                    Comment = comment,
+                    Subaccount = subaccount
+                });
+        }
+
+        public Task<MandrillSmsReject> DeleteSmsAsync(string phone, string? subaccount = null)
+        {
+            if (phone == null) throw new ArgumentNullException(nameof(phone));
+            return MandrillApi.PostAsync<MandrillSmsRejectRequest, MandrillSmsReject>("rejects/delete-sms.json",
+                new MandrillSmsRejectRequest
+                {
+                    Phone = phone,
+                    Subaccount = subaccount
+                });
+        }
+
+        public Task<IList<MandrillSmsRejectInfo>> ListSmsAsync(string? phone = null, bool? includeExpired = null, string? subaccount = null)
+        {
+            return MandrillApi.PostAsync<MandrillSmsRejectRequest, IList<MandrillSmsRejectInfo>>("rejects/list-sms.json",
+                new MandrillSmsRejectRequest
+                {
+                    Phone = phone,
+                    IncludeExpired = includeExpired,
+                    Subaccount = subaccount
+                });
+        }
     }
 }

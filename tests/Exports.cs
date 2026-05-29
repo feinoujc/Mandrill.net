@@ -132,6 +132,28 @@ namespace Tests
             }
         }
 
+        [Trait("Category", "exports/allowlist.json")]
+        public class Allowlist : Exports
+        {
+            public Allowlist(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
+
+            [Fact]
+            public async Task Can_export_allowlist()
+            {
+                string notifyEmail = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
+                try
+                {
+                    var result = await HandleExportThrottleError(Api.Exports.AllowlistAsync(notifyEmail));
+                    result.Should().NotBeNull();
+                    result.Type.Should().Be("allowlist");
+                    result.State.Should().Be("waiting");
+                }
+                catch (ExportThrottledTestException)
+                {
+                }
+            }
+        }
+
         [Trait("Category", "exports/activity.json")]
         public class Activity : Exports
         {

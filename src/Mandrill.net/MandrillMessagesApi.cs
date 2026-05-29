@@ -188,5 +188,51 @@ namespace Mandrill
                         Id = id,
                     });
         }
+
+        public Task<IList<MandrillSmsMessage>> SendSmsAsync(MandrillSmsDetails sms,
+            IList<MandrillRcptMergeVar>? mergeVars = null,
+            IList<MandrillMergeVar>? globalMergeVars = null,
+            bool? async = null)
+        {
+            if (sms == null) throw new ArgumentNullException(nameof(sms));
+
+            return MandrillApi.PostAsync<MandrillSendSmsRequest, IList<MandrillSmsMessage>>(
+                "messages/send-sms.json",
+                new MandrillSendSmsRequest
+                {
+                    Message = new MandrillSmsMessageObject
+                    {
+                        Sms = sms,
+                        GlobalMergeVars = globalMergeVars?.ToList(),
+                        MergeVars = mergeVars?.ToList()
+                    },
+                    Async = async
+                });
+        }
+
+        public Task<IList<MandrillSendMessageResponse>> SendMcTemplateAsync(MandrillMessage message,
+            int mcTemplateId,
+            MandrillMcTemplateVersion? mcTemplateVersion = null,
+            bool async = false,
+            string? ipPool = null,
+            DateTime? sendAtUtc = null)
+        {
+            if (message == null) throw new ArgumentNullException(nameof(message));
+
+            if (sendAtUtc != null && sendAtUtc.Value.Kind != DateTimeKind.Utc)
+                throw new ArgumentException("date must be in utc", nameof(sendAtUtc));
+
+            return MandrillApi.PostAsync<MandrillSendMcTemplateRequest, IList<MandrillSendMessageResponse>>(
+                "messages/send-mc-template.json",
+                new MandrillSendMcTemplateRequest
+                {
+                    McTemplateId = mcTemplateId,
+                    McTemplateVersion = mcTemplateVersion,
+                    Message = message,
+                    Async = async,
+                    IpPool = ipPool,
+                    SendAt = sendAtUtc?.ToString(SendAtDateFormat)
+                });
+        }
     }
 }
