@@ -25,9 +25,9 @@ namespace Tests
                 {
                     await Api.Metadata.DeleteAsync(name);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    Output.WriteLine($"failed to delete metadata field '{name}'");
+                    Output.WriteLine($"failed to delete metadata field '{name}': {ex}");
                     // best-effort cleanup
                 }
             }
