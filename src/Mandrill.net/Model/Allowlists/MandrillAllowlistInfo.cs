@@ -1,5 +1,5 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using Mandrill.Serialization;
+using System.Text.Json.Serialization;
 using System;
 
 namespace Mandrill.Model
@@ -12,9 +12,5 @@ namespace Mandrill.Model
 
         [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTime CreatedAt { get; set; }
-
-        public bool Added { get; set; }
-
-        public bool Deleted { get; set; }
     }
 }

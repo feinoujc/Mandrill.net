@@ -1,14 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <VersionPrefix>9.0.2</VersionPrefix>
-  </PropertyGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>.NET wrapper for the Mandrill API</Description>
     <AssemblyTitle>Mandrill.net</AssemblyTitle>
     <Description>Simple .net wrapper for the Mandrill.net api</Description>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AssemblyName>Mandrill.net</AssemblyName>
     <SignAssembly>true</SignAssembly>
@@ -27,8 +23,12 @@
     <None Include="logo.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
+
 </Project>

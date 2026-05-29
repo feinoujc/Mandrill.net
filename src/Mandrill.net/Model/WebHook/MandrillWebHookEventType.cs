@@ -1,10 +1,11 @@
-using System.Runtime.Serialization;
 
 namespace Mandrill.Model
 {
     public enum MandrillWebHookEventType
     {
         Send,
+        Delivered,
+        Deferral,
         HardBounce,
         SoftBounce,
         Open,
@@ -12,8 +13,16 @@ namespace Mandrill.Model
         Spam,
         Unsub,
         Reject,
-        Deferral,
         Blacklist,
-        Whitelist
+        Whitelist,
+        SmsProcessing,
+        SmsQueued,
+        SmsSent,
+        SmsDelivered,
+        SmsCanceled,
+        SmsFailed,
+        SmsOpen,
+        SmsClick,
+        SmsUnsub,
     }
 }

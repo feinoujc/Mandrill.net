@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Mandrill;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -8,18 +8,18 @@ namespace Tests
 {
     [Trait("Category", "tags")]
     [Collection("tags")]
-    public class Tags : IntegrationTest
+    public class Tags(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        public Tags(ITestOutputHelper output) : base(output)
-        {
-        }
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual Task DisposeAsync() => Task.CompletedTask;
 
         [Trait("Category", "tags/list.json")]
         public class List : Tags
         {
-            public List(ITestOutputHelper output) : base(output)
-            {
-            }
+            public List(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_list_all()
@@ -30,7 +30,7 @@ namespace Tests
                 var found = results.OrderBy(x => x.Tag).FirstOrDefault();
                 if (found != null)
                 {
-                    results.Count.Should().BeGreaterOrEqualTo(1);
+                    Assert.True(results.Count >= 1);
                 }
                 else
                 {
@@ -42,9 +42,7 @@ namespace Tests
         [Trait("Category", "tags/info.json")]
         public class Info : Tags
         {
-            public Info(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Info(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_retrieve_info()
@@ -53,8 +51,8 @@ namespace Tests
                 if (tag != null)
                 {
                     var result = await Api.Tags.InfoAsync(tag.Tag);
-                    result.Should().NotBeNull();
-                    result.Tag.Should().Be(tag.Tag);
+                    Assert.NotNull(result);
+                    Assert.Equal(tag.Tag, result.Tag);
                 }
                 else
                 {
@@ -66,9 +64,7 @@ namespace Tests
         [Trait("Category", "tags/delete.json")]
         public class Delete : Tags
         {
-            public Delete(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Delete(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_delete_tag()
@@ -77,8 +73,8 @@ namespace Tests
                 if (tag != null)
                 {
                     var result = await Api.Tags.DeleteAsync(tag.Tag);
-                    result.Should().NotBeNull();
-                    result.Tag.Should().Be(tag.Tag);
+                    Assert.NotNull(result);
+                    Assert.Equal(tag.Tag, result.Tag);
                 }
                 else
                 {
@@ -90,9 +86,7 @@ namespace Tests
         [Trait("Category", "tags/time_series.json")]
         public class TimeSeries : Tags
         {
-            public TimeSeries(ITestOutputHelper output) : base(output)
-            {
-            }
+            public TimeSeries(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_get_tag_time_series()
@@ -106,7 +100,7 @@ namespace Tests
                     var found = results.OrderBy(x => x.Time).FirstOrDefault();
                     if (found != null)
                     {
-                        results.Count.Should().BeGreaterOrEqualTo(1);
+                        Assert.True(results.Count >= 1);
                     }
                     else
                     {
@@ -123,9 +117,7 @@ namespace Tests
         [Trait("Category", "tags/all_time_series.json")]
         public class AllTimeSeries : Tags
         {
-            public AllTimeSeries(ITestOutputHelper output) : base(output)
-            {
-            }
+            public AllTimeSeries(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_get_tag_all_time_series()
@@ -136,7 +128,7 @@ namespace Tests
                 var found = results.OrderBy(x => x.Time).FirstOrDefault();
                 if (found != null)
                 {
-                    results.Count.Should().BeGreaterOrEqualTo(1);
+                    Assert.True(results.Count >= 1);
                 }
                 else
                 {

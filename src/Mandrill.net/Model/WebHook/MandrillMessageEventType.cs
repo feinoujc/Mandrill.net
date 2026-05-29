@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 
 namespace Mandrill.Model
 {
@@ -8,11 +7,11 @@ namespace Mandrill.Model
         Deferral,
         HardBounce,
         SoftBounce,
+        Delivered,
         Open,
         Click,
         Spam,
         Unsub,
         Reject,
-        Delivered
     }
 }

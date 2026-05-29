@@ -93,45 +93,49 @@ static IServiceCollection ConfigureServices(IServiceCollection services)
 
 ### Processing a web hook batch
 
+Mandrill sends a HEAD request to verify the endpoint before activating it, and then POSTs batches of up to 1,000 events as `application/x-www-form-urlencoded` with a `mandrill_events` field. Use minimal APIs to handle both:
+
 ```cs
-[HttpPost]
-[Route("/api/some/route/outbound")]
-[Consumes("application/x-www-form-urlencoded")]
-public async Task<IActionResult> Outbound([FromForm(Name = "mandrill_events")] string body)
+// HEAD request: Mandrill sends this to verify the endpoint is reachable
+app.MapMethods("/api/webhooks/mandrill", ["HEAD"], () => Results.Ok());
+
+// POST request: Mandrill sends batches of events
+app.MapPost("/api/webhooks/mandrill", async (HttpRequest request) =>
 {
-    if (!Request.Headers.TryGetValue("X-Mandrill-Signature", out var signature))
+    if (!request.Headers.TryGetValue("X-Mandrill-Signature", out var signature))
     {
-        return Unauthorized();
+        return Results.Unauthorized();
     }
 
+    var form = await request.ReadFormAsync();
+    var body = form["mandrill_events"].ToString();
 
     var events = MandrillMessageEvent.ParseMandrillEvents(body);
 
-    // accept an empty test request
+    // accept an empty test request (Mandrill sends one when the HEAD request fails)
     if (events.Count == 0)
     {
-        return Accepted();
+        return Results.Accepted();
     }
 
-    if (!ValidateRequest(body, signature, "WEBHOOK_SECRET_KEY_HERE"))
+    // If your app runs behind a reverse proxy (e.g. nginx, a cloud load balancer), request.Scheme
+    // and request.Host must reflect the original public URL — not the proxy's internal address —
+    // otherwise signature verification will fail. Configure forwarded headers middleware:
+    // https://learn.microsoft.com/aspnet/core/host-and-deploy/proxy-load-balancer
+    var url = new Uri($"{request.Scheme}://{request.Host}{request.Path}");
+    if (!WebHookSignatureHelper.VerifyWebHookSignature(signature, "WEBHOOK_SECRET_KEY_HERE", url,
+        form.ToDictionary(x => x.Key, x => x.Value.ToString())))
     {
-        return Forbid();
+        return Results.Forbid();
     }
 
     foreach (var messageEvent in events)
     {
         // do something with the event
     }
-    return Ok();
-}
 
-
-private bool ValidateRequest(string body, string signature, string authKey)
-{
-    var form = new NameValueCollection();
-    form.Set("mandrill_events", body);
-    return WebHookSignatureHelper.VerifyWebHookSignature(signature, authKey, new Uri(Request.GetDisplayUrl()), form);
-}
+    return Results.Ok();
+});
 ```
 
 ## Building

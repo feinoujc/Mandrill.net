@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Mandrill;
+using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -10,26 +11,28 @@ namespace Tests
 {
     [Trait("Category", "allowlists")]
     [Collection("allowlists")]
-    public class Allowlists : IntegrationTest
+    public class Allowlists(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        private HashSet<string> _added = new HashSet<string>();
 
-        public Allowlists(ITestOutputHelper output) : base(output)
-        {
-        }
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
 
-        public override void Dispose()
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+
+        public virtual async Task DisposeAsync()
         {
             foreach (var email in _added)
             {
-                var result = Api.Allowlists.DeleteAsync(email).GetAwaiter().GetResult();
+                await Api.Allowlists.DeleteAsync(email);
             }
         }
+
+        private HashSet<string> _added = new HashSet<string>();
 
         [Trait("Category", "allowlists/list.json")]
         public class List : Allowlists
         {
-            public List(ITestOutputHelper output) : base(output)
+            public List(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -43,7 +46,7 @@ namespace Tests
                 var found = results.OrderBy(x => x.CreatedAt).FirstOrDefault();
                 if (found != null)
                 {
-                    results.Count.Should().BeGreaterOrEqualTo(1);
+                    Assert.True(results.Count >= 1);
                 }
                 else
                 {
@@ -63,8 +66,8 @@ namespace Tests
                 {
                     var result = await Api.Allowlists.ListAsync(found.Email);
                     string allowlistemail = result.FirstOrDefault().Email;
-                    allowlistemail.Should().NotBeNullOrEmpty();
-                    allowlistemail.Should().Be(found.Email);
+                    Assert.False(string.IsNullOrEmpty(allowlistemail));
+                    Assert.Equal(found.Email, allowlistemail);
                 }
                 else
                 {
@@ -76,7 +79,7 @@ namespace Tests
         [Trait("Category", "allowlists/add.json")]
         public class Add : Allowlists
         {
-            public Add(ITestOutputHelper output) : base(output)
+            public Add(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -85,7 +88,7 @@ namespace Tests
             {
                 var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
                 var result = await Api.Allowlists.AddAsync(email);
-                result.Added.Should().BeTrue();
+                Assert.True(result.Added);
                 _added.Add(result.Email);
             }
         }
@@ -93,7 +96,7 @@ namespace Tests
         [Trait("Category", "allowlists/delete.json")]
         public class Delete : Allowlists
         {
-            public Delete(ITestOutputHelper output) : base(output)
+            public Delete(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -104,7 +107,7 @@ namespace Tests
                 await Api.Allowlists.AddAsync(email);
 
                 var result = await Api.Allowlists.DeleteAsync(email);
-                result.Deleted.Should().BeTrue();
+                Assert.True(result.Deleted);
             }
         }
     }

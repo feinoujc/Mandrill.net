@@ -1,3 +1,4 @@
+#nullable enable
 using Mandrill.Model;
 using System;
 using System.Collections.Generic;
@@ -11,12 +12,13 @@ namespace Mandrill
         Task<MandrillExportInfo> InfoAsync(string id);
         Task<MandrillExportInfo> RejectsAsync(string notifyEmail);
         Task<MandrillExportInfo> WhitelistAsync(string notifyEmail);
+        Task<MandrillExportInfo> AllowlistAsync(string? notifyEmail = null);
         Task<MandrillExportInfo> ActivityAsync(string notifyEmail,
-            DateTime? dateFrom = null,
-            DateTime? dateTo = null,
-            IList<string> tags = null,
-            IList<string> senders = null,
-            IList<string> states = null,
-            IList<string> apiKeys = null);
+            DateOnly? dateFrom = null,
+            DateOnly? dateTo = null,
+            IList<string>? tags = null,
+            IList<string>? senders = null,
+            IList<string>? states = null,
+            IList<string>? apiKeys = null);
     }
 }

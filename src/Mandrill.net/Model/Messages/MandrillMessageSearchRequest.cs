@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Mandrill.Model
@@ -6,9 +7,9 @@ namespace Mandrill.Model
     {
         public string Query { get; set; }
 
-        public string DateFrom { get; set; }
+        public DateOnly? DateFrom { get; set; }
 
-        public string DateTo { get; set; }
+        public DateOnly? DateTo { get; set; }
 
         public List<string> Tags { get; set; }
 

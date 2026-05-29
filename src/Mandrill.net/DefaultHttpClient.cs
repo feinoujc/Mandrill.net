@@ -12,7 +12,7 @@ namespace Mandrill
 
         }
         private static readonly Lazy<Version> UserAgentVersionLazy = new Lazy<Version>(() => new AssemblyName(typeof(MandrillRequest).GetTypeInfo().Assembly.FullName).Version);
-        private static readonly Uri BaseUrl = new Uri("https://mandrillapp.com/api/1.0/");
+        private static readonly Uri BaseUrl = new Uri("https://mandrillapp.com/api/1.4/");
 
         public static HttpClient CreateDefault()
         {

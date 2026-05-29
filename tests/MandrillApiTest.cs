@@ -3,10 +3,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using FluentAssertions;
 using Mandrill;
 using Mandrill.Model;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace Tests
@@ -21,8 +19,8 @@ namespace Tests
 
             using (var api = new MandrillApi("api_key", client))
             {
-                api.HttpClient.BaseAddress.OriginalString.Should().Be("https://mandrillapp.com/api/1.0/");
-                api.HttpClient.DefaultRequestHeaders.Accept.Count.Should().Be(1);
+                Assert.Equal("https://mandrillapp.com/api/1.4/", api.HttpClient.BaseAddress.OriginalString);
+                Assert.Single(api.HttpClient.DefaultRequestHeaders.Accept);
             }
         }
 
@@ -37,8 +35,8 @@ namespace Tests
 
             using (var api = new MandrillApi("api_key", client))
             {
-                api.HttpClient.BaseAddress.OriginalString.Should().Be("https://mycorp.proxy.local/");
-                api.HttpClient.DefaultRequestHeaders.Accept.Count.Should().Be(2);
+                Assert.Equal("https://mycorp.proxy.local/", api.HttpClient.BaseAddress.OriginalString);
+                Assert.Equal(2, api.HttpClient.DefaultRequestHeaders.Accept.Count);
             }
         }
 
@@ -50,7 +48,7 @@ namespace Tests
 
             using (var api = new MandrillApi("api_key", client))
             {
-                api.HttpClient.BaseAddress.OriginalString.Should().Be("https://mycorp.proxy.local/");
+                Assert.Equal("https://mycorp.proxy.local/", api.HttpClient.BaseAddress.OriginalString);
             }
 
             try

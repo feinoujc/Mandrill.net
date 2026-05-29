@@ -1,7 +1,10 @@
+using System.Text.Json.Serialization;
+
 namespace Mandrill.Model
 {
     abstract class MandrillRequestBase
     {
-        public string Key { get; set; }
+        [JsonInclude]
+        internal string Key { get; set; }
     }
 }

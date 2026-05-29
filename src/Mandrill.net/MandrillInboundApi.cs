@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -88,8 +89,8 @@ namespace Mandrill
                 });
         }
 
-        public Task<IList<MandrillInboundSendResponse>> SendRawAsync(string rawMessage, IList<string> to = null,
-            string mailFrom = null, string helo = null, string clientAddress = null)
+        public Task<IList<MandrillInboundSendResponse>> SendRawAsync(string rawMessage, IList<string>? to = null,
+            string? mailFrom = null, string? helo = null, string? clientAddress = null)
         {
             if (rawMessage == null) throw new ArgumentNullException(nameof(rawMessage));
             return

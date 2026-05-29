@@ -13,5 +13,9 @@ namespace Mandrill
         IMandrillInboundApi Inbound { get; }
         IMandrillWebHooksApi WebHooks { get; }
         IMandrillExportsApi Exports { get; }
+        IMandrillIpsApi Ips { get; }
+        IMandrillMcTemplatesApi McTemplates { get; }
+        IMandrillMetadataApi Metadata { get; }
+        IMandrillUrlsApi Urls { get; }
     }
 }

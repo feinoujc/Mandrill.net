@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Mandrill.Model
 {
@@ -6,16 +6,16 @@ namespace Mandrill.Model
     {
         public MandrillAggregateStatisticsBase Today { get; set; }
 
-        [JsonProperty("last_7_days")]
+        [JsonPropertyName("last_7_days")]
         public MandrillAggregateStatisticsBase Last7Days { get; set; }
 
-        [JsonProperty("last_30_days")]
+        [JsonPropertyName("last_30_days")]
         public MandrillAggregateStatisticsBase Last30Days { get; set; }
 
-        [JsonProperty("last_60_days")]
+        [JsonPropertyName("last_60_days")]
         public MandrillAggregateStatisticsBase Last60Days { get; set; }
 
-        [JsonProperty("last_90_days")]
+        [JsonPropertyName("last_90_days")]
         public MandrillAggregateStatisticsBase Last90Days { get; set; }
 
         public MandrillAggregateStatisticsBase AllTime { get; set; }

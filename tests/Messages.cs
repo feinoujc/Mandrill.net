@@ -4,8 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
-using Newtonsoft.Json.Linq;
+using Mandrill;
 using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
@@ -14,15 +13,15 @@ namespace Tests
 {
     [Trait("Category", "messages")]
     [Collection("messages")]
-    public class Messages : IntegrationTest
+    public class Messages(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+        protected string ApiKey => fixture.ApiKey;
+        public string FromEmail => "mandrill.net@" + (Environment.GetEnvironmentVariable("MANDRILL_SENDING_DOMAIN") ?? "test.mandrillapp.com");
 
-        public string FromEmail => "mandrill.net@" +
-                            (Environment.GetEnvironmentVariable("MANDRILL_SENDING_DOMAIN") ?? "test.mandrillapp.com");
-
-        public Messages(ITestOutputHelper output) : base(output)
-        {
-        }
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual Task DisposeAsync() => Task.CompletedTask;
 
         void AssertResults(IEnumerable<MandrillSendMessageResponse> result)
         {
@@ -32,8 +31,7 @@ namespace Tests
                 {
                     Assert.Fail("invalid email: " + response.RejectReason);
                 }
-                if (response.Status == MandrillSendMessageResponseStatus.Rejected &&
-        response.RejectReason == "unsigned")
+                if (response.Status == MandrillSendMessageResponseStatus.Rejected && response.RejectReason == "unsigned")
                 {
                     Output.WriteLine("unsigned sending domain");
                     break;
@@ -41,15 +39,11 @@ namespace Tests
                 if (response.Status == MandrillSendMessageResponseStatus.Rejected)
                 {
                     Assert.Fail("rejected email: " + response.RejectReason);
-
                 }
-
-                if (response.Status == MandrillSendMessageResponseStatus.Queued ||
-                    response.Status == MandrillSendMessageResponseStatus.Sent)
+                if (response.Status == MandrillSendMessageResponseStatus.Queued || response.Status == MandrillSendMessageResponseStatus.Sent)
                 {
                     break;
                 }
-
                 Assert.Fail("Unexptected status:" + response.Status);
             }
         }
@@ -57,7 +51,7 @@ namespace Tests
         [Trait("Category", "messages/cancel_scheduled.json")]
         public class CancelScheduled : Messages
         {
-            public CancelScheduled(ITestOutputHelper output) : base(output)
+            public CancelScheduled(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -70,7 +64,7 @@ namespace Tests
                 if (schedule != null)
                 {
                     var result = await Api.Messages.CancelScheduledAsync(schedule.Id);
-                    result.Id.Should().Be(schedule.Id);
+                    Assert.Equal(schedule.Id, result.Id);
                 }
                 else
                 {
@@ -82,14 +76,14 @@ namespace Tests
         [Trait("Category", "messages/content.json")]
         public class Content : Messages
         {
-            public Content(ITestOutputHelper output) : base(output)
+            public Content(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
             [Fact]
             public async Task Can_retrieve_content()
             {
-                var results = await Api.Messages.SearchAsync(null, DateTime.Today.AddDays(-1));
+                var results = await Api.Messages.SearchAsync(null, DateOnly.FromDateTime(DateTime.Today.AddDays(-1)));
 
                 //the api doesn't return results immediately, it may return no results.
                 //Also, the content may not be around > 24 hrs
@@ -100,9 +94,9 @@ namespace Tests
                 {
                     var result = await Api.Messages.ContentAsync(found.Id);
 
-                    result.Should().NotBeNull();
+                    Assert.NotNull(result);
                     var content = result.Html ?? result.Text;
-                    content.Should().NotBeNullOrWhiteSpace();
+                    Assert.False(string.IsNullOrWhiteSpace(content));
                 }
                 else
                 {
@@ -114,14 +108,14 @@ namespace Tests
             public async Task Throws_when_not_found()
             {
                 var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
-                mandrillException.Name.Should().Be("Unknown_Message");
+                Assert.Equal("Unknown_Message", mandrillException.Name);
             }
 
             [Fact]
             public async Task Throws_when_not_found_sync()
             {
                 var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
-                mandrillException.Name.Should().Be("Unknown_Message");
+                Assert.Equal("Unknown_Message", mandrillException.Name);
                 Output.WriteLine(mandrillException.ToString());
             }
         }
@@ -129,7 +123,7 @@ namespace Tests
         [Trait("Category", "messages/info.json")]
         public class Info : Messages
         {
-            public Info(ITestOutputHelper output) : base(output)
+            public Info(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -144,8 +138,8 @@ namespace Tests
                 {
                     var result = await Api.Messages.InfoAsync(found.Id);
 
-                    result.Should().NotBeNull();
-                    result.Id.Should().Be(found.Id);
+                    Assert.NotNull(result);
+                    Assert.Equal(found.Id, result.Id);
                 }
                 else
                 {
@@ -157,14 +151,14 @@ namespace Tests
             public async Task Throws_when_not_found()
             {
                 var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.InfoAsync(Guid.NewGuid().ToString("N")));
-                mandrillException.Name.Should().Be("Unknown_Message");
+                Assert.Equal("Unknown_Message", mandrillException.Name);
             }
         }
 
         [Trait("Category", "messages/list_scheduled.json")]
         public class ListScheduled : Messages
         {
-            public ListScheduled(ITestOutputHelper output) : base(output)
+            public ListScheduled(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -172,15 +166,15 @@ namespace Tests
             public async Task Can_list_scheduled()
             {
                 var result = await Api.Messages.ListScheduledAsync();
-                result.Should().NotBeNull();
-                result.Count.Should().BeGreaterOrEqualTo(0);
+                Assert.NotNull(result);
+                Assert.True(result.Count >= 0);
             }
         }
 
         [Trait("Category", "messages/parse.json")]
         public class Parse : Messages
         {
-            public Parse(ITestOutputHelper output) : base(output)
+            public Parse(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -189,11 +183,11 @@ namespace Tests
             {
                 var rawMessage = $"From: {FromEmail}\nTo: recipient.email@mandrilldotnet.org\nSubject: Some Subject\n\nSome content.";
                 var result = await Api.Messages.ParseAsync(rawMessage);
-                result.Should().NotBeNull();
-                result.FromEmail.Should().Be(FromEmail);
-                result.To[0].Email.Should().Be("recipient.email@mandrilldotnet.org");
-                result.Subject.Should().Be("Some Subject");
-                result.Text.Should().Be("Some content.");
+                Assert.NotNull(result);
+                Assert.Equal(FromEmail, result.FromEmail);
+                Assert.Equal("recipient.email@mandrilldotnet.org", result.To[0].Email);
+                Assert.Equal("Some Subject", result.Subject);
+                Assert.Equal("Some content.", result.Text);
             }
 
 
@@ -214,19 +208,19 @@ To: Mr Smith
 ";
                 var result = await Api.Messages.ParseAsync(rawMessage);
 
-                result.Should().NotBeNull();
-                result.Headers["Received"].Should().BeOfType<JArray>();
-                ((JArray)result.Headers["Received"]).Count.Should().Be(3);
-                result.Headers["Delivered-To"].Should().BeOfType<string>();
-                result.Headers["Delivered-To"].Should().Be("MrSmith@gmail.com");
-                result.ReplyTo.Should().Be("MrsJohnson@gmail.com");
+                Assert.NotNull(result);
+                Assert.True(result.Headers["Received"].HasMultipleValues);
+                Assert.Equal(3, result.Headers["Received"].Values.Count);
+                Assert.False(result.Headers["Delivered-To"].HasMultipleValues);
+                Assert.Equal("MrSmith@gmail.com", result.Headers["Delivered-To"]);
+                Assert.Equal("MrsJohnson@gmail.com", result.ReplyTo);
             }
         }
 
         [Trait("Category", "messages/reschedule.json")]
         public class Reschedule : Messages
         {
-            public Reschedule(ITestOutputHelper output) : base(output)
+            public Reschedule(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -241,7 +235,7 @@ To: Mr Smith
                     var sendAtUtc = DateTime.UtcNow.AddHours(1);
                     sendAtUtc = new DateTime(sendAtUtc.Year, sendAtUtc.Month, sendAtUtc.Day, sendAtUtc.Hour, sendAtUtc.Minute, sendAtUtc.Second, 0, DateTimeKind.Utc);
                     var result = await Api.Messages.RescheduleAsync(schedule.Id, sendAtUtc);
-                    result.SendAt.Should().Be(sendAtUtc);
+                    Assert.Equal(sendAtUtc, result.SendAt);
                 }
                 else
                 {
@@ -265,7 +259,7 @@ To: Mr Smith
         [Trait("Category", "messages/search.json")]
         public class Search : Messages
         {
-            public Search(ITestOutputHelper output) : base(output)
+            public Search(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -273,19 +267,19 @@ To: Mr Smith
             public async Task Can_search_all_params()
             {
                 var results = await Api.Messages.SearchAsync("email:mandrilldotnet.org",
-                    DateTime.Today.AddDays(-1),
-                    DateTime.Today.AddDays(1),
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
                     new string[0],
                     new[] { FromEmail },
                     new[] { ApiKey },
                     10);
 
                 //the api doesn't return results immediately, it may return no results
-                results.Count.Should().BeLessOrEqualTo(10);
+                Assert.True(results.Count <= 10);
 
                 foreach (var result in results)
                 {
-                    result.Id.Should().NotBeEmpty();
+                    Assert.NotEmpty(result.Id);
                 }
 
                 if (results.Count == 0)
@@ -300,11 +294,11 @@ To: Mr Smith
                 var results = await Api.Messages.SearchAsync("email:mandrilldotnet.org", limit: 1);
 
                 //the api doesn't return results immediately, it may return no results
-                results.Count.Should().BeLessOrEqualTo(1);
+                Assert.True(results.Count <= 1);
 
                 foreach (var result in results)
                 {
-                    result.Id.Should().NotBeEmpty();
+                    Assert.NotEmpty(result.Id);
                 }
                 if (results.Count == 0)
                 {
@@ -316,7 +310,7 @@ To: Mr Smith
         [Trait("Category", "messages/search_time_series.json")]
         public class SearchTimeSeries : Messages
         {
-            public SearchTimeSeries(ITestOutputHelper output) : base(output)
+            public SearchTimeSeries(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -324,14 +318,14 @@ To: Mr Smith
             public async Task Can_search_all_params()
             {
                 var results = await Api.Messages.SearchTimeSeriesAsync("email:mandrilldotnet.org",
-                    DateTime.Today.AddDays(-1),
-                    DateTime.Today.AddDays(1),
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
+                    DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
                     new string[0],
                     new[] { FromEmail });
 
                 foreach (var result in results)
                 {
-                    result.Clicks.Should().BeGreaterOrEqualTo(0);
+                    Assert.True(result.Clicks >= 0);
                 }
 
                 if (results.Count == 0)
@@ -347,7 +341,7 @@ To: Mr Smith
 
                 foreach (var result in results)
                 {
-                    result.Clicks.Should().BeGreaterOrEqualTo(0);
+                    Assert.True(result.Clicks >= 0);
                 }
 
                 if (results.Count == 0)
@@ -360,7 +354,7 @@ To: Mr Smith
         [Trait("Category", "messages/send.json")]
         public class Send : Messages
         {
-            public Send(ITestOutputHelper output) : base(output)
+            public Send(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -394,7 +388,7 @@ To: Mr Smith
 
                 var result = await Api.Messages.SendAsync(message);
 
-                result.Should().HaveCount(2);
+                Assert.Equal(2, result.Count);
                 AssertResults(result);
             }
 
@@ -416,9 +410,9 @@ To: Mr Smith
                 };
 
                 var result = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.SendAsync(message));
-                result.Should().NotBeNull();
-                result.Name.Should().Be("Unknown_Subaccount");
-                result.Message.Should().Contain(invalidSubaccount);
+                Assert.NotNull(result);
+                Assert.Equal("Unknown_Subaccount", result.Name);
+                Assert.Contains(invalidSubaccount, result.Message);
             }
 
             [Fact]
@@ -437,7 +431,7 @@ To: Mr Smith
                 };
                 var result = await Api.Messages.SendAsync(message, true);
 
-                result.Should().HaveCount(1);
+                Assert.Single(result);
                 AssertResults(result);
 
             }
@@ -466,9 +460,9 @@ To: Mr Smith
                 var sendAtUtc = DateTime.UtcNow.AddHours(1);
                 var result = await Api.Messages.SendAsync(message, sendAtUtc: sendAtUtc);
 
-                result.Should().HaveCount(1);
-                result[0].Email.Should().Be("test1@mandrilldotnet.org");
-                result[0].Status.Should().Be(MandrillSendMessageResponseStatus.Scheduled);
+                Assert.Single(result);
+                Assert.Equal("test1@mandrilldotnet.org", result[0].Email);
+                Assert.Equal(MandrillSendMessageResponseStatus.Scheduled, result[0].Status);
             }
 
             [Fact]
@@ -479,14 +473,14 @@ To: Mr Smith
                 var sendAtLocal = DateTime.SpecifyKind(DateTime.Now.AddHours(1), DateTimeKind.Local);
                 var result = await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.SendAsync(message, sendAtUtc: sendAtLocal));
 
-                result.ParamName.Should().Be("sendAtUtc");
+                Assert.Equal("sendAtUtc", result.ParamName);
             }
         }
 
         [Trait("Category", "messages/send_raw.json")]
         public class SendRaw : Messages
         {
-            public SendRaw(ITestOutputHelper output) : base(output)
+            public SendRaw(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
             }
 
@@ -505,7 +499,7 @@ To: Mr Smith
 
                 var result = await Api.Messages.SendRawAsync(rawMessage, fromEmail, fromName, to, async, ipPool, sendAt, returnPathDomain);
 
-                result.Should().HaveCount(1);
+                Assert.Single(result);
                 AssertResults(result);
 
             }
@@ -516,17 +510,11 @@ To: Mr Smith
         {
             protected string TestTemplateName;
 
-            public SendTemplate(ITestOutputHelper output) : base(output)
+            public SendTemplate(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
                 TestTemplateName = Guid.NewGuid().ToString();
                 var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.Code, TemplateContent.Text, true).GetAwaiter().GetResult();
-                result.Should().NotBeNull();
-            }
-
-            public override void Dispose()
-            {
-                var result = Api.Templates.DeleteAsync(TestTemplateName).GetAwaiter().GetResult();
-                result.Should().NotBeNull();
+                Assert.NotNull(result);
             }
 
             [Fact]
@@ -550,7 +538,7 @@ To: Mr Smith
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
-                result.Should().HaveCount(2);
+                Assert.Equal(2, result.Count);
                 AssertResults(result);
 
             }
@@ -580,18 +568,11 @@ To: Mr Smith
         {
             protected string TestTemplateName;
 
-            public SendTemplate_Handlebars(ITestOutputHelper output) : base(output)
+            public SendTemplate_Handlebars(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
                 TestTemplateName = Guid.NewGuid().ToString();
                 var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.HandleBarCode, null, true).GetAwaiter().GetResult();
-                result.Should().NotBeNull();
-            }
-
-            public override void Dispose()
-            {
-                var result = Api.Templates.DeleteAsync(TestTemplateName).GetAwaiter().GetResult();
-                result.Should().NotBeNull();
-                base.Dispose();
+                Assert.NotNull(result);
             }
 
             [Fact]
@@ -665,7 +646,7 @@ To: Mr Smith
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
-                result.Should().HaveCount(2);
+                Assert.Equal(2, result.Count);
                 AssertResults(result);
             }
 
@@ -740,7 +721,7 @@ To: Mr Smith
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
-                result.Should().HaveCount(2);
+                Assert.Equal(2, result.Count);
                 AssertResults(result);
 
             }
@@ -787,8 +768,51 @@ To: Mr Smith
 
                 var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
 
-                result.Should().HaveCount(2);
+                Assert.Equal(2, result.Count);
                 AssertResults(result);
+            }
+        }
+
+        [Trait("Category", "messages/send-sms.json")]
+        public class SendSms : Messages
+        {
+            public SendSms(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
+
+            [Fact(Skip = "Requires SMS feature enabled on account")]
+            public async Task Can_send_sms()
+            {
+                var sms = new MandrillSmsDetails
+                {
+                    Text = "Hello from Mandrill SMS!",
+                    To = new List<string> { "+10000000000" },
+                    From = "+10000000001",
+                    Consent = MandrillSmsDetailsConsent.Onetime
+                };
+                var results = await Api.Messages.SendSmsAsync(sms);
+                Assert.NotNull(results);
+                Assert.Single(results);
+            }
+        }
+
+        [Trait("Category", "messages/send-mc-template.json")]
+        public class SendMcTemplate : Messages
+        {
+            public SendMcTemplate(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
+
+            [Fact(Skip = "Requires a Mailchimp campaign template on the account")]
+            public async Task Can_send_mc_template()
+            {
+                var templates = await Api.McTemplates.ListAsync();
+                var template = templates.FirstOrDefault();
+                if (template == null)
+                {
+                    Output.WriteLine("no MC templates found.");
+                    return;
+                }
+                var message = new MandrillMessage(FromEmail, FromEmail, "MC Template Test", null);
+                var results = await Api.Messages.SendMcTemplateAsync(message, template.McTemplateId);
+                Assert.NotNull(results);
+                AssertResults(results);
             }
         }
     }

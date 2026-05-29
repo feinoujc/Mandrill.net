@@ -19,6 +19,10 @@ namespace Mandrill
         private MandrillUsersApi _users;
         private MandrillWebHooksApi _webhooks;
         private MandrillAllowlistsApi _allowlists;
+        private MandrillIpsApi _ips;
+        private MandrillMcTemplatesApi _mcTemplates;
+        private MandrillMetadataApi _metadata;
+        private MandrillUrlsApi _urls;
 
         public HttpClient HttpClient => _request.HttpClient;
 
@@ -62,6 +66,14 @@ namespace Mandrill
         public IMandrillWebHooksApi WebHooks => _webhooks ?? (_webhooks = new MandrillWebHooksApi(this));
 
         public IMandrillExportsApi Exports => _exports ?? (_exports = new MandrillExportsApi(this));
+
+        public IMandrillIpsApi Ips => _ips ?? (_ips = new MandrillIpsApi(this));
+
+        public IMandrillMcTemplatesApi McTemplates => _mcTemplates ?? (_mcTemplates = new MandrillMcTemplatesApi(this));
+
+        public IMandrillMetadataApi Metadata => _metadata ?? (_metadata = new MandrillMetadataApi(this));
+
+        public IMandrillUrlsApi Urls => _urls ?? (_urls = new MandrillUrlsApi(this));
 
         public void Dispose()
         {

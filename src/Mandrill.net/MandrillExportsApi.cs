@@ -1,3 +1,4 @@
+#nullable enable
 using Mandrill.Model;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,6 @@ namespace Mandrill
 {
     internal partial class MandrillExportsApi : IMandrillExportsApi
     {
-        private const string ActivityDateFormat = "yyyy-MM-dd";
 
         public MandrillExportsApi(MandrillApi mandrillApi)
         {
@@ -40,6 +40,15 @@ namespace Mandrill
                 });
         }
 
+        public Task<MandrillExportInfo> AllowlistAsync(string? notifyEmail = null)
+        {
+            return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/allowlist.json",
+                new MandrillExportRequest
+                {
+                    NotifyEmail = notifyEmail
+                });
+        }
+
         public Task<MandrillExportInfo> WhitelistAsync(string notifyEmail)
         {
             return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/whitelist.json",
@@ -50,19 +59,19 @@ namespace Mandrill
         }
 
         public Task<MandrillExportInfo> ActivityAsync(string notifyEmail,
-            DateTime? dateFrom = null,
-            DateTime? dateTo = null,
-            IList<string> tags = null,
-            IList<string> senders = null,
-            IList<string> states = null,
-            IList<string> apiKeys = null)
+            DateOnly? dateFrom = null,
+            DateOnly? dateTo = null,
+            IList<string>? tags = null,
+            IList<string>? senders = null,
+            IList<string>? states = null,
+            IList<string>? apiKeys = null)
         {
             return MandrillApi.PostAsync<MandrillExportRequest, MandrillExportInfo>("exports/activity",
                 new MandrillExportRequest
                 {
                     NotifyEmail = notifyEmail,
-                    DateFrom = dateFrom?.ToString(ActivityDateFormat),
-                    DateTo = dateTo?.ToString(ActivityDateFormat),
+                    DateFrom = dateFrom,
+                    DateTo = dateTo,
                     Tags = tags?.ToList(),
                     Senders = senders?.ToList(),
                     States = states?.ToList(),

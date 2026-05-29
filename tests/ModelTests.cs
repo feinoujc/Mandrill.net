@@ -1,5 +1,4 @@
 using System.Linq;
-using FluentAssertions;
 using Mandrill.Model;
 using Xunit;
 
@@ -15,12 +14,12 @@ namespace Tests
             {
                 var model = new MandrillMessage("from@mandrilldotnet.org", "to@mandrilldotnet.org", "test subject", "<body>test</body>");
 
-                model.FromEmail.Should().Be("from@mandrilldotnet.org");
-                model.FromName.Should().BeNull();
-                model.To[0].Email.Should().Be("to@mandrilldotnet.org");
-                model.To[0].Name.Should().BeNull();
-                model.Text.Should().BeNull();
-                model.Html.Should().Be("<body>test</body>");
+                Assert.Equal("from@mandrilldotnet.org", model.FromEmail);
+                Assert.Null(model.FromName);
+                Assert.Equal("to@mandrilldotnet.org", model.To[0].Email);
+                Assert.Null(model.To[0].Name);
+                Assert.Null(model.Text);
+                Assert.Equal("<body>test</body>", model.Html);
             }
 
             [Fact]
@@ -28,12 +27,12 @@ namespace Tests
             {
                 var model = new MandrillMessage("from@mandrilldotnet.org", "to@mandrilldotnet.org", "test subject", "test");
 
-                model.FromEmail.Should().Be("from@mandrilldotnet.org");
-                model.FromName.Should().BeNull();
-                model.To[0].Email.Should().Be("to@mandrilldotnet.org");
-                model.To[0].Name.Should().BeNull();
-                model.Html.Should().BeNull();
-                model.Text.Should().Be("test");
+                Assert.Equal("from@mandrilldotnet.org", model.FromEmail);
+                Assert.Null(model.FromName);
+                Assert.Equal("to@mandrilldotnet.org", model.To[0].Email);
+                Assert.Null(model.To[0].Name);
+                Assert.Null(model.Html);
+                Assert.Equal("test", model.Text);
             }
 
             [Fact]
@@ -41,10 +40,10 @@ namespace Tests
             {
                 var model = new MandrillMessage("from@mandrilldotnet.org", "to@mandrilldotnet.org");
 
-                model.FromEmail.Should().Be("from@mandrilldotnet.org");
-                model.FromName.Should().BeNull();
-                model.To[0].Email.Should().Be("to@mandrilldotnet.org");
-                model.To[0].Name.Should().BeNull();
+                Assert.Equal("from@mandrilldotnet.org", model.FromEmail);
+                Assert.Null(model.FromName);
+                Assert.Equal("to@mandrilldotnet.org", model.To[0].Email);
+                Assert.Null(model.To[0].Name);
             }
 
             [Fact]
@@ -53,10 +52,10 @@ namespace Tests
                 var model = new MandrillMessage(new MandrillMailAddress("from@mandrilldotnet.org", "From Name"),
                     new MandrillMailAddress("to@mandrilldotnet.org", "To Name"));
 
-                model.FromEmail.Should().Be("from@mandrilldotnet.org");
-                model.FromName.Should().Be("From Name");
-                model.To[0].Email.Should().Be("to@mandrilldotnet.org");
-                model.To[0].Name.Should().Be("To Name");
+                Assert.Equal("from@mandrilldotnet.org", model.FromEmail);
+                Assert.Equal("From Name", model.FromName);
+                Assert.Equal("to@mandrilldotnet.org", model.To[0].Email);
+                Assert.Equal("To Name", model.To[0].Name);
             }
 
             [Fact]
@@ -70,8 +69,8 @@ namespace Tests
                 model.AddRecipientMetadata("to1@mandrilldotnet.org", "my-property", "1");
                 model.AddRecipientMetadata("to2@mandrilldotnet.org", "my-property", "2");
 
-                model.RecipientMetadata.Single(m => m.Rcpt == "to1@mandrilldotnet.org").Values["my-property"].Should().Be("1");
-                model.RecipientMetadata.Single(m => m.Rcpt == "to2@mandrilldotnet.org").Values["my-property"].Should().Be("2");
+                Assert.Equal("1", model.RecipientMetadata.Single(m => m.Rcpt == "to1@mandrilldotnet.org").Values["my-property"]);
+                Assert.Equal("2", model.RecipientMetadata.Single(m => m.Rcpt == "to2@mandrilldotnet.org").Values["my-property"]);
             }
 
             [Fact]
@@ -99,7 +98,7 @@ namespace Tests
 
                 model.AddMetadata("meta1", "foo");
 
-                model.Metadata["META1"].Should().Be("foo");
+                Assert.Equal("foo", model.Metadata["META1"]);
             }
 
             [Fact]
@@ -109,7 +108,7 @@ namespace Tests
 
                 model.AddHeader("X-MY-HEADER", "foo");
 
-                model.Headers["x-my-header"].Should().Be("foo");
+                Assert.Equal("foo", model.Headers["x-my-header"]);
             }
 
             [Fact]
@@ -117,10 +116,9 @@ namespace Tests
             {
                 var model = new MandrillMessage();
 
-
                 model.AddHeader("X-MY-HEADER", new[] { "foo", "bar" });
 
-                model.Headers["x-my-header"].Should().BeEquivalentTo(new[] { "foo", "bar" });
+                Assert.Equal(new[] { "foo", "bar" }, model.Headers["x-my-header"].Values);
             }
 
             [Fact]
@@ -128,10 +126,10 @@ namespace Tests
             {
                 var model = new MandrillMessage();
 
-                model.ReplyTo.Should().BeNull();
+                Assert.Null(model.ReplyTo);
                 model.ReplyTo = "reply@mandrilldotnet.org";
-                model.ReplyTo.Should().Be("reply@mandrilldotnet.org");
-                model.Headers["reply-to"].Should().Be("reply@mandrilldotnet.org");
+                Assert.Equal("reply@mandrilldotnet.org", model.ReplyTo);
+                Assert.Equal("reply@mandrilldotnet.org", model.Headers["reply-to"]);
             }
         }
     }

@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,8 +17,8 @@ namespace Mandrill
         Task<MandrillInboundRoute> UpdateRouteAsync(string id, string pattern, Uri url);
         Task<MandrillInboundRoute> DeleteRouteAsync(string id);
 
-        Task<IList<MandrillInboundSendResponse>> SendRawAsync(string rawMessage, IList<string> to = null,
-            string mailFrom = null,
-            string helo = null, string clientAddress = null);
+        Task<IList<MandrillInboundSendResponse>> SendRawAsync(string rawMessage, IList<string>? to = null,
+            string? mailFrom = null,
+            string? helo = null, string? clientAddress = null);
     }
 }

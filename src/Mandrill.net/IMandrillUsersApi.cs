@@ -7,6 +7,7 @@ namespace Mandrill
     public partial interface IMandrillUsersApi
     {
         Task<string> PingAsync();
+        Task<MandrillPing2Response> Ping2Async();
         Task<IList<MandrillSenderDemographics>> SendersAsync();
         Task<MandrillUserInfo> InfoAsync();
     }

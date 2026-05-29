@@ -1,21 +1,22 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Mandrill;
+using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
-using FluentAssertions;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Mandrill.Model;
 
 namespace Tests
 {
     [Trait("Category", "exports")]
     [Collection("exports")]
-    public class Exports : IntegrationTest
+    public class Exports(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        public Exports(ITestOutputHelper output) : base(output)
-        {
-        }
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+
+        protected string GenerateUniqueNotifyEmail() => $"test_{Guid.NewGuid():N}"[..13] + "@mandrilldotnet.org";
 
         class ExportThrottledTestException : Exception
         {
@@ -33,6 +34,10 @@ namespace Tests
             }
             catch (MandrillException mex)
             {
+                if (mex.Code == 429 && mex.Name == "RequestLimitExceeded")
+                {
+                    throw new ExportThrottledTestException(mex.Message, mex);
+                }
                 if (mex.Code == -99 && mex.Name == "UserError")
                 {
                     throw new ExportThrottledTestException(mex.Message, mex);
@@ -41,23 +46,23 @@ namespace Tests
             }
         }
 
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+
+        public virtual Task DisposeAsync() => Task.CompletedTask;
+
         [Trait("Category", "exports/list.json")]
         public class List : Exports
         {
-            public List(ITestOutputHelper output) : base(output)
-            {
-            }
+            public List(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_list_all()
             {
                 var results = await Api.Exports.ListAsync();
-
-                //the api doesn't return results immediately, it may return no results
-                var found = results.OrderBy(x => x.Id).FirstOrDefault();
+                var found = results.Cast<MandrillExportInfo>().OrderBy(x => x.Id).FirstOrDefault();
                 if (found != null)
                 {
-                    results.Count.Should().BeGreaterOrEqualTo(1);
+                    Assert.True(results.Count >= 1);
                 }
                 else
                 {
@@ -69,19 +74,17 @@ namespace Tests
         [Trait("Category", "exports/info.json")]
         public class Info : Exports
         {
-            public Info(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Info(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_retrieve_info()
             {
-                var export = (await Api.Exports.ListAsync()).LastOrDefault();
+                var export = (await Api.Exports.ListAsync()).Cast<MandrillExportInfo>().LastOrDefault();
                 if (export != null)
                 {
                     var result = await Api.Exports.InfoAsync(export.Id);
-                    result.Should().NotBeNull();
-                    result.Id.Should().Be(export.Id);
+                    Assert.NotNull(result);
+                    Assert.Equal(export.Id, result.Id);
                 }
                 else
                 {
@@ -93,22 +96,17 @@ namespace Tests
         [Trait("Category", "exports/rejects.json")]
         public class Rejects : Exports
         {
-            public Rejects(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Rejects(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_export_info()
             {
-                // notifyEmail is an optional field that will
-                // be emailed when the export is done compiling. omitting for test purposes.
-                string notifyEmail = string.Empty;
                 try
                 {
-                    var result = await HandleExportThrottleError(Api.Exports.RejectsAsync(notifyEmail));
-                    result.Should().NotBeNull();
-                    result.Type.Should().Be("reject");
-                    result.State.Should().Be("waiting");
+                    var result = await HandleExportThrottleError(Api.Exports.RejectsAsync(GenerateUniqueNotifyEmail()));
+                    Assert.NotNull(result);
+                    Assert.Equal(MandrillExportType.Reject, result.Type);
+                    Assert.Equal(MandrillExportState.Waiting, result.State);
                 }
                 catch (ExportThrottledTestException)
                 {
@@ -119,22 +117,39 @@ namespace Tests
         [Trait("Category", "exports/whitelist.json")]
         public class Whitelist : Exports
         {
-            public Whitelist(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Whitelist(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_export_info()
             {
-                // notifyEmail is an optional field that will
-                // be emailed when the export is done compiling. omitting for test purposes.
-                string notifyEmail = string.Empty;
+
                 try
                 {
-                    var result = await HandleExportThrottleError(Api.Exports.WhitelistAsync(notifyEmail));
-                    result.Should().NotBeNull();
-                    result.Type.Should().Be("whitelist");
-                    result.State.Should().Be("waiting");
+                    var result = await HandleExportThrottleError(Api.Exports.WhitelistAsync(GenerateUniqueNotifyEmail()));
+                    Assert.NotNull(result);
+                    Assert.Equal(MandrillExportType.Whitelist, result.Type);
+                    Assert.Equal(MandrillExportState.Waiting, result.State);
+                }
+                catch (ExportThrottledTestException)
+                {
+                }
+            }
+        }
+
+        [Trait("Category", "exports/allowlist.json")]
+        public class Allowlist : Exports
+        {
+            public Allowlist(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
+
+            [Fact]
+            public async Task Can_export_allowlist()
+            {
+                try
+                {
+                    var result = await HandleExportThrottleError(Api.Exports.AllowlistAsync(GenerateUniqueNotifyEmail()));
+                    Assert.NotNull(result);
+                    Assert.Equal(MandrillExportType.Whitelist, result.Type);
+                    Assert.Equal(MandrillExportState.Waiting, result.State);
                 }
                 catch (ExportThrottledTestException)
                 {
@@ -145,16 +160,14 @@ namespace Tests
         [Trait("Category", "exports/activity.json")]
         public class Activity : Exports
         {
-            public Activity(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Activity(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_export_activity()
             {
-                string notifyEmail = string.Empty;
-                DateTime? dateFrom = null;
-                DateTime? dateTo = null;
+                string notifyEmail = GenerateUniqueNotifyEmail();
+                DateOnly? dateFrom = null;
+                DateOnly? dateTo = null;
                 IList<string> tags = null;
                 IList<string> senders = null;
                 IList<string> states = null;
@@ -169,9 +182,9 @@ namespace Tests
                         senders,
                         states,
                         apiKeys));
-                    result.Should().NotBeNull();
-                    result.Type.Should().Be("activity");
-                    result.State.Should().Be("waiting");
+                    Assert.NotNull(result);
+                    Assert.Equal(MandrillExportType.Activity, result.Type);
+                    Assert.Equal(MandrillExportState.Waiting, result.State);
                 }
                 catch (ExportThrottledTestException)
                 {

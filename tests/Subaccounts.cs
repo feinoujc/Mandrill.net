@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Mandrill;
 using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
@@ -10,29 +11,25 @@ namespace Tests
 {
     [Trait("Category", "subaccounts")]
     [Collection("subaccounts")]
-    public class Subaccounts : IntegrationTest
+    public class Subaccounts(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        HashSet<string> _added = new HashSet<string>();
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+        private HashSet<string> _added = new();
 
-        public Subaccounts(ITestOutputHelper output) : base(output)
-        {
-        }
-
-        public override void Dispose()
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual async Task DisposeAsync()
         {
             foreach (var id in _added)
             {
-                var result = Api.Subaccounts.DeleteAsync(id).GetAwaiter().GetResult();
+                await Api.Subaccounts.DeleteAsync(id);
             }
-            base.Dispose();
         }
 
         [Trait("Category", "subaccounts/add.json")]
         public class Add : Subaccounts
         {
-            public Add(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Add(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_add_subaccount()
@@ -40,7 +37,7 @@ namespace Tests
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
                 var result = await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
-                result.Id.Should().Be(id);
+                Assert.Equal(id, result.Id);
                 _added.Add(result.Id);
             }
         }
@@ -48,30 +45,26 @@ namespace Tests
         [Trait("Category", "subaccounts/list.json")]
         public class List : Subaccounts
         {
-            public List(ITestOutputHelper output) : base(output)
-            {
-            }
+            public List(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_list_subaccount()
             {
                 var results = await Api.Subaccounts.ListAsync(q: null);
-                results.Count.Should().BeGreaterOrEqualTo(0);
+                Assert.True(results.Count >= 0);
             }
             [Fact]
             public async Task Can_filter_subaccount()
             {
                 var results = await Api.Subaccounts.ListAsync(q: Guid.NewGuid().ToString("N"));
-                results.Count.Should().Be(0);
+                Assert.Empty(results);
             }
         }
 
         [Trait("Category", "subaccounts/update.json")]
         public class Update : Subaccounts
         {
-            public Update(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Update(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_update_subaccount()
@@ -81,7 +74,7 @@ namespace Tests
                 await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
 
                 var result = await Api.Subaccounts.UpdateAsync(id, name: "test", notes: "update", customQuota: 5000);
-                result.CustomQuota.Should().Be(5000);
+                Assert.Equal(5000, result.CustomQuota);
                 _added.Add(result.Id);
             }
 
@@ -90,9 +83,7 @@ namespace Tests
         [Trait("Category", "subaccounts/pause.json")]
         public class Pause : Subaccounts
         {
-            public Pause(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Pause(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_pause_subaccount()
@@ -102,7 +93,7 @@ namespace Tests
                 await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
 
                 var result = await Api.Subaccounts.PauseAsync(id);
-                result.Status.Should().Be(MandrillSubaccountStatus.Paused);
+                Assert.Equal(MandrillSubaccountStatus.Paused, result.Status);
                 _added.Add(result.Id);
             }
 
@@ -111,9 +102,7 @@ namespace Tests
         [Trait("Category", "subaccounts/resume.json")]
         public class Resume : Subaccounts
         {
-            public Resume(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Resume(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_resume_subaccount()
@@ -123,10 +112,10 @@ namespace Tests
                 await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
 
                 var result = await Api.Subaccounts.PauseAsync(id);
-                result.Status.Should().Be(MandrillSubaccountStatus.Paused);
+                Assert.Equal(MandrillSubaccountStatus.Paused, result.Status);
 
                 result = await Api.Subaccounts.ResumeAsync(id);
-                result.Status.Should().Be(MandrillSubaccountStatus.Active);
+                Assert.Equal(MandrillSubaccountStatus.Active, result.Status);
                 _added.Add(result.Id);
             }
 
@@ -135,9 +124,7 @@ namespace Tests
         [Trait("Category", "subaccounts/delete.json")]
         public class Delete : Subaccounts
         {
-            public Delete(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Delete(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_delete_subaccount()
@@ -147,7 +134,7 @@ namespace Tests
                 await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
 
                 var result = await Api.Subaccounts.DeleteAsync(id);
-                result.Id.Should().Be(id);
+                Assert.Equal(id, result.Id);
             }
 
         }
@@ -155,9 +142,7 @@ namespace Tests
         [Trait("Category", "subaccounts/info.json")]
         public class Info : Subaccounts
         {
-            public Info(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Info(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_get_info_subaccount()
@@ -167,9 +152,9 @@ namespace Tests
                 await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
 
                 var result = await Api.Subaccounts.InfoAsync(id);
-                result.Id.Should().Be(id);
-                result.Last30Days.Clicks.Should().Be(0);
-                result.FirstSentAt.Should().Be((DateTime?)null);
+                Assert.Equal(id, result.Id);
+                Assert.Equal(0, result.Last30Days.Clicks);
+                Assert.Null(result.FirstSentAt);
 
                 _added.Add(result.Id);
             }

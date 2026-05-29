@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentAssertions;
+using Mandrill;
 using Mandrill.Model;
 using Xunit;
 using Xunit.Abstractions;
@@ -11,9 +11,11 @@ namespace Tests
 {
     [Trait("Category", "templates")]
     [Collection("templates")]
-    public class Templates : IntegrationTest
+    public class Templates(MandrillFixture fixture, ITestOutputHelper output) : IClassFixture<MandrillFixture>, IAsyncLifetime
     {
-        protected HashSet<string> TemplatesToCleanup;
+        protected IMandrillApi Api => fixture.Api;
+        protected ITestOutputHelper Output => output;
+        protected HashSet<string> TemplatesToCleanup = new();
 
         protected string AddToBeDeleted(string templateName)
         {
@@ -21,27 +23,23 @@ namespace Tests
             return templateName;
         }
 
-        public Templates(ITestOutputHelper output) : base(output)
+        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual async Task DisposeAsync()
         {
-            TemplatesToCleanup = new HashSet<string>();
-        }
-
-        public override void Dispose()
-        {
-            foreach (var templateName in TemplatesToCleanup)
+            if (TemplatesToCleanup != null)
             {
-                var result = Api.Templates.DeleteAsync(templateName).GetAwaiter().GetResult();
+                foreach (var templateName in TemplatesToCleanup)
+                {
+                    await Api.Templates.DeleteAsync(templateName);
+                }
+                TemplatesToCleanup = null;
             }
-            TemplatesToCleanup = null;
-            base.Dispose();
         }
 
         [Trait("Category", "templates/add.json")]
         public class Add : Templates
         {
-            public Add(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Add(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_add_template()
@@ -49,19 +47,17 @@ namespace Tests
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
                 var result = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
 
-                result.Name.Should().Be(name);
-                result.Code.Should().Be(TemplateContent.Code);
-                result.Slug.Should().Be(name);
-                result.Text.Should().Be(TemplateContent.Text);
+                Assert.Equal(name, result.Name);
+                Assert.Equal(TemplateContent.Code, result.Code);
+                Assert.Equal(name, result.Slug);
+                Assert.Equal(TemplateContent.Text, result.Text);
             }
         }
 
         [Trait("Category", "templates/add.json")]
         public class Info : Templates
         {
-            public Info(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Info(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_get_template_info()
@@ -70,19 +66,17 @@ namespace Tests
                 var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
                 var result = await Api.Templates.InfoAsync(added.Name);
 
-                result.Name.Should().Be(name);
-                result.Code.Should().Be(TemplateContent.Code);
-                result.Slug.Should().Be(name);
-                result.Text.Should().Be(TemplateContent.Text);
+                Assert.Equal(name, result.Name);
+                Assert.Equal(TemplateContent.Code, result.Code);
+                Assert.Equal(name, result.Slug);
+                Assert.Equal(TemplateContent.Text, result.Text);
             }
         }
 
         [Trait("Category", "templates/list.json")]
         public class List : Templates
         {
-            public List(ITestOutputHelper output) : base(output)
-            {
-            }
+            public List(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_list_all_templates()
@@ -96,8 +90,8 @@ namespace Tests
 
                 var results = await Api.Templates.ListAsync(testLabel);
 
-                results.Count.Should().BeGreaterOrEqualTo(10);
-                results.Where(info => templates.Contains(info.Name)).Should().HaveCount(10);
+                Assert.True(results.Count >= 10);
+                Assert.Equal(10, results.Where(info => templates.Contains(info.Name)).Count());
             }
 
             [Fact]
@@ -112,22 +106,20 @@ namespace Tests
 
                 var results = await Api.Templates.ListAsync(testLabel);
 
-                results.Should().HaveCount(10);
-                results.All(x =>
+                Assert.Equal(10, results.Count);
+                foreach (var x in results)
                 {
-                    x.Labels.Should().NotBeNullOrEmpty();
-                    x.Labels[0].Should().Be(testLabel);
-                    return true;
-                }).Should().BeTrue();
+                    Assert.NotNull(x.Labels);
+                    Assert.NotEmpty(x.Labels);
+                    Assert.Equal(testLabel, x.Labels[0]);
+                }
             }
         }
 
         [Trait("Category", "templates/add.json")]
         public class Publish : Templates
         {
-            public Publish(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Publish(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_publish_template()
@@ -139,16 +131,14 @@ namespace Tests
                 var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
                 var result = await Api.Templates.PublishAsync(added.Name);
 
-                result.PublishedAt.Should().BeOnOrAfter(skew);
+                Assert.True(result.PublishedAt >= skew);
             }
         }
 
         [Trait("Category", "templates/render.json")]
         public class Render : Templates
         {
-            public Render(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Render(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_render()
@@ -168,19 +158,17 @@ namespace Tests
                 };
                 var result = await Api.Templates.RenderAsync(name, templateContent, mergeVars);
 
-                result.Html.Should().NotBeNullOrWhiteSpace();
-                result.Html.Should().Contain("Joe");
-                result.Html.Should().Contain("11/28/2014");
-                result.Html.Should().Contain("Lorem ipsum dolor sit amet");
+                Assert.False(string.IsNullOrWhiteSpace(result.Html));
+                Assert.Contains("Joe", result.Html);
+                Assert.Contains("11/28/2014", result.Html);
+                Assert.Contains("Lorem ipsum dolor sit amet", result.Html);
             }
         }
 
         [Trait("Category", "templates/time_series.json")]
         public class TimeSeries : Templates
         {
-            public TimeSeries(ITestOutputHelper output) : base(output)
-            {
-            }
+            public TimeSeries(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_get_time_series()
@@ -199,9 +187,7 @@ namespace Tests
         [Trait("Category", "templates/update.json")]
         public class Update : Templates
         {
-            public Update(ITestOutputHelper output) : base(output)
-            {
-            }
+            public Update(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output) { }
 
             [Fact]
             public async Task Can_update()
@@ -210,10 +196,10 @@ namespace Tests
                 await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
                 var result = await Api.Templates.UpdateAsync(name, TemplateContent.Code.Replace("footer", "booger"), null, false,
                     "update@mandrilldotnet.org");
-                result.Name.Should().Be(name);
-                result.Code.Should().Contain("booger");
-                result.Slug.Should().Be(name);
-                result.FromEmail.Should().Be("update@mandrilldotnet.org");
+                Assert.Equal(name, result.Name);
+                Assert.Contains("booger", result.Code);
+                Assert.Equal(name, result.Slug);
+                Assert.Equal("update@mandrilldotnet.org", result.FromEmail);
             }
         }
     }
