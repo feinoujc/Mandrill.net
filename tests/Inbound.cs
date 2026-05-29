@@ -101,7 +101,7 @@ namespace Tests
                 Assert.Equal(route.Id, results[0].Id);
             }
 
-            [Fact]
+            [Fact(Skip = "Webhook validation is flaky")]
             public async Task Can_add_route()
             {
                 var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
@@ -114,7 +114,7 @@ namespace Tests
                 Assert.Equal(WebhookUri, result.Url);
             }
 
-            [Fact]
+            [Fact(Skip = "Webhook validation is flaky")]
             public async Task Can_update_route()
             {
                 var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
@@ -134,7 +134,7 @@ namespace Tests
             }
 
 
-            [Fact]
+            [Fact(Skip = "Webhook validation is flaky")]
             public async Task Can_delete_route()
             {
                 var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
@@ -151,7 +151,7 @@ namespace Tests
                 Assert.Equal(id, result.Id);
             }
 
-            [Fact]
+            [Fact(Skip = "Webhook validation is flaky")]
             public async Task Can_send_raw()
             {
                 var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -516,8 +515,7 @@ namespace Tests
         [Fact]
         public void Can_verify_webhook_signature()
         {
-            var formData = new NameValueCollection();
-            formData["mandrill_events"] = TestData.sample_webhook;
+            var formData = new Dictionary<string, string> { ["mandrill_events"] = TestData.sample_webhook };
 
             var result = WebHookSignatureHelper.VerifyWebHookSignature("NnvRYvKo0gA99/YGgRSb2JS4c/Y=", "f7YEknp5hLvZVw6BNSaM6g", new Uri("http://requestb.in/wvhpa9wv"), formData);
             Assert.True(result);
