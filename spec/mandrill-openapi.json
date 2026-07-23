@@ -6,8 +6,8 @@
     },
     "servers": [
         {
-            "url": "https://mandrillapp.com/api/1.4",
-            "description": "Mailchimp Transactional API v1.4"
+            "url": "https://mandrillapp.com/api/1.3",
+            "description": "Mailchimp Transactional API"
         }
     ],
     "paths": {
