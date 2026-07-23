@@ -19,7 +19,7 @@ namespace Tests
 
             using (var api = new MandrillApi("api_key", client))
             {
-                Assert.Equal("https://mandrillapp.com/api/1.4/", api.HttpClient.BaseAddress.OriginalString);
+                Assert.Equal("https://mandrillapp.com/api/1.3/", api.HttpClient.BaseAddress.OriginalString);
                 Assert.Single(api.HttpClient.DefaultRequestHeaders.Accept);
             }
         }
