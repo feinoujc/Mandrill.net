@@ -5,7 +5,7 @@
       <UserSecretsId>a7a8e3f9-c2d1-4b5e-9f0a-3d6c8e2b1a7f</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" Version="10.0.1" />
+    <PackageReference Include="coverlet.msbuild" Version="10.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
       
     <PackageReference Include="xunit" Version="2.9.3" />
