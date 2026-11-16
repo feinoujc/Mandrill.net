@@ -15,17 +15,17 @@ namespace Tests
         public IMandrillApi Api => _services.GetRequiredService<IMandrillApi>();
         public string ApiKey { get; private set; }
 
-        public Task InitializeAsync()
+        public ValueTask InitializeAsync()
         {
             ApiKey = ResolveApiKey();
             var services = new ServiceCollection();
             services.AddLogging(b => b.SetMinimumLevel(LogLevel.Warning));
             services.AddMandrill(options => options.ApiKey = ApiKey);
             _services = services.BuildServiceProvider();
-            return Task.CompletedTask;
+            return ValueTask.CompletedTask;
         }
 
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             if (_services != null)
                 await _services.DisposeAsync();

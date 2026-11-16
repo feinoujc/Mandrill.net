@@ -7,7 +7,6 @@ using System.Text.Json.Serialization;
 using Mandrill.Model;
 using Mandrill.Serialization;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tests
 {

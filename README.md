@@ -152,9 +152,18 @@ dotnet build
 
 ```sh
 # include MANDRILL_API_KEY and MANDRILL_SENDING_DOMAIN in your env. For example:
-# MANDRILL_API_KEY=xxxxxxxxx MANDRILL_SENDING_DOMAIN=acme.com dotnet test tests
-dotnet test
+# MANDRILL_API_KEY=xxxxxxxxx MANDRILL_SENDING_DOMAIN=acme.com dotnet test --project tests
+dotnet test --project tests
 ```
+
+Tests use [xUnit v3](https://xunit.net/) on [Microsoft.Testing.Platform](https://learn.microsoft.com/dotnet/core/testing/microsoft-testing-platform-intro) (enabled for `dotnet test` via `global.json`, requires the .NET 10 SDK). Platform options are passed directly to `dotnet test`, for example:
+
+```sh
+# filter to a category, write a TRX report and lcov coverage to ./TestResults
+dotnet test --project tests --filter-trait "Category=messages"   --results-directory TestResults --report-trx   --coverlet --coverlet-output-format lcov
+```
+
+The test project is also a standalone executable, so `dotnet run --project tests` (or running `tests/bin/<Configuration>/net10.0/Tests`) works too.
 
 ## API coverage
 

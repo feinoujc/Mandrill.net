@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Mandrill;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -15,7 +14,7 @@ namespace Tests
         protected IMandrillApi Api => fixture.Api;
         protected ITestOutputHelper Output => output;
 
-        public virtual async Task InitializeAsync()
+        public virtual async ValueTask InitializeAsync()
         {
             var existing = await Api.Metadata.ListAsync();
             foreach (var field in existing.Where(f => f.Name.StartsWith("test_")))
@@ -25,7 +24,7 @@ namespace Tests
             }
         }
 
-        public virtual async Task DisposeAsync()
+        public virtual async ValueTask DisposeAsync()
         {
             foreach (var name in _added)
             {

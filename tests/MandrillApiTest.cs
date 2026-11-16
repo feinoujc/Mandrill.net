@@ -53,7 +53,7 @@ namespace Tests
 
             try
             {
-                await client.GetAsync("test");
+                await client.GetAsync("test", TestContext.Current.CancellationToken);
             }
             catch (ObjectDisposedException)
             {

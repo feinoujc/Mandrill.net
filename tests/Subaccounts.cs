@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Mandrill;
 using Mandrill.Model;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -17,8 +16,8 @@ namespace Tests
         protected ITestOutputHelper Output => output;
         private HashSet<string> _added = new();
 
-        public virtual Task InitializeAsync() => Task.CompletedTask;
-        public virtual async Task DisposeAsync()
+        public virtual ValueTask InitializeAsync() => ValueTask.CompletedTask;
+        public virtual async ValueTask DisposeAsync()
         {
             foreach (var id in _added)
             {

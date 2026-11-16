@@ -13,6 +13,9 @@ on:
 jobs:
     test:
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            checks: write # dorny/test-reporter publishes the TRX summary as a check run
 
         steps:
             - uses: actions/checkout@v7
@@ -31,7 +34,30 @@ jobs:
               env:
                   MANDRILL_API_KEY: ${{ secrets.MANDRILL_API_KEY }}
                   MANDRILL_SENDING_DOMAIN: ${{ secrets.MANDRILL_SENDING_DOMAIN }}
-              run: dotnet test tests --configuration Release --logger "console;verbosity=normal" -p:CollectCoverage=true -p:CoverletOutputFormat=lcov -p:CoverletOutput=./coverage.lcov
+              # Microsoft.Testing.Platform (enabled via global.json); TRX report + coverlet.MTP lcov coverage.
+              run: >-
+                  dotnet test --project tests --configuration Release --output Detailed
+                  --results-directory TestResults
+                  --report-trx --report-trx-filename tests.trx
+                  --coverlet --coverlet-output-format lcov
+            - name: Rename coverage report
+              if:
+                  (github.event_name == 'pull_request_target' && github.event.pull_request.user.login == 'dependabot[bot]') ||
+                  (github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]') ||
+                  github.event_name == 'push'
+              # coverlet.MTP writes coverage.<timestamp>.info; give it a stable name.
+              run: mv TestResults/coverage.*.info TestResults/coverage.lcov
+            - name: Test report
+              if: always() && (
+                      (github.event_name == 'pull_request_target' && github.event.pull_request.user.login == 'dependabot[bot]') ||
+                      (github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]') ||
+                      github.event_name == 'push')
+              uses: dorny/test-reporter@v3
+              with:
+                  name: Test results
+                  path: TestResults/*.trx
+                  reporter: dotnet-trx
+                  fail-on-error: false
             - name: Push coverage result
               if:
                   (github.event_name == 'pull_request_target' && github.event.pull_request.user.login == 'dependabot[bot]') ||
@@ -40,7 +66,7 @@ jobs:
               uses: coverallsapp/github-action@v2.3.8
               with:
                   github-token: ${{ secrets.GITHUB_TOKEN }}
-                  path-to-lcov: ./tests/coverage.lcov
+                  path-to-lcov: ./TestResults/coverage.lcov
 
     publish-nuget:
         runs-on: ubuntu-latest

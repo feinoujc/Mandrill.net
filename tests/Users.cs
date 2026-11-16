@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Mandrill;
 using Mandrill.Model;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -14,8 +13,8 @@ namespace Tests
         protected IMandrillApi Api => fixture.Api;
         protected ITestOutputHelper Output => output;
 
-        public virtual Task InitializeAsync() => Task.CompletedTask;
-        public virtual Task DisposeAsync() => Task.CompletedTask;
+        public virtual ValueTask InitializeAsync() => ValueTask.CompletedTask;
+        public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
         [Trait("Category", "users/info.json")]
         public class Info : Users

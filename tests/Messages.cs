@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Mandrill;
 using Mandrill.Model;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -20,8 +19,8 @@ namespace Tests
         protected string ApiKey => fixture.ApiKey;
         public string FromEmail => "mandrill.net@" + (Environment.GetEnvironmentVariable("MANDRILL_SENDING_DOMAIN") ?? "test.mandrillapp.com");
 
-        public virtual Task InitializeAsync() => Task.CompletedTask;
-        public virtual Task DisposeAsync() => Task.CompletedTask;
+        public virtual ValueTask InitializeAsync() => ValueTask.CompletedTask;
+        public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
         void AssertResults(IEnumerable<MandrillSendMessageResponse> result)
         {

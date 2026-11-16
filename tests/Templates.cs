@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Mandrill;
 using Mandrill.Model;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -23,8 +22,8 @@ namespace Tests
             return templateName;
         }
 
-        public virtual Task InitializeAsync() => Task.CompletedTask;
-        public virtual async Task DisposeAsync()
+        public virtual ValueTask InitializeAsync() => ValueTask.CompletedTask;
+        public virtual async ValueTask DisposeAsync()
         {
             if (TemplatesToCleanup != null)
             {

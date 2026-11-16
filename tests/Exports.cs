@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Mandrill;
 using Mandrill.Model;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -46,9 +45,9 @@ namespace Tests
             }
         }
 
-        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-        public virtual Task DisposeAsync() => Task.CompletedTask;
+        public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
         [Trait("Category", "exports/list.json")]
         public class List : Exports
