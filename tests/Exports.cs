@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Mandrill;
 using Mandrill.Model;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -46,9 +45,9 @@ namespace Tests
             }
         }
 
-        public virtual Task InitializeAsync() => Task.CompletedTask;
+        public virtual ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-        public virtual Task DisposeAsync() => Task.CompletedTask;
+        public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
         [Trait("Category", "exports/list.json")]
         public class List : Exports
@@ -58,7 +57,7 @@ namespace Tests
             [Fact]
             public async Task Can_list_all()
             {
-                var results = await Api.Exports.ListAsync();
+                var results = await Api.Exports.ListAsync(TestContext.Current.CancellationToken);
                 var found = results.Cast<MandrillExportInfo>().OrderBy(x => x.Id).FirstOrDefault();
                 if (found != null)
                 {
@@ -79,10 +78,10 @@ namespace Tests
             [Fact]
             public async Task Can_retrieve_info()
             {
-                var export = (await Api.Exports.ListAsync()).Cast<MandrillExportInfo>().LastOrDefault();
+                var export = (await Api.Exports.ListAsync(TestContext.Current.CancellationToken)).Cast<MandrillExportInfo>().LastOrDefault();
                 if (export != null)
                 {
-                    var result = await Api.Exports.InfoAsync(export.Id);
+                    var result = await Api.Exports.InfoAsync(export.Id, TestContext.Current.CancellationToken);
                     Assert.NotNull(result);
                     Assert.Equal(export.Id, result.Id);
                 }
@@ -103,7 +102,7 @@ namespace Tests
             {
                 try
                 {
-                    var result = await HandleExportThrottleError(Api.Exports.RejectsAsync(GenerateUniqueNotifyEmail()));
+                    var result = await HandleExportThrottleError(Api.Exports.RejectsAsync(GenerateUniqueNotifyEmail(), TestContext.Current.CancellationToken));
                     Assert.NotNull(result);
                     Assert.Equal(MandrillExportType.Reject, result.Type);
                     Assert.Equal(MandrillExportState.Waiting, result.State);
@@ -125,7 +124,7 @@ namespace Tests
 
                 try
                 {
-                    var result = await HandleExportThrottleError(Api.Exports.WhitelistAsync(GenerateUniqueNotifyEmail()));
+                    var result = await HandleExportThrottleError(Api.Exports.WhitelistAsync(GenerateUniqueNotifyEmail(), TestContext.Current.CancellationToken));
                     Assert.NotNull(result);
                     Assert.Equal(MandrillExportType.Whitelist, result.Type);
                     Assert.Equal(MandrillExportState.Waiting, result.State);
@@ -146,7 +145,7 @@ namespace Tests
             {
                 try
                 {
-                    var result = await HandleExportThrottleError(Api.Exports.AllowlistAsync(GenerateUniqueNotifyEmail()));
+                    var result = await HandleExportThrottleError(Api.Exports.AllowlistAsync(GenerateUniqueNotifyEmail(), TestContext.Current.CancellationToken));
                     Assert.NotNull(result);
                     Assert.Equal(MandrillExportType.Whitelist, result.Type);
                     Assert.Equal(MandrillExportState.Waiting, result.State);
@@ -181,7 +180,7 @@ namespace Tests
                         tags,
                         senders,
                         states,
-                        apiKeys));
+                        apiKeys, TestContext.Current.CancellationToken));
                     Assert.NotNull(result);
                     Assert.Equal(MandrillExportType.Activity, result.Type);
                     Assert.Equal(MandrillExportState.Waiting, result.State);

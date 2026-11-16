@@ -2,7 +2,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Mandrill;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -13,8 +12,8 @@ namespace Tests
         protected IMandrillApi Api => fixture.Api;
         protected ITestOutputHelper Output => output;
 
-        public virtual Task InitializeAsync() => Task.CompletedTask;
-        public virtual Task DisposeAsync() => Task.CompletedTask;
+        public virtual ValueTask InitializeAsync() => ValueTask.CompletedTask;
+        public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
         [Trait("Category", "ips/list.json")]
         public class List : IPs
@@ -24,7 +23,7 @@ namespace Tests
             [Fact]
             public async Task Can_list_ips()
             {
-                var results = await Api.Ips.ListAsync();
+                var results = await Api.Ips.ListAsync(TestContext.Current.CancellationToken);
                 Assert.NotNull(results);
                 var found = results.FirstOrDefault();
                 if (found != null)
@@ -46,7 +45,7 @@ namespace Tests
             [Fact]
             public async Task Can_list_pools()
             {
-                var results = await Api.Ips.ListPoolsAsync();
+                var results = await Api.Ips.ListPoolsAsync(TestContext.Current.CancellationToken);
                 Assert.NotNull(results);
                 var found = results.FirstOrDefault();
                 if (found != null)
@@ -68,7 +67,7 @@ namespace Tests
             [Fact(Skip = "Provisions a real dedicated IP which has a cost")]
             public async Task Can_provision_ip()
             {
-                var result = await Api.Ips.ProvisionAsync(warmup: true);
+                var result = await Api.Ips.ProvisionAsync(warmup: true, cancellationToken: TestContext.Current.CancellationToken);
                 Assert.NotNull(result);
             }
         }
@@ -81,7 +80,7 @@ namespace Tests
             [Fact(Skip = "Creates a pool that requires manual cleanup")]
             public async Task Can_create_pool()
             {
-                var result = await Api.Ips.CreatePoolAsync("test-pool");
+                var result = await Api.Ips.CreatePoolAsync("test-pool", TestContext.Current.CancellationToken);
                 Assert.NotNull(result);
                 Assert.Equal("test-pool", result.Name);
             }

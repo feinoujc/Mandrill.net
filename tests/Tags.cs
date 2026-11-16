@@ -2,7 +2,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Mandrill;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -13,8 +12,8 @@ namespace Tests
         protected IMandrillApi Api => fixture.Api;
         protected ITestOutputHelper Output => output;
 
-        public virtual Task InitializeAsync() => Task.CompletedTask;
-        public virtual Task DisposeAsync() => Task.CompletedTask;
+        public virtual ValueTask InitializeAsync() => ValueTask.CompletedTask;
+        public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
         [Trait("Category", "tags/list.json")]
         public class List : Tags
@@ -24,7 +23,7 @@ namespace Tests
             [Fact]
             public async Task Can_list_all()
             {
-                var results = await Api.Tags.ListAsync();
+                var results = await Api.Tags.ListAsync(TestContext.Current.CancellationToken);
 
                 //the api doesn't return results immediately, it may return no results
                 var found = results.OrderBy(x => x.Tag).FirstOrDefault();
@@ -47,10 +46,10 @@ namespace Tests
             [Fact]
             public async Task Can_retrieve_info()
             {
-                var tag = (await Api.Tags.ListAsync()).LastOrDefault();
+                var tag = (await Api.Tags.ListAsync(TestContext.Current.CancellationToken)).LastOrDefault();
                 if (tag != null)
                 {
-                    var result = await Api.Tags.InfoAsync(tag.Tag);
+                    var result = await Api.Tags.InfoAsync(tag.Tag, TestContext.Current.CancellationToken);
                     Assert.NotNull(result);
                     Assert.Equal(tag.Tag, result.Tag);
                 }
@@ -69,10 +68,10 @@ namespace Tests
             [Fact]
             public async Task Can_delete_tag()
             {
-                var tag = (await Api.Tags.ListAsync()).LastOrDefault();
+                var tag = (await Api.Tags.ListAsync(TestContext.Current.CancellationToken)).LastOrDefault();
                 if (tag != null)
                 {
-                    var result = await Api.Tags.DeleteAsync(tag.Tag);
+                    var result = await Api.Tags.DeleteAsync(tag.Tag, TestContext.Current.CancellationToken);
                     Assert.NotNull(result);
                     Assert.Equal(tag.Tag, result.Tag);
                 }
@@ -91,10 +90,10 @@ namespace Tests
             [Fact]
             public async Task Can_get_tag_time_series()
             {
-                var tag = (await Api.Tags.ListAsync()).LastOrDefault();
+                var tag = (await Api.Tags.ListAsync(TestContext.Current.CancellationToken)).LastOrDefault();
                 if (tag != null)
                 {
-                    var results = await Api.Tags.TimeSeriesAsync(tag.Tag);
+                    var results = await Api.Tags.TimeSeriesAsync(tag.Tag, TestContext.Current.CancellationToken);
 
                     //the api doesn't return results immediately, it may return no results
                     var found = results.OrderBy(x => x.Time).FirstOrDefault();
@@ -122,7 +121,7 @@ namespace Tests
             [Fact]
             public async Task Can_get_tag_all_time_series()
             {
-                var results = await Api.Tags.AllTimeSeriesAsync();
+                var results = await Api.Tags.AllTimeSeriesAsync(TestContext.Current.CancellationToken);
 
                 //the api doesn't return results immediately, it may return no results
                 var found = results.OrderBy(x => x.Time).FirstOrDefault();

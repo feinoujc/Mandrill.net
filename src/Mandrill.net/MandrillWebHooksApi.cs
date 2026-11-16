@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Mandrill.Model;
 
@@ -14,13 +15,13 @@ namespace Mandrill
         }
         public MandrillApi MandrillApi { get; private set; }
 
-        public Task<IList<MandrillWebHookInfo>> ListAsync()
+        public Task<IList<MandrillWebHookInfo>> ListAsync(CancellationToken cancellationToken = default)
         {
             return MandrillApi.PostAsync<MandrillWebHookRequest, IList<MandrillWebHookInfo>>("webhooks/list",
-                new MandrillWebHookRequest());
+                new MandrillWebHookRequest(), cancellationToken);
         }
 
-        public Task<MandrillWebHookInfo> AddAsync(Uri url, string? description = null, IList<MandrillWebHookEventType>? events = null)
+        public Task<MandrillWebHookInfo> AddAsync(Uri url, string? description = null, IList<MandrillWebHookEventType>? events = null, CancellationToken cancellationToken = default)
         {
             return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/add",
                 new MandrillWebHookRequest()
@@ -28,19 +29,19 @@ namespace Mandrill
                     Url = url,
                     Description = description,
                     Events = events
-                });
+                }, cancellationToken);
         }
 
-        public Task<MandrillWebHookInfo> InfoAsync(int id)
+        public Task<MandrillWebHookInfo> InfoAsync(int id, CancellationToken cancellationToken = default)
         {
             return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/info",
                 new MandrillWebHookRequest()
                 {
                     Id = id
-                });
+                }, cancellationToken);
         }
 
-        public Task<MandrillWebHookInfo> UpdateAsync(int id, Uri url, string? description = null, IList<MandrillWebHookEventType>? events = null)
+        public Task<MandrillWebHookInfo> UpdateAsync(int id, Uri url, string? description = null, IList<MandrillWebHookEventType>? events = null, CancellationToken cancellationToken = default)
         {
             return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/update",
                 new MandrillWebHookRequest()
@@ -49,16 +50,16 @@ namespace Mandrill
                     Url = url,
                     Description = description,
                     Events = events
-                });
+                }, cancellationToken);
         }
 
-        public Task<MandrillWebHookInfo> DeleteAsync(int id)
+        public Task<MandrillWebHookInfo> DeleteAsync(int id, CancellationToken cancellationToken = default)
         {
             return MandrillApi.PostAsync<MandrillWebHookRequest, MandrillWebHookInfo>("webhooks/delete",
                 new MandrillWebHookRequest()
                 {
                     Id = id,
-                });
+                }, cancellationToken);
         }
     }
 }

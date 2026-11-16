@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Mandrill.Model;
 
@@ -19,7 +20,7 @@ namespace Mandrill
         public MandrillApi MandrillApi { get; private set; }
 
         public Task<IList<MandrillSendMessageResponse>> SendAsync(MandrillMessage message, bool async = false,
-            string? ipPool = null, DateTime? sendAtUtc = null)
+            string? ipPool = null, DateTime? sendAtUtc = null, CancellationToken cancellationToken = default)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
@@ -36,12 +37,12 @@ namespace Mandrill
                         Async = async,
                         IpPool = ipPool,
                         SendAt = sendAtUtc?.ToString(SendAtDateFormat)
-                    });
+                    }, cancellationToken);
         }
 
         public Task<IList<MandrillSendMessageResponse>> SendTemplateAsync(MandrillMessage message, string templateName,
             IList<MandrillTemplateContent>? templateContent = null, bool async = false,
-            string? ipPool = null, DateTime? sendAtUtc = null)
+            string? ipPool = null, DateTime? sendAtUtc = null, CancellationToken cancellationToken = default)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
             if (templateName == null) throw new ArgumentNullException(nameof(templateName));
@@ -62,12 +63,12 @@ namespace Mandrill
                         Async = async,
                         IpPool = ipPool,
                         SendAt = sendAtUtc?.ToString(SendAtDateFormat)
-                    });
+                    }, cancellationToken);
         }
 
         public Task<IList<MandrillSendMessageResponse>> SendRawAsync(string rawMessage, string? fromEmail = null,
             string? fromName = null, IList<string>? to = null, bool? async = null,
-            string? ipPool = null, DateTime? sendAtUtc = null, string? returnPathDomain = null)
+            string? ipPool = null, DateTime? sendAtUtc = null, string? returnPathDomain = null, CancellationToken cancellationToken = default)
         {
             if (rawMessage == null) throw new ArgumentNullException(nameof(rawMessage));
             return
@@ -83,12 +84,12 @@ namespace Mandrill
                         IpPool = ipPool,
                         SendAt = sendAtUtc?.ToString(SendAtDateFormat),
                         ReturnPathDomain = returnPathDomain
-                    });
+                    }, cancellationToken);
         }
 
         public Task<IList<MandrillMessageInfo>> SearchAsync(string query, DateOnly? dateFrom = null,
             DateOnly? dateTo = null, IList<string>? tags = null, IList<string>? senders = null,
-            IList<string>? apiKeys = null, int? limit = null)
+            IList<string>? apiKeys = null, int? limit = null, CancellationToken cancellationToken = default)
         {
             return
                 MandrillApi.PostAsync<MandrillMessageSearchRequest, IList<MandrillMessageInfo>>("messages/search",
@@ -101,12 +102,12 @@ namespace Mandrill
                         Senders = senders?.ToList(),
                         ApiKeys = apiKeys?.ToList(),
                         Limit = limit
-                    });
+                    }, cancellationToken);
         }
 
         public Task<IList<MandrillMessageTimeSeries>> SearchTimeSeriesAsync(string query, DateOnly? dateFrom = null,
             DateOnly? dateTo = null, IList<string>? tags = null,
-            IList<string>? senders = null)
+            IList<string>? senders = null, CancellationToken cancellationToken = default)
         {
             return
                 MandrillApi.PostAsync<MandrillMessageSearchRequest, IList<MandrillMessageTimeSeries>>(
@@ -118,28 +119,28 @@ namespace Mandrill
                         Query = query,
                         Tags = tags?.ToList(),
                         Senders = senders?.ToList()
-                    });
+                    }, cancellationToken);
         }
 
-        public Task<MandrillMessageInfo> InfoAsync(string id)
+        public Task<MandrillMessageInfo> InfoAsync(string id, CancellationToken cancellationToken = default)
         {
             return MandrillApi.PostAsync<MandrillMessageInfoRequest, MandrillMessageInfo>("messages/info",
                 new MandrillMessageInfoRequest
                 {
                     Id = id
-                });
+                }, cancellationToken);
         }
 
-        public Task<MandrillMessageContent> ContentAsync(string id)
+        public Task<MandrillMessageContent> ContentAsync(string id, CancellationToken cancellationToken = default)
         {
             return MandrillApi.PostAsync<MandrillMessageInfoRequest, MandrillMessageContent>("messages/content",
                 new MandrillMessageInfoRequest
                 {
                     Id = id
-                });
+                }, cancellationToken);
         }
 
-        public Task<MandrillParsedMessage> ParseAsync(string rawMessage)
+        public Task<MandrillParsedMessage> ParseAsync(string rawMessage, CancellationToken cancellationToken = default)
         {
             if (rawMessage == null) throw new ArgumentNullException(nameof(rawMessage));
 
@@ -147,10 +148,10 @@ namespace Mandrill
                 new MandrillSendRawMessageRequest
                 {
                     RawMessage = rawMessage
-                });
+                }, cancellationToken);
         }
 
-        public Task<IList<MandrillMessageScheduleInfo>> ListScheduledAsync(string? to = null)
+        public Task<IList<MandrillMessageScheduleInfo>> ListScheduledAsync(string? to = null, CancellationToken cancellationToken = default)
         {
             return
                 MandrillApi.PostAsync<MandrillScheduleRequest, IList<MandrillMessageScheduleInfo>>(
@@ -158,10 +159,10 @@ namespace Mandrill
                     new MandrillScheduleRequest
                     {
                         To = to
-                    });
+                    }, cancellationToken);
         }
 
-        public Task<MandrillMessageScheduleInfo> RescheduleAsync(string id, DateTime sendAtUtc)
+        public Task<MandrillMessageScheduleInfo> RescheduleAsync(string id, DateTime sendAtUtc, CancellationToken cancellationToken = default)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
             if (sendAtUtc.Kind != DateTimeKind.Utc)
@@ -173,10 +174,10 @@ namespace Mandrill
                     {
                         Id = id,
                         SendAt = sendAtUtc.ToString(SendAtDateFormat)
-                    });
+                    }, cancellationToken);
         }
 
-        public Task<MandrillMessageScheduleInfo> CancelScheduledAsync(string id)
+        public Task<MandrillMessageScheduleInfo> CancelScheduledAsync(string id, CancellationToken cancellationToken = default)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
@@ -186,13 +187,13 @@ namespace Mandrill
                     new MandrillScheduleRequest
                     {
                         Id = id,
-                    });
+                    }, cancellationToken);
         }
 
         public Task<IList<MandrillSmsMessage>> SendSmsAsync(MandrillSmsDetails sms,
             IList<MandrillRcptMergeVar>? mergeVars = null,
             IList<MandrillMergeVar>? globalMergeVars = null,
-            bool? async = null)
+            bool? async = null, CancellationToken cancellationToken = default)
         {
             if (sms == null) throw new ArgumentNullException(nameof(sms));
 
@@ -207,7 +208,7 @@ namespace Mandrill
                         MergeVars = mergeVars?.ToList()
                     },
                     Async = async
-                });
+                }, cancellationToken);
         }
 
         public Task<IList<MandrillSendMessageResponse>> SendMcTemplateAsync(MandrillMessage message,
@@ -215,7 +216,7 @@ namespace Mandrill
             MandrillMcTemplateVersion? mcTemplateVersion = null,
             bool async = false,
             string? ipPool = null,
-            DateTime? sendAtUtc = null)
+            DateTime? sendAtUtc = null, CancellationToken cancellationToken = default)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
 
@@ -232,7 +233,7 @@ namespace Mandrill
                     Async = async,
                     IpPool = ipPool,
                     SendAt = sendAtUtc?.ToString(SendAtDateFormat)
-                });
+                }, cancellationToken);
         }
     }
 }

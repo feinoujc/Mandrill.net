@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 using Mandrill;
 using Mandrill.Model;
@@ -53,7 +54,7 @@ namespace Tests
 
             try
             {
-                await client.GetAsync("test");
+                await client.GetAsync("test", TestContext.Current.CancellationToken);
             }
             catch (ObjectDisposedException)
             {
@@ -71,8 +72,50 @@ namespace Tests
             var api = new MandrillApi("api_key");
             api.Dispose();
 
-            await Assert.ThrowsAsync<ObjectDisposedException>(() => api.Tags.AllTimeSeriesAsync());
+            await Assert.ThrowsAsync<ObjectDisposedException>(() => api.Tags.AllTimeSeriesAsync(TestContext.Current.CancellationToken));
 
+        }
+
+        [Fact]
+        public async Task MandrillApi_forwards_cancellation_token_to_http_pipeline()
+        {
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+            var handler = new BlockingHandler();
+            using var api = new MandrillApi("api_key", new HttpClient(handler));
+
+            var pending = api.Messages.InfoAsync("id", cts.Token);
+            await handler.RequestReceived.Task.WaitAsync(TestContext.Current.CancellationToken);
+            Assert.True(handler.ObservedToken.CanBeCanceled);
+
+            cts.Cancel();
+
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => pending);
+        }
+
+        [Fact]
+        public async Task MandrillApi_already_cancelled_token_throws()
+        {
+            var handler = new BlockingHandler();
+            using var api = new MandrillApi("api_key", new HttpClient(handler));
+
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(
+                () => api.Tags.ListAsync(new CancellationToken(canceled: true)));
+            if (handler.RequestReceived.Task.IsCompleted)
+                Assert.True(handler.ObservedToken.IsCancellationRequested);
+        }
+
+        private sealed class BlockingHandler : HttpMessageHandler
+        {
+            public TaskCompletionSource RequestReceived { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            public CancellationToken ObservedToken { get; private set; }
+
+            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+            {
+                ObservedToken = cancellationToken;
+                RequestReceived.TrySetResult();
+                await Task.Delay(Timeout.Infinite, cancellationToken);
+                throw new InvalidOperationException("unreachable");
+            }
         }
     }
 }

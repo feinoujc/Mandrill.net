@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Mandrill;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -15,12 +14,12 @@ namespace Tests
         protected ITestOutputHelper Output => output;
         private HashSet<string> _added = new();
 
-        public virtual Task InitializeAsync() => Task.CompletedTask;
-        public virtual async Task DisposeAsync()
+        public virtual ValueTask InitializeAsync() => ValueTask.CompletedTask;
+        public virtual async ValueTask DisposeAsync()
         {
             foreach (var id in _added)
             {
-                await Api.Rejects.DeleteAsync(id);
+                await Api.Rejects.DeleteAsync(id, cancellationToken: TestContext.Current.CancellationToken);
             }
         }
 
@@ -33,7 +32,7 @@ namespace Tests
             public async Task Can_add_email_to_rejects()
             {
                 var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
-                var result = await Api.Rejects.AddAsync(email, comment: "test", subaccount: null);
+                var result = await Api.Rejects.AddAsync(email, comment: "test", subaccount: null, cancellationToken: TestContext.Current.CancellationToken);
                 Assert.True(result.Added);
                 _added.Add(email);
             }
@@ -48,8 +47,8 @@ namespace Tests
             public async Task Can_delete_email_from_rejects()
             {
                 var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
-                await Api.Rejects.AddAsync(email, comment: "test", subaccount: null);
-                var result = await Api.Rejects.DeleteAsync(email, subaccount: null);
+                await Api.Rejects.AddAsync(email, comment: "test", subaccount: null, cancellationToken: TestContext.Current.CancellationToken);
+                var result = await Api.Rejects.DeleteAsync(email, subaccount: null, cancellationToken: TestContext.Current.CancellationToken);
                 Assert.True(result.Deleted);
             }
         }
@@ -62,7 +61,7 @@ namespace Tests
             [Fact(Skip = "Requires SMS feature enabled on account")]
             public async Task Can_add_phone_to_sms_rejects()
             {
-                var result = await Api.Rejects.AddSmsAsync("+10000000000", comment: "test");
+                var result = await Api.Rejects.AddSmsAsync("+10000000000", comment: "test", cancellationToken: TestContext.Current.CancellationToken);
                 Assert.True(result.Added);
             }
         }
@@ -75,8 +74,8 @@ namespace Tests
             [Fact(Skip = "Requires SMS feature enabled on account")]
             public async Task Can_delete_phone_from_sms_rejects()
             {
-                await Api.Rejects.AddSmsAsync("+10000000000");
-                var result = await Api.Rejects.DeleteSmsAsync("+10000000000");
+                await Api.Rejects.AddSmsAsync("+10000000000", cancellationToken: TestContext.Current.CancellationToken);
+                var result = await Api.Rejects.DeleteSmsAsync("+10000000000", cancellationToken: TestContext.Current.CancellationToken);
                 Assert.True(result.Deleted);
             }
         }
@@ -89,7 +88,7 @@ namespace Tests
             [Fact(Skip = "Requires SMS feature enabled on account")]
             public async Task Can_list_sms_rejects()
             {
-                var results = await Api.Rejects.ListSmsAsync();
+                var results = await Api.Rejects.ListSmsAsync(cancellationToken: TestContext.Current.CancellationToken);
                 Assert.NotNull(results);
             }
         }
@@ -103,8 +102,8 @@ namespace Tests
             public async Task Can_list_filter_by_email()
             {
                 var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
-                await Api.Rejects.AddAsync(email, comment: "test", subaccount: null);
-                var results = await Api.Rejects.ListAsync(email, subaccount: null);
+                await Api.Rejects.AddAsync(email, comment: "test", subaccount: null, cancellationToken: TestContext.Current.CancellationToken);
+                var results = await Api.Rejects.ListAsync(email, subaccount: null, cancellationToken: TestContext.Current.CancellationToken);
                 Assert.Contains(results, x => x.Email == email);
                 Assert.Single(results);
                 _added.Add(email);
@@ -115,8 +114,8 @@ namespace Tests
             public async Task Can_list_all()
             {
                 var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
-                await Api.Rejects.AddAsync(email, comment: "test", subaccount: null);
-                var results = await Api.Rejects.ListAsync(null, subaccount: null);
+                await Api.Rejects.AddAsync(email, comment: "test", subaccount: null, cancellationToken: TestContext.Current.CancellationToken);
+                var results = await Api.Rejects.ListAsync(null, subaccount: null, cancellationToken: TestContext.Current.CancellationToken);
                 Assert.Contains(results, x => x.Email == email);
                 Assert.True(results.Count >= 1);
                 _added.Add(email);

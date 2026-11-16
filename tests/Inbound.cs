@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Mandrill;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -16,12 +15,12 @@ namespace Tests
         protected ITestOutputHelper Output => output;
         private HashSet<string> _added = new();
 
-        public virtual Task InitializeAsync() => Task.CompletedTask;
-        public virtual async Task DisposeAsync()
+        public virtual ValueTask InitializeAsync() => ValueTask.CompletedTask;
+        public virtual async ValueTask DisposeAsync()
         {
             foreach (var id in _added)
             {
-                await Api.Inbound.DeleteDomainAsync(id);
+                await Api.Inbound.DeleteDomainAsync(id, TestContext.Current.CancellationToken);
                 Output.WriteLine($"inbound domain deleted: {id}");
             }
         }
@@ -34,7 +33,7 @@ namespace Tests
             [Fact]
             public async Task Can_get_domains()
             {
-                var results = await Api.Inbound.DomainsAsync();
+                var results = await Api.Inbound.DomainsAsync(TestContext.Current.CancellationToken);
                 Assert.True(results.Count >= 0);
             }
 
@@ -43,7 +42,7 @@ namespace Tests
             public async Task Can_add_domain()
             {
                 var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
-                var results = await Api.Inbound.AddDomainAsync(domain);
+                var results = await Api.Inbound.AddDomainAsync(domain, TestContext.Current.CancellationToken);
                 _added.Add(results.Domain);
 
                 Assert.Equal(domain, results.Domain);
@@ -53,10 +52,10 @@ namespace Tests
             public async Task Can_check_domain()
             {
                 var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
-                await Api.Inbound.AddDomainAsync(domain);
+                await Api.Inbound.AddDomainAsync(domain, TestContext.Current.CancellationToken);
                 _added.Add(domain);
 
-                var result = await Api.Inbound.CheckDomainAsync(domain);
+                var result = await Api.Inbound.CheckDomainAsync(domain, TestContext.Current.CancellationToken);
 
                 Assert.False(result.ValidMx);
 
@@ -66,9 +65,9 @@ namespace Tests
             public async Task Can_delete_domain()
             {
                 var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
-                await Api.Inbound.AddDomainAsync(domain);
+                await Api.Inbound.AddDomainAsync(domain, TestContext.Current.CancellationToken);
 
-                var results = await Api.Inbound.DeleteDomainAsync(domain);
+                var results = await Api.Inbound.DeleteDomainAsync(domain, TestContext.Current.CancellationToken);
                 Assert.Equal(domain, results.Domain);
             }
         }
@@ -91,12 +90,12 @@ namespace Tests
             public async Task Can_get_routes()
             {
                 var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
-                await Api.Inbound.AddDomainAsync(domain);
+                await Api.Inbound.AddDomainAsync(domain, TestContext.Current.CancellationToken);
                 _added.Add(domain);
 
-                var route = await Api.Inbound.AddRouteAsync(domain, domain, WebhookUri);
+                var route = await Api.Inbound.AddRouteAsync(domain, domain, WebhookUri, TestContext.Current.CancellationToken);
 
-                var results = await Api.Inbound.RoutesAsync(domain);
+                var results = await Api.Inbound.RoutesAsync(domain, TestContext.Current.CancellationToken);
                 Assert.NotEmpty(results);
                 Assert.Equal(route.Id, results[0].Id);
             }
@@ -105,10 +104,10 @@ namespace Tests
             public async Task Can_add_route()
             {
                 var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
-                await Api.Inbound.AddDomainAsync(domain);
+                await Api.Inbound.AddDomainAsync(domain, TestContext.Current.CancellationToken);
                 _added.Add(domain);
 
-                var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri);
+                var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri, TestContext.Current.CancellationToken);
 
                 Assert.NotNull(result.Id);
                 Assert.Equal(WebhookUri, result.Url);
@@ -118,17 +117,17 @@ namespace Tests
             public async Task Can_update_route()
             {
                 var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
-                await Api.Inbound.AddDomainAsync(domain);
+                await Api.Inbound.AddDomainAsync(domain, TestContext.Current.CancellationToken);
                 _added.Add(domain);
 
-                var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri);
+                var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri, TestContext.Current.CancellationToken);
                 Assert.NotNull(result.Id);
                 Assert.Equal(WebhookUri, result.Url);
                 var id = result.Id;
 
                 var newpattern = string.Format("{0:N}-*", Guid.NewGuid());
 
-                result = await Api.Inbound.UpdateRouteAsync(id, newpattern, WebhookUri);
+                result = await Api.Inbound.UpdateRouteAsync(id, newpattern, WebhookUri, TestContext.Current.CancellationToken);
                 Assert.Equal(id, result.Id);
                 Assert.Equal(newpattern, result.Pattern);
             }
@@ -138,16 +137,16 @@ namespace Tests
             public async Task Can_delete_route()
             {
                 var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
-                await Api.Inbound.AddDomainAsync(domain);
+                await Api.Inbound.AddDomainAsync(domain, TestContext.Current.CancellationToken);
                 _added.Add(domain);
 
-                var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri);
+                var result = await Api.Inbound.AddRouteAsync(domain, "*", WebhookUri, TestContext.Current.CancellationToken);
                 Assert.NotNull(result.Id);
                 Assert.Equal(WebhookUri, result.Url);
                 var id = result.Id;
 
 
-                result = await Api.Inbound.DeleteRouteAsync(id);
+                result = await Api.Inbound.DeleteRouteAsync(id, TestContext.Current.CancellationToken);
                 Assert.Equal(id, result.Id);
             }
 
@@ -155,12 +154,12 @@ namespace Tests
             public async Task Can_send_raw()
             {
                 var domain = string.Format("{0:N}.mandrilldotnet.org", Guid.NewGuid());
-                await Api.Inbound.AddDomainAsync(domain);
+                await Api.Inbound.AddDomainAsync(domain, TestContext.Current.CancellationToken);
                 _added.Add(domain);
 
                 var id = Guid.NewGuid().ToString("N");
                 var pattern = string.Format("{0}-*", id);
-                var result = await Api.Inbound.AddRouteAsync(domain, pattern, WebhookUri);
+                var result = await Api.Inbound.AddRouteAsync(domain, pattern, WebhookUri, TestContext.Current.CancellationToken);
                 Assert.NotNull(result.Id);
                 Assert.Equal(WebhookUri, result.Url);
 
@@ -168,7 +167,7 @@ namespace Tests
                 var email = string.Format(id + "-@" + domain);
                 var raw = string.Format(@"From: sender@mandrilldotnet.org\nTo: {0}\nSubject: Some Subject\n\nSome content.", email);
 
-                var responses = await Api.Inbound.SendRawAsync(raw, new[] { email });
+                var responses = await Api.Inbound.SendRawAsync(raw, new[] { email }, cancellationToken: TestContext.Current.CancellationToken);
 
                 Assert.NotEmpty(responses);
                 Assert.EndsWith(domain, responses[0].Email);

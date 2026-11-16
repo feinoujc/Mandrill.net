@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Mandrill.Model;
 using Mandrill.Serialization;
@@ -23,24 +24,24 @@ namespace Mandrill
             JsonOptions = MandrillSerializer.Instance;
         }
 
-        public async Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value) where TRequest : MandrillRequestBase
+        public async Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value, CancellationToken cancellationToken) where TRequest : MandrillRequestBase
         {
             value.Key = ApiKey;
-            var response = await HttpClient.PostAsync(requestUri, JsonContent.Create(value, value.GetType(), options: JsonOptions)).ConfigureAwait(false);
-            await EnsureSuccessAsync(response).ConfigureAwait(false);
-            return (await response.Content.ReadFromJsonAsync<TResponse>(JsonOptions).ConfigureAwait(false))!;
+            var response = await HttpClient.PostAsync(requestUri, JsonContent.Create(value, value.GetType(), options: JsonOptions), cancellationToken).ConfigureAwait(false);
+            await EnsureSuccessAsync(response, cancellationToken).ConfigureAwait(false);
+            return (await response.Content.ReadFromJsonAsync<TResponse>(JsonOptions, cancellationToken).ConfigureAwait(false))!;
         }
 
-        private async Task<HttpResponseMessage> EnsureSuccessAsync(HttpResponseMessage response)
+        private async Task<HttpResponseMessage> EnsureSuccessAsync(HttpResponseMessage response, CancellationToken cancellationToken)
         {
             if (!response.IsSuccessStatusCode)
             {
                 MandrillErrorResponse error = null;
                 try
                 {
-                    error = await response.Content.ReadFromJsonAsync<MandrillErrorResponse>(JsonOptions).ConfigureAwait(false);
+                    error = await response.Content.ReadFromJsonAsync<MandrillErrorResponse>(JsonOptions, cancellationToken).ConfigureAwait(false);
                 }
-                catch (Exception)
+                catch (Exception) when (!cancellationToken.IsCancellationRequested)
                 {
                 }
 

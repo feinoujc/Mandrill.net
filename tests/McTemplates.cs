@@ -2,7 +2,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Mandrill;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -13,8 +12,8 @@ namespace Tests
         protected IMandrillApi Api => fixture.Api;
         protected ITestOutputHelper Output => output;
 
-        public virtual Task InitializeAsync() => Task.CompletedTask;
-        public virtual Task DisposeAsync() => Task.CompletedTask;
+        public virtual ValueTask InitializeAsync() => ValueTask.CompletedTask;
+        public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
         [Trait("Category", "mctemplates/list.json")]
         public class List : McTemplates
@@ -24,7 +23,7 @@ namespace Tests
             [Fact]
             public async Task Can_list_templates()
             {
-                var results = await Api.McTemplates.ListAsync();
+                var results = await Api.McTemplates.ListAsync(cancellationToken: TestContext.Current.CancellationToken);
                 Assert.NotNull(results);
                 var found = results.FirstOrDefault();
                 if (found != null)
@@ -40,7 +39,7 @@ namespace Tests
             [Fact]
             public async Task Can_list_with_search_query()
             {
-                var results = await Api.McTemplates.ListAsync(searchQuery: "nonexistent-template-xyz");
+                var results = await Api.McTemplates.ListAsync(searchQuery: "nonexistent-template-xyz", cancellationToken: TestContext.Current.CancellationToken);
                 Assert.NotNull(results);
                 Assert.Empty(results);
             }
@@ -54,11 +53,11 @@ namespace Tests
             [Fact]
             public async Task Can_get_info_for_existing_template()
             {
-                var templates = await Api.McTemplates.ListAsync();
+                var templates = await Api.McTemplates.ListAsync(cancellationToken: TestContext.Current.CancellationToken);
                 var first = templates.FirstOrDefault();
                 if (first != null)
                 {
-                    var result = await Api.McTemplates.InfoAsync(first.McTemplateId);
+                    var result = await Api.McTemplates.InfoAsync(first.McTemplateId, TestContext.Current.CancellationToken);
                     Assert.NotNull(result);
                     Assert.Equal(first.McTemplateId, result.McTemplateId);
                     Assert.Equal(first.McTemplateName, result.McTemplateName);
@@ -78,11 +77,11 @@ namespace Tests
             [Fact]
             public async Task Can_get_time_series()
             {
-                var templates = await Api.McTemplates.ListAsync();
+                var templates = await Api.McTemplates.ListAsync(cancellationToken: TestContext.Current.CancellationToken);
                 var first = templates.FirstOrDefault();
                 if (first != null)
                 {
-                    var results = await Api.McTemplates.TimeSeriesAsync(first.McTemplateId);
+                    var results = await Api.McTemplates.TimeSeriesAsync(first.McTemplateId, TestContext.Current.CancellationToken);
                     Assert.NotNull(results);
                 }
                 else

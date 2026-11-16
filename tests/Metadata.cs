@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Mandrill;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Tests
 {
@@ -15,23 +14,23 @@ namespace Tests
         protected IMandrillApi Api => fixture.Api;
         protected ITestOutputHelper Output => output;
 
-        public virtual async Task InitializeAsync()
+        public virtual async ValueTask InitializeAsync()
         {
-            var existing = await Api.Metadata.ListAsync();
+            var existing = await Api.Metadata.ListAsync(TestContext.Current.CancellationToken);
             foreach (var field in existing.Where(f => f.Name.StartsWith("test_")))
             {
-                try { await Api.Metadata.DeleteAsync(field.Name); }
+                try { await Api.Metadata.DeleteAsync(field.Name, TestContext.Current.CancellationToken); }
                 catch { /* best-effort orphan sweep */ }
             }
         }
 
-        public virtual async Task DisposeAsync()
+        public virtual async ValueTask DisposeAsync()
         {
             foreach (var name in _added)
             {
                 try
                 {
-                    await Api.Metadata.DeleteAsync(name);
+                    await Api.Metadata.DeleteAsync(name, TestContext.Current.CancellationToken);
                 }
                 catch (Exception ex)
                 {
@@ -51,7 +50,7 @@ namespace Tests
             [Fact]
             public async Task Can_list_metadata()
             {
-                var results = await Api.Metadata.ListAsync();
+                var results = await Api.Metadata.ListAsync(TestContext.Current.CancellationToken);
                 Assert.NotNull(results);
                 var found = results.FirstOrDefault();
                 if (found != null)
@@ -75,7 +74,7 @@ namespace Tests
             public async Task Can_add_metadata()
             {
                 var name = "test_" + Guid.NewGuid().ToString("N")[..8];
-                var result = await Api.Metadata.AddAsync(name);
+                var result = await Api.Metadata.AddAsync(name, cancellationToken: TestContext.Current.CancellationToken);
                 _added.Add(name);
                 Assert.NotNull(result);
                 Assert.Equal(name, result.Name);
@@ -92,10 +91,10 @@ namespace Tests
             public async Task Can_update_metadata()
             {
                 var name = "test_" + Guid.NewGuid().ToString("N")[..8];
-                await Api.Metadata.AddAsync(name);
+                await Api.Metadata.AddAsync(name, cancellationToken: TestContext.Current.CancellationToken);
                 _added.Add(name);
 
-                var result = await Api.Metadata.UpdateAsync(name, "<a>{{value}}</a>");
+                var result = await Api.Metadata.UpdateAsync(name, "<a>{{value}}</a>", TestContext.Current.CancellationToken);
                 Assert.NotNull(result);
                 Assert.Equal(name, result.Name);
             }
@@ -110,10 +109,10 @@ namespace Tests
             public async Task Can_delete_metadata()
             {
                 var name = "test_" + Guid.NewGuid().ToString("N")[..8];
-                await Api.Metadata.AddAsync(name);
+                await Api.Metadata.AddAsync(name, cancellationToken: TestContext.Current.CancellationToken);
                 _added.Add(name);
 
-                var result = await Api.Metadata.DeleteAsync(name);
+                var result = await Api.Metadata.DeleteAsync(name, TestContext.Current.CancellationToken);
                 _added.Remove(name);
                 Assert.NotNull(result);
                 Assert.Equal(name, result.Name);

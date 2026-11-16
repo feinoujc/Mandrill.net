@@ -1,6 +1,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Mandrill.Model;
 
@@ -14,7 +15,7 @@ namespace Mandrill
         }
 
         public MandrillApi MandrillApi { get; private set; }
-        public Task<MandrillRejectAddResponse> AddAsync(string email, string? comment = null, string? subaccount = null)
+        public Task<MandrillRejectAddResponse> AddAsync(string email, string? comment = null, string? subaccount = null, CancellationToken cancellationToken = default)
         {
             if (email == null) throw new ArgumentNullException(nameof(email));
             return MandrillApi.PostAsync<MandrillRejectRequest, MandrillRejectAddResponse>("rejects/add",
@@ -23,10 +24,10 @@ namespace Mandrill
                     Email = email,
                     Comment = comment,
                     Subaccount = subaccount
-                });
+                }, cancellationToken);
         }
 
-        public Task<MandrillRejectDeleteResponse> DeleteAsync(string email, string? subaccount = null)
+        public Task<MandrillRejectDeleteResponse> DeleteAsync(string email, string? subaccount = null, CancellationToken cancellationToken = default)
         {
             if (email == null) throw new ArgumentNullException(nameof(email));
             return MandrillApi.PostAsync<MandrillRejectRequest, MandrillRejectDeleteResponse>("rejects/delete",
@@ -34,10 +35,10 @@ namespace Mandrill
                 {
                     Email = email,
                     Subaccount = subaccount
-                });
+                }, cancellationToken);
         }
 
-        public Task<IList<MandrillRejectInfo>> ListAsync(string? email = null, bool? includeExpired = null, string? subaccount = null)
+        public Task<IList<MandrillRejectInfo>> ListAsync(string? email = null, bool? includeExpired = null, string? subaccount = null, CancellationToken cancellationToken = default)
         {
             return MandrillApi.PostAsync<MandrillRejectRequest, IList<MandrillRejectInfo>>("rejects/list",
                 new MandrillRejectRequest
@@ -45,10 +46,10 @@ namespace Mandrill
                     Email = email,
                     IncludeExpired = includeExpired,
                     Subaccount = subaccount
-                });
+                }, cancellationToken);
         }
 
-        public Task<MandrillSmsReject> AddSmsAsync(string phone, string? comment = null, string? subaccount = null)
+        public Task<MandrillSmsReject> AddSmsAsync(string phone, string? comment = null, string? subaccount = null, CancellationToken cancellationToken = default)
         {
             if (phone == null) throw new ArgumentNullException(nameof(phone));
             return MandrillApi.PostAsync<MandrillSmsRejectRequest, MandrillSmsReject>("rejects/add-sms",
@@ -57,10 +58,10 @@ namespace Mandrill
                     Phone = phone,
                     Comment = comment,
                     Subaccount = subaccount
-                });
+                }, cancellationToken);
         }
 
-        public Task<MandrillSmsReject> DeleteSmsAsync(string phone, string? subaccount = null)
+        public Task<MandrillSmsReject> DeleteSmsAsync(string phone, string? subaccount = null, CancellationToken cancellationToken = default)
         {
             if (phone == null) throw new ArgumentNullException(nameof(phone));
             return MandrillApi.PostAsync<MandrillSmsRejectRequest, MandrillSmsReject>("rejects/delete-sms",
@@ -68,10 +69,10 @@ namespace Mandrill
                 {
                     Phone = phone,
                     Subaccount = subaccount
-                });
+                }, cancellationToken);
         }
 
-        public Task<IList<MandrillSmsRejectInfo>> ListSmsAsync(string? phone = null, bool? includeExpired = null, string? subaccount = null)
+        public Task<IList<MandrillSmsRejectInfo>> ListSmsAsync(string? phone = null, bool? includeExpired = null, string? subaccount = null, CancellationToken cancellationToken = default)
         {
             return MandrillApi.PostAsync<MandrillSmsRejectRequest, IList<MandrillSmsRejectInfo>>("rejects/list-sms",
                 new MandrillSmsRejectRequest
@@ -79,7 +80,7 @@ namespace Mandrill
                     Phone = phone,
                     IncludeExpired = includeExpired,
                     Subaccount = subaccount
-                });
+                }, cancellationToken);
         }
     }
 }
