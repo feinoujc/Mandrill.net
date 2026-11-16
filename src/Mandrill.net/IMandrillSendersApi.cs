@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Mandrill.Model;
 
@@ -6,13 +7,13 @@ namespace Mandrill
 {
     public partial interface IMandrillSendersApi
     {
-        Task<IList<MandrillSenderInfo>> ListAsync();
-        Task<IList<MandrillSenderDomain>> DomainsAsync();
-        Task<MandrillSenderDomain> AddDomainAsync(string domain);
-        Task<MandrillSenderDomain> CheckDomainAsync(string domain);
-        Task<MandrillSenderVerifyDomain> VerifyDomainAsync(string domain, string mailbox);
-        Task<MandrillSenderInfo> InfoAsync(string address);
-        Task<IList<MandrillSenderTimeSeries>> TimeSeriesAsync(string address);
-        Task<MandrillSenderDomain> DeleteDomainAsync(string domain);
+        Task<IList<MandrillSenderInfo>> ListAsync(CancellationToken cancellationToken = default);
+        Task<IList<MandrillSenderDomain>> DomainsAsync(CancellationToken cancellationToken = default);
+        Task<MandrillSenderDomain> AddDomainAsync(string domain, CancellationToken cancellationToken = default);
+        Task<MandrillSenderDomain> CheckDomainAsync(string domain, CancellationToken cancellationToken = default);
+        Task<MandrillSenderVerifyDomain> VerifyDomainAsync(string domain, string mailbox, CancellationToken cancellationToken = default);
+        Task<MandrillSenderInfo> InfoAsync(string address, CancellationToken cancellationToken = default);
+        Task<IList<MandrillSenderTimeSeries>> TimeSeriesAsync(string address, CancellationToken cancellationToken = default);
+        Task<MandrillSenderDomain> DeleteDomainAsync(string domain, CancellationToken cancellationToken = default);
     }
 }

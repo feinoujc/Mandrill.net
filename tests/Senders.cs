@@ -25,7 +25,7 @@ namespace Tests
             [Fact]
             public async Task Can_list_all()
             {
-                var results = await Api.Senders.ListAsync();
+                var results = await Api.Senders.ListAsync(TestContext.Current.CancellationToken);
                 var found = results.OrderBy(x => x.Address).FirstOrDefault();
                 if (found != null)
                 {
@@ -46,7 +46,7 @@ namespace Tests
             [Fact]
             public async Task Can_list_sender_domains()
             {
-                var results = await Api.Senders.DomainsAsync();
+                var results = await Api.Senders.DomainsAsync(TestContext.Current.CancellationToken);
 
                 //the api doesn't return results immediately, it may return no results
                 var found = results.OrderBy(x => x.CreatedAt).FirstOrDefault();
@@ -70,7 +70,7 @@ namespace Tests
             public async Task Can_add_domain()
             {
                 var domain = Guid.NewGuid().ToString("N") + "mandrilldotnet.org";
-                var result = await Api.Senders.AddDomainAsync(domain);
+                var result = await Api.Senders.AddDomainAsync(domain, TestContext.Current.CancellationToken);
                 Assert.Contains(domain, result.Domain);
             }
         }
@@ -84,8 +84,8 @@ namespace Tests
             public async Task Can_check_domain()
             {
                 var domain = Guid.NewGuid().ToString("N") + "mandrilldotnet.org";
-                await Api.Senders.AddDomainAsync(domain);
-                var result = await Api.Senders.CheckDomainAsync(domain);
+                await Api.Senders.AddDomainAsync(domain, TestContext.Current.CancellationToken);
+                var result = await Api.Senders.CheckDomainAsync(domain, TestContext.Current.CancellationToken);
                 Assert.Contains(domain, result.Domain);
             }
         }
@@ -103,8 +103,8 @@ namespace Tests
                 // sends a verification email to `mailbox`. Tested with a
                 // valid mailbox to ensure it works.
                 var mailbox = "testmailbox";
-                await Api.Senders.AddDomainAsync(domain);
-                var result = await Api.Senders.VerifyDomainAsync(domain, mailbox);
+                await Api.Senders.AddDomainAsync(domain, TestContext.Current.CancellationToken);
+                var result = await Api.Senders.VerifyDomainAsync(domain, mailbox, TestContext.Current.CancellationToken);
                 Assert.Contains(domain, result.Domain);
             }
         }
@@ -117,10 +117,10 @@ namespace Tests
             [Fact]
             public async Task Can_retrieve_info()
             {
-                var address = (await Api.Senders.ListAsync()).LastOrDefault();
+                var address = (await Api.Senders.ListAsync(TestContext.Current.CancellationToken)).LastOrDefault();
                 if (address != null)
                 {
-                    var result = await Api.Senders.InfoAsync(address.Address);
+                    var result = await Api.Senders.InfoAsync(address.Address, TestContext.Current.CancellationToken);
                     Assert.NotNull(result);
                     Assert.Equal(address.Address, result.Address);
                 }
@@ -139,11 +139,11 @@ namespace Tests
             [Fact(Skip = "Requires an existing domain and cannot be re-added without sending a verification email")]
             public async Task Can_delete_domain()
             {
-                var domains = await Api.Senders.DomainsAsync();
+                var domains = await Api.Senders.DomainsAsync(TestContext.Current.CancellationToken);
                 var domain = domains.FirstOrDefault();
                 if (domain != null)
                 {
-                    var result = await Api.Senders.DeleteDomainAsync(domain.Domain);
+                    var result = await Api.Senders.DeleteDomainAsync(domain.Domain, TestContext.Current.CancellationToken);
                     Assert.Equal(domain.Domain, result.Domain);
                 }
                 else
@@ -161,10 +161,10 @@ namespace Tests
             [Fact]
             public async Task Can_get_sender_time_series()
             {
-                var address = (await Api.Senders.ListAsync()).LastOrDefault();
+                var address = (await Api.Senders.ListAsync(TestContext.Current.CancellationToken)).LastOrDefault();
                 if (address != null)
                 {
-                    var results = await Api.Senders.TimeSeriesAsync(address.Address);
+                    var results = await Api.Senders.TimeSeriesAsync(address.Address, TestContext.Current.CancellationToken);
 
                     //the api doesn't return results immediately, it may return no results
                     var found = results.OrderBy(x => x.Time).FirstOrDefault();

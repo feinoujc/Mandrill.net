@@ -22,7 +22,7 @@ namespace Tests
         {
             foreach (var email in _added)
             {
-                await Api.Allowlists.DeleteAsync(email);
+                await Api.Allowlists.DeleteAsync(email, TestContext.Current.CancellationToken);
             }
         }
 
@@ -39,7 +39,7 @@ namespace Tests
             public async Task Can_list_all()
             {
                 string email = null;
-                var results = await Api.Allowlists.ListAsync(email);
+                var results = await Api.Allowlists.ListAsync(email, TestContext.Current.CancellationToken);
 
                 //the api doesn't return results immediately, it may return no results
                 var found = results.OrderBy(x => x.CreatedAt).FirstOrDefault();
@@ -57,13 +57,13 @@ namespace Tests
             public async Task Can_list_all_filtered()
             {
                 string email = null;
-                var entirelist = await Api.Allowlists.ListAsync(email);
+                var entirelist = await Api.Allowlists.ListAsync(email, TestContext.Current.CancellationToken);
 
                 //the api doesn't return results immediately, it may return no results
                 var found = entirelist.OrderBy(x => x.CreatedAt).LastOrDefault();
                 if (found != null)
                 {
-                    var result = await Api.Allowlists.ListAsync(found.Email);
+                    var result = await Api.Allowlists.ListAsync(found.Email, TestContext.Current.CancellationToken);
                     string allowlistemail = result.FirstOrDefault().Email;
                     Assert.False(string.IsNullOrEmpty(allowlistemail));
                     Assert.Equal(found.Email, allowlistemail);
@@ -86,7 +86,7 @@ namespace Tests
             public async Task Can_add_allowlist()
             {
                 var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
-                var result = await Api.Allowlists.AddAsync(email);
+                var result = await Api.Allowlists.AddAsync(email, TestContext.Current.CancellationToken);
                 Assert.True(result.Added);
                 _added.Add(result.Email);
             }
@@ -103,9 +103,9 @@ namespace Tests
             public async Task Can_delete_allowlist()
             {
                 var email = Guid.NewGuid().ToString("N") + "@mandrilldotnet.org";
-                await Api.Allowlists.AddAsync(email);
+                await Api.Allowlists.AddAsync(email, TestContext.Current.CancellationToken);
 
-                var result = await Api.Allowlists.DeleteAsync(email);
+                var result = await Api.Allowlists.DeleteAsync(email, TestContext.Current.CancellationToken);
                 Assert.True(result.Deleted);
             }
         }

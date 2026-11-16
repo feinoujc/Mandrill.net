@@ -1,5 +1,6 @@
 using Mandrill.Model;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Mandrill
@@ -13,28 +14,28 @@ namespace Mandrill
 
         public MandrillApi MandrillApi { get; private set; }
 
-        public Task<IList<MandrillTrackingDomain>> TrackingDomainsAsync()
+        public Task<IList<MandrillTrackingDomain>> TrackingDomainsAsync(CancellationToken cancellationToken = default)
         {
             return MandrillApi.PostAsync<MandrillTrackingDomainRequest, IList<MandrillTrackingDomain>>("urls/tracking-domains",
-                new MandrillTrackingDomainRequest());
+                new MandrillTrackingDomainRequest(), cancellationToken);
         }
 
-        public Task<MandrillTrackingDomain> AddTrackingDomainAsync(string domain)
+        public Task<MandrillTrackingDomain> AddTrackingDomainAsync(string domain, CancellationToken cancellationToken = default)
         {
             return MandrillApi.PostAsync<MandrillTrackingDomainRequest, MandrillTrackingDomain>("urls/add-tracking-domain",
-                new MandrillTrackingDomainRequest { Domain = domain });
+                new MandrillTrackingDomainRequest { Domain = domain }, cancellationToken);
         }
 
-        public Task<MandrillTrackingDomain> CheckTrackingDomainAsync(string domain)
+        public Task<MandrillTrackingDomain> CheckTrackingDomainAsync(string domain, CancellationToken cancellationToken = default)
         {
             return MandrillApi.PostAsync<MandrillTrackingDomainRequest, MandrillTrackingDomain>("urls/check-tracking-domain",
-                new MandrillTrackingDomainRequest { Domain = domain });
+                new MandrillTrackingDomainRequest { Domain = domain }, cancellationToken);
         }
 
-        public Task<MandrillTrackingDomain> DeleteTrackingDomainAsync(string domain)
+        public Task<MandrillTrackingDomain> DeleteTrackingDomainAsync(string domain, CancellationToken cancellationToken = default)
         {
             return MandrillApi.PostAsync<MandrillTrackingDomainRequest, MandrillTrackingDomain>("urls/delete-tracking-domain",
-                new MandrillTrackingDomainRequest { Domain = domain });
+                new MandrillTrackingDomainRequest { Domain = domain }, cancellationToken);
         }
     }
 }

@@ -21,14 +21,14 @@ namespace Tests
         {
             foreach (var id in _added)
             {
-                await Api.WebHooks.DeleteAsync(id);
+                await Api.WebHooks.DeleteAsync(id, TestContext.Current.CancellationToken);
             }
         }
 
         [Fact(Skip = "Webhook validation is flaky")]
         public async Task Can_add()
         {
-            var result = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, });
+            var result = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, }, TestContext.Current.CancellationToken);
             Assert.NotNull(result);
             _added.Add(result.Id);
 
@@ -39,23 +39,23 @@ namespace Tests
         [Fact]
         public async Task Throws_when_bad_url()
         {
-            await Assert.ThrowsAsync<MandrillException>(() => Api.WebHooks.AddAsync(new Uri("http://www.invalid_url.org")));
+            await Assert.ThrowsAsync<MandrillException>(() => Api.WebHooks.AddAsync(new Uri("http://www.invalid_url.org"), cancellationToken: TestContext.Current.CancellationToken));
         }
 
         [Fact]
         public async Task Can_list()
         {
-            var result = await Api.WebHooks.ListAsync();
+            var result = await Api.WebHooks.ListAsync(TestContext.Current.CancellationToken);
             Assert.True(result.Count >= 0);
         }
 
         [Fact(Skip = "Webhook validation is flaky")]
         public async Task Can_delete()
         {
-            var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, });
+            var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, }, TestContext.Current.CancellationToken);
             _added.Add(added.Id);
 
-            var result = await Api.WebHooks.DeleteAsync(added.Id);
+            var result = await Api.WebHooks.DeleteAsync(added.Id, TestContext.Current.CancellationToken);
             Assert.Equal(added.Id, result.Id);
             _added.Remove(result.Id);
         }
@@ -63,20 +63,20 @@ namespace Tests
         [Fact(Skip = "Webhook validation is flaky")]
         public async Task Can_get()
         {
-            var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, });
+            var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, }, TestContext.Current.CancellationToken);
             _added.Add(added.Id);
 
-            var result = await Api.WebHooks.InfoAsync(added.Id);
+            var result = await Api.WebHooks.InfoAsync(added.Id, TestContext.Current.CancellationToken);
             Assert.Equal(added.Id, result.Id);
         }
 
         [Fact(Skip = "Webhook validation is flaky")]
         public async Task Can_update()
         {
-            var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, });
+            var added = await Api.WebHooks.AddAsync(WebhookUri, "a test webhook", new[] { MandrillWebHookEventType.Unsub, }, TestContext.Current.CancellationToken);
             _added.Add(added.Id);
 
-            var result = await Api.WebHooks.UpdateAsync(added.Id, WebhookUri, description: "An updated description", events: new[] { MandrillWebHookEventType.Unsub, });
+            var result = await Api.WebHooks.UpdateAsync(added.Id, WebhookUri, description: "An updated description", events: new[] { MandrillWebHookEventType.Unsub, }, cancellationToken: TestContext.Current.CancellationToken);
             Assert.Equal(added.Id, result.Id);
         }
     }

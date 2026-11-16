@@ -57,12 +57,12 @@ namespace Tests
             [Fact]
             public async Task Can_cancel_scheduled()
             {
-                var list = await Api.Messages.ListScheduledAsync();
+                var list = await Api.Messages.ListScheduledAsync(cancellationToken: TestContext.Current.CancellationToken);
 
                 var schedule = list.LastOrDefault();
                 if (schedule != null)
                 {
-                    var result = await Api.Messages.CancelScheduledAsync(schedule.Id);
+                    var result = await Api.Messages.CancelScheduledAsync(schedule.Id, TestContext.Current.CancellationToken);
                     Assert.Equal(schedule.Id, result.Id);
                 }
                 else
@@ -82,7 +82,7 @@ namespace Tests
             [Fact]
             public async Task Can_retrieve_content()
             {
-                var results = await Api.Messages.SearchAsync(null, DateOnly.FromDateTime(DateTime.Today.AddDays(-1)));
+                var results = await Api.Messages.SearchAsync(null, DateOnly.FromDateTime(DateTime.Today.AddDays(-1)), cancellationToken: TestContext.Current.CancellationToken);
 
                 //the api doesn't return results immediately, it may return no results.
                 //Also, the content may not be around > 24 hrs
@@ -91,7 +91,7 @@ namespace Tests
                         .FirstOrDefault(x => x.State == MandrillMessageState.Sent);
                 if (found != null)
                 {
-                    var result = await Api.Messages.ContentAsync(found.Id);
+                    var result = await Api.Messages.ContentAsync(found.Id, TestContext.Current.CancellationToken);
 
                     Assert.NotNull(result);
                     var content = result.Html ?? result.Text;
@@ -106,14 +106,14 @@ namespace Tests
             [Fact]
             public async Task Throws_when_not_found()
             {
-                var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
+                var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N"), TestContext.Current.CancellationToken));
                 Assert.Equal("Unknown_Message", mandrillException.Name);
             }
 
             [Fact]
             public async Task Throws_when_not_found_sync()
             {
-                var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N")));
+                var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.ContentAsync(Guid.NewGuid().ToString("N"), TestContext.Current.CancellationToken));
                 Assert.Equal("Unknown_Message", mandrillException.Name);
                 Output.WriteLine(mandrillException.ToString());
             }
@@ -129,13 +129,13 @@ namespace Tests
             [Fact]
             public async Task Can_retrieve_info()
             {
-                var results = await Api.Messages.SearchAsync("email:mandrilldotnet.org");
+                var results = await Api.Messages.SearchAsync("email:mandrilldotnet.org", cancellationToken: TestContext.Current.CancellationToken);
 
                 //the api doesn't return results immediately, it may return no results
                 var found = results.OrderBy(x => x.Ts).FirstOrDefault();
                 if (found != null)
                 {
-                    var result = await Api.Messages.InfoAsync(found.Id);
+                    var result = await Api.Messages.InfoAsync(found.Id, TestContext.Current.CancellationToken);
 
                     Assert.NotNull(result);
                     Assert.Equal(found.Id, result.Id);
@@ -149,7 +149,7 @@ namespace Tests
             [Fact]
             public async Task Throws_when_not_found()
             {
-                var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.InfoAsync(Guid.NewGuid().ToString("N")));
+                var mandrillException = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.InfoAsync(Guid.NewGuid().ToString("N"), TestContext.Current.CancellationToken));
                 Assert.Equal("Unknown_Message", mandrillException.Name);
             }
         }
@@ -164,7 +164,7 @@ namespace Tests
             [Fact]
             public async Task Can_list_scheduled()
             {
-                var result = await Api.Messages.ListScheduledAsync();
+                var result = await Api.Messages.ListScheduledAsync(cancellationToken: TestContext.Current.CancellationToken);
                 Assert.NotNull(result);
                 Assert.True(result.Count >= 0);
             }
@@ -181,7 +181,7 @@ namespace Tests
             public async Task Can_parse_raw_message()
             {
                 var rawMessage = $"From: {FromEmail}\nTo: recipient.email@mandrilldotnet.org\nSubject: Some Subject\n\nSome content.";
-                var result = await Api.Messages.ParseAsync(rawMessage);
+                var result = await Api.Messages.ParseAsync(rawMessage, TestContext.Current.CancellationToken);
                 Assert.NotNull(result);
                 Assert.Equal(FromEmail, result.FromEmail);
                 Assert.Equal("recipient.email@mandrilldotnet.org", result.To[0].Email);
@@ -205,7 +205,7 @@ From: Mr Jones
 Subject: Hello
 To: Mr Smith
 ";
-                var result = await Api.Messages.ParseAsync(rawMessage);
+                var result = await Api.Messages.ParseAsync(rawMessage, TestContext.Current.CancellationToken);
 
                 Assert.NotNull(result);
                 Assert.True(result.Headers["Received"].HasMultipleValues);
@@ -226,14 +226,14 @@ To: Mr Smith
             [Fact]
             public async Task Can_reschedule()
             {
-                var list = await Api.Messages.ListScheduledAsync();
+                var list = await Api.Messages.ListScheduledAsync(cancellationToken: TestContext.Current.CancellationToken);
 
                 var schedule = list.LastOrDefault();
                 if (schedule != null)
                 {
                     var sendAtUtc = DateTime.UtcNow.AddHours(1);
                     sendAtUtc = new DateTime(sendAtUtc.Year, sendAtUtc.Month, sendAtUtc.Day, sendAtUtc.Hour, sendAtUtc.Minute, sendAtUtc.Second, 0, DateTimeKind.Utc);
-                    var result = await Api.Messages.RescheduleAsync(schedule.Id, sendAtUtc);
+                    var result = await Api.Messages.RescheduleAsync(schedule.Id, sendAtUtc, TestContext.Current.CancellationToken);
                     Assert.Equal(sendAtUtc, result.SendAt);
                 }
                 else
@@ -245,13 +245,13 @@ To: Mr Smith
             [Fact]
             public async Task Throws_on_missing_args()
             {
-                await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.RescheduleAsync(null, DateTime.UtcNow));
+                await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.RescheduleAsync(null, DateTime.UtcNow, TestContext.Current.CancellationToken));
             }
 
             [Fact]
             public async Task Throws_on_invalid_date()
             {
-                await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.RescheduleAsync("foo", DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
+                await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.RescheduleAsync("foo", DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local), TestContext.Current.CancellationToken));
             }
         }
 
@@ -271,7 +271,7 @@ To: Mr Smith
                     new string[0],
                     new[] { FromEmail },
                     new[] { ApiKey },
-                    10);
+                    10, TestContext.Current.CancellationToken);
 
                 //the api doesn't return results immediately, it may return no results
                 Assert.True(results.Count <= 10);
@@ -290,7 +290,7 @@ To: Mr Smith
             [Fact]
             public async Task Can_search_query()
             {
-                var results = await Api.Messages.SearchAsync("email:mandrilldotnet.org", limit: 1);
+                var results = await Api.Messages.SearchAsync("email:mandrilldotnet.org", limit: 1, cancellationToken: TestContext.Current.CancellationToken);
 
                 //the api doesn't return results immediately, it may return no results
                 Assert.True(results.Count <= 1);
@@ -320,7 +320,7 @@ To: Mr Smith
                     DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
                     DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
                     new string[0],
-                    new[] { FromEmail });
+                    new[] { FromEmail }, TestContext.Current.CancellationToken);
 
                 foreach (var result in results)
                 {
@@ -336,7 +336,7 @@ To: Mr Smith
             [Fact]
             public async Task Can_search_open_query()
             {
-                var results = await Api.Messages.SearchTimeSeriesAsync(null);
+                var results = await Api.Messages.SearchTimeSeriesAsync(null, cancellationToken: TestContext.Current.CancellationToken);
 
                 foreach (var result in results)
                 {
@@ -385,7 +385,7 @@ To: Mr Smith
                 message.Attachments.Add(new MandrillAttachment("text/plain", "message.txt", Encoding.UTF8.GetBytes("This is an attachment.\n")));
                 message.Attachments.Add(new MandrillAttachment(MandrillAttachmentType.Txt, "message2.txt", Encoding.UTF8.GetBytes("This is also an attachment.\n")));
 
-                var result = await Api.Messages.SendAsync(message);
+                var result = await Api.Messages.SendAsync(message, cancellationToken: TestContext.Current.CancellationToken);
 
                 Assert.Equal(2, result.Count);
                 AssertResults(result);
@@ -408,7 +408,7 @@ To: Mr Smith
                     Subaccount = invalidSubaccount
                 };
 
-                var result = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.SendAsync(message));
+                var result = await Assert.ThrowsAsync<MandrillException>(() => Api.Messages.SendAsync(message, cancellationToken: TestContext.Current.CancellationToken));
                 Assert.NotNull(result);
                 Assert.Equal("Unknown_Subaccount", result.Name);
                 Assert.Contains(invalidSubaccount, result.Message);
@@ -428,7 +428,7 @@ To: Mr Smith
                     },
                     Text = "This is a test",
                 };
-                var result = await Api.Messages.SendAsync(message, true);
+                var result = await Api.Messages.SendAsync(message, true, cancellationToken: TestContext.Current.CancellationToken);
 
                 Assert.Single(result);
                 AssertResults(result);
@@ -438,7 +438,7 @@ To: Mr Smith
             [Fact]
             public async Task Throws_on_missing_args()
             {
-                await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.SendAsync(null, true));
+                await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.SendAsync(null, true, cancellationToken: TestContext.Current.CancellationToken));
             }
 
             [Fact]
@@ -457,7 +457,7 @@ To: Mr Smith
                 };
 
                 var sendAtUtc = DateTime.UtcNow.AddHours(1);
-                var result = await Api.Messages.SendAsync(message, sendAtUtc: sendAtUtc);
+                var result = await Api.Messages.SendAsync(message, sendAtUtc: sendAtUtc, cancellationToken: TestContext.Current.CancellationToken);
 
                 Assert.Single(result);
                 Assert.Equal("test1@mandrilldotnet.org", result[0].Email);
@@ -470,7 +470,7 @@ To: Mr Smith
                 var message = new MandrillMessage();
 
                 var sendAtLocal = DateTime.SpecifyKind(DateTime.Now.AddHours(1), DateTimeKind.Local);
-                var result = await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.SendAsync(message, sendAtUtc: sendAtLocal));
+                var result = await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.SendAsync(message, sendAtUtc: sendAtLocal, cancellationToken: TestContext.Current.CancellationToken));
 
                 Assert.Equal("sendAtUtc", result.ParamName);
             }
@@ -496,7 +496,7 @@ To: Mr Smith
                 string returnPathDomain = null;
 
 
-                var result = await Api.Messages.SendRawAsync(rawMessage, fromEmail, fromName, to, async, ipPool, sendAt, returnPathDomain);
+                var result = await Api.Messages.SendRawAsync(rawMessage, fromEmail, fromName, to, async, ipPool, sendAt, returnPathDomain, TestContext.Current.CancellationToken);
 
                 Assert.Single(result);
                 AssertResults(result);
@@ -512,7 +512,7 @@ To: Mr Smith
             public SendTemplate(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
                 TestTemplateName = Guid.NewGuid().ToString();
-                var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.Code, TemplateContent.Text, true).GetAwaiter().GetResult();
+                var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.Code, TemplateContent.Text, true, cancellationToken: TestContext.Current.CancellationToken).GetAwaiter().GetResult();
                 Assert.NotNull(result);
             }
 
@@ -535,7 +535,7 @@ To: Mr Smith
                 message.AddRcptMergeVars("test1@mandrilldotnet.org", "INVOICEDETAILS", "invoice for test1@mandrilldotnet.org");
                 message.AddRcptMergeVars("test2@mandrilldotnet.org", "INVOICEDETAILS", "invoice for test2@mandrilldotnet.org");
 
-                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
+                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName, cancellationToken: TestContext.Current.CancellationToken);
 
                 Assert.Equal(2, result.Count);
                 AssertResults(result);
@@ -545,20 +545,20 @@ To: Mr Smith
             [Fact]
             public async Task Throws_on_missing_args0()
             {
-                var result = await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.SendTemplateAsync(null, TestTemplateName));
+                var result = await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.SendTemplateAsync(null, TestTemplateName, cancellationToken: TestContext.Current.CancellationToken));
             }
 
 
             [Fact]
             public async Task Throws_on_missing_args1()
             {
-                var result = await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.SendTemplateAsync(new MandrillMessage(), null));
+                var result = await Assert.ThrowsAsync<ArgumentNullException>(() => Api.Messages.SendTemplateAsync(new MandrillMessage(), null, cancellationToken: TestContext.Current.CancellationToken));
             }
 
             [Fact]
             public async Task Throws_on_invalid_date_type()
             {
-                var result = await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.SendTemplateAsync(new MandrillMessage(), TestTemplateName, sendAtUtc: DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local)));
+                var result = await Assert.ThrowsAsync<ArgumentException>(() => Api.Messages.SendTemplateAsync(new MandrillMessage(), TestTemplateName, sendAtUtc: DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local), cancellationToken: TestContext.Current.CancellationToken));
             }
         }
 
@@ -570,7 +570,7 @@ To: Mr Smith
             public SendTemplate_Handlebars(MandrillFixture fixture, ITestOutputHelper output) : base(fixture, output)
             {
                 TestTemplateName = Guid.NewGuid().ToString();
-                var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.HandleBarCode, null, true).GetAwaiter().GetResult();
+                var result = Api.Templates.AddAsync(TestTemplateName, TemplateContent.HandleBarCode, null, true, cancellationToken: TestContext.Current.CancellationToken).GetAwaiter().GetResult();
                 Assert.NotNull(result);
             }
 
@@ -643,7 +643,7 @@ To: Mr Smith
                 message.AddRcptMergeVars("test1@mandrilldotnet.org", "PRODUCTS", data1);
                 message.AddRcptMergeVars("test2@mandrilldotnet.org", "PRODUCTS", data2);
 
-                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
+                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName, cancellationToken: TestContext.Current.CancellationToken);
 
                 Assert.Equal(2, result.Count);
                 AssertResults(result);
@@ -718,7 +718,7 @@ To: Mr Smith
                 message.AddRcptMergeVars("test1@mandrilldotnet.org", "PRODUCTS", data1);
                 message.AddRcptMergeVars("test2@mandrilldotnet.org", "PRODUCTS", data2);
 
-                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
+                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName, cancellationToken: TestContext.Current.CancellationToken);
 
                 Assert.Equal(2, result.Count);
                 AssertResults(result);
@@ -765,7 +765,7 @@ To: Mr Smith
                 message.AddGlobalMergeVars("ORDERDATE", DateTime.UtcNow.ToString("d"));
                 message.AddGlobalMergeVars("PRODUCTS", new[] { item1, item2 });
 
-                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName);
+                var result = await Api.Messages.SendTemplateAsync(message, TestTemplateName, cancellationToken: TestContext.Current.CancellationToken);
 
                 Assert.Equal(2, result.Count);
                 AssertResults(result);
@@ -787,7 +787,7 @@ To: Mr Smith
                     From = "+10000000001",
                     Consent = MandrillSmsDetailsConsent.Onetime
                 };
-                var results = await Api.Messages.SendSmsAsync(sms);
+                var results = await Api.Messages.SendSmsAsync(sms, cancellationToken: TestContext.Current.CancellationToken);
                 Assert.NotNull(results);
                 Assert.Single(results);
             }
@@ -801,7 +801,7 @@ To: Mr Smith
             [Fact(Skip = "Requires a Mailchimp campaign template on the account")]
             public async Task Can_send_mc_template()
             {
-                var templates = await Api.McTemplates.ListAsync();
+                var templates = await Api.McTemplates.ListAsync(cancellationToken: TestContext.Current.CancellationToken);
                 var template = templates.FirstOrDefault();
                 if (template == null)
                 {
@@ -809,7 +809,7 @@ To: Mr Smith
                     return;
                 }
                 var message = new MandrillMessage(FromEmail, FromEmail, "MC Template Test", null);
-                var results = await Api.Messages.SendMcTemplateAsync(message, template.McTemplateId);
+                var results = await Api.Messages.SendMcTemplateAsync(message, template.McTemplateId, cancellationToken: TestContext.Current.CancellationToken);
                 Assert.NotNull(results);
                 AssertResults(results);
             }

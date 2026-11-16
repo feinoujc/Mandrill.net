@@ -23,7 +23,7 @@ namespace Tests
             [Fact]
             public async Task Can_list_tracking_domains()
             {
-                var results = await Api.Urls.TrackingDomainsAsync();
+                var results = await Api.Urls.TrackingDomainsAsync(TestContext.Current.CancellationToken);
                 Assert.NotNull(results);
                 var found = results.FirstOrDefault();
                 if (found != null)
@@ -45,7 +45,7 @@ namespace Tests
             [Fact(Skip = "Adds a tracking domain that requires manual cleanup")]
             public async Task Can_add_tracking_domain()
             {
-                var result = await Api.Urls.AddTrackingDomainAsync("tracking.mandrilldotnet.org");
+                var result = await Api.Urls.AddTrackingDomainAsync("tracking.mandrilldotnet.org", TestContext.Current.CancellationToken);
                 Assert.NotNull(result);
                 Assert.Equal("tracking.mandrilldotnet.org", result.Domain);
             }
@@ -59,11 +59,11 @@ namespace Tests
             [Fact]
             public async Task Can_check_existing_tracking_domain()
             {
-                var domains = await Api.Urls.TrackingDomainsAsync();
+                var domains = await Api.Urls.TrackingDomainsAsync(TestContext.Current.CancellationToken);
                 var first = domains.FirstOrDefault();
                 if (first != null)
                 {
-                    var result = await Api.Urls.CheckTrackingDomainAsync(first.Domain);
+                    var result = await Api.Urls.CheckTrackingDomainAsync(first.Domain, TestContext.Current.CancellationToken);
                     Assert.NotNull(result);
                     Assert.Equal(first.Domain, result.Domain);
                 }

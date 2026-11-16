@@ -1,24 +1,25 @@
 #nullable enable
 using Mandrill.Model;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Mandrill
 {
     public partial interface IMandrillIpsApi
     {
-        Task<IList<MandrillIpInfo>> ListAsync();
-        Task<MandrillIpInfo> InfoAsync(string ip);
-        Task<MandrillIpProvisionResponse> ProvisionAsync(bool? warmup = null, string? pool = null);
-        Task<MandrillIpInfo> StartWarmupAsync(string ip);
-        Task<MandrillIpInfo> CancelWarmupAsync(string ip);
-        Task<MandrillIpInfo> SetPoolAsync(string ip, string pool, bool? createPool = null);
-        Task<MandrillIpDeleteResponse> DeleteAsync(string ip);
-        Task<IList<MandrillIpPool>> ListPoolsAsync();
-        Task<MandrillIpPool> PoolInfoAsync(string pool);
-        Task<MandrillIpPool> CreatePoolAsync(string pool);
-        Task<MandrillIpDeletePoolResponse> DeletePoolAsync(string pool);
-        Task<MandrillIpCheckCustomDnsResponse> CheckCustomDnsAsync(string ip, string domain);
-        Task<MandrillIpInfo> SetCustomDnsAsync(string ip, string domain);
+        Task<IList<MandrillIpInfo>> ListAsync(CancellationToken cancellationToken = default);
+        Task<MandrillIpInfo> InfoAsync(string ip, CancellationToken cancellationToken = default);
+        Task<MandrillIpProvisionResponse> ProvisionAsync(bool? warmup = null, string? pool = null, CancellationToken cancellationToken = default);
+        Task<MandrillIpInfo> StartWarmupAsync(string ip, CancellationToken cancellationToken = default);
+        Task<MandrillIpInfo> CancelWarmupAsync(string ip, CancellationToken cancellationToken = default);
+        Task<MandrillIpInfo> SetPoolAsync(string ip, string pool, bool? createPool = null, CancellationToken cancellationToken = default);
+        Task<MandrillIpDeleteResponse> DeleteAsync(string ip, CancellationToken cancellationToken = default);
+        Task<IList<MandrillIpPool>> ListPoolsAsync(CancellationToken cancellationToken = default);
+        Task<MandrillIpPool> PoolInfoAsync(string pool, CancellationToken cancellationToken = default);
+        Task<MandrillIpPool> CreatePoolAsync(string pool, CancellationToken cancellationToken = default);
+        Task<MandrillIpDeletePoolResponse> DeletePoolAsync(string pool, CancellationToken cancellationToken = default);
+        Task<MandrillIpCheckCustomDnsResponse> CheckCustomDnsAsync(string ip, string domain, CancellationToken cancellationToken = default);
+        Task<MandrillIpInfo> SetCustomDnsAsync(string ip, string domain, CancellationToken cancellationToken = default);
     }
 }

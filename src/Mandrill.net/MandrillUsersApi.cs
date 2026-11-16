@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Mandrill.Model;
 
@@ -14,26 +15,26 @@ namespace Mandrill
 
         public MandrillApi MandrillApi { get; private set; }
 
-        public async Task<string> PingAsync()
+        public async Task<string> PingAsync(CancellationToken cancellationToken = default)
         {
             return (await MandrillApi.PostAsync<MandrillUsersRequest, JsonElement>("users/ping2",
-                new MandrillUsersRequest()).ConfigureAwait(false)).GetProperty("PING").GetString()!;
+                new MandrillUsersRequest(), cancellationToken).ConfigureAwait(false)).GetProperty("PING").GetString()!;
         }
 
-        public Task<MandrillPing2Response> Ping2Async()
+        public Task<MandrillPing2Response> Ping2Async(CancellationToken cancellationToken = default)
         {
             return MandrillApi.PostAsync<MandrillUsersRequest, MandrillPing2Response>("users/ping2",
-                new MandrillUsersRequest());
+                new MandrillUsersRequest(), cancellationToken);
         }
 
-        public Task<IList<MandrillSenderDemographics>> SendersAsync()
+        public Task<IList<MandrillSenderDemographics>> SendersAsync(CancellationToken cancellationToken = default)
         {
-            return MandrillApi.PostAsync<MandrillUsersRequest, IList<MandrillSenderDemographics>>("users/senders", new MandrillUsersRequest());
+            return MandrillApi.PostAsync<MandrillUsersRequest, IList<MandrillSenderDemographics>>("users/senders", new MandrillUsersRequest(), cancellationToken);
         }
 
-        public Task<MandrillUserInfo> InfoAsync()
+        public Task<MandrillUserInfo> InfoAsync(CancellationToken cancellationToken = default)
         {
-            return MandrillApi.PostAsync<MandrillUsersRequest, MandrillUserInfo>("users/info", new MandrillUsersRequest());
+            return MandrillApi.PostAsync<MandrillUsersRequest, MandrillUserInfo>("users/info", new MandrillUsersRequest(), cancellationToken);
         }
     }
 }

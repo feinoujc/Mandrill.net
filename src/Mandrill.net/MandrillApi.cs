@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Mandrill.Model;
 
@@ -83,10 +84,11 @@ namespace Mandrill
             }
         }
 
-        internal Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value)
+        internal Task<TResponse> PostAsync<TRequest, TResponse>(string requestUri, TRequest value,
+            CancellationToken cancellationToken)
             where TRequest : MandrillRequestBase
         {
-            return _request.PostAsync<TRequest, TResponse>(requestUri, value);
+            return _request.PostAsync<TRequest, TResponse>(requestUri, value, cancellationToken);
         }
     }
 }

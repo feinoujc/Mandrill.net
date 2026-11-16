@@ -21,7 +21,7 @@ namespace Tests
         {
             foreach (var id in _added)
             {
-                await Api.Subaccounts.DeleteAsync(id);
+                await Api.Subaccounts.DeleteAsync(id, TestContext.Current.CancellationToken);
             }
         }
 
@@ -35,7 +35,7 @@ namespace Tests
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
-                var result = await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
+                var result = await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null, cancellationToken: TestContext.Current.CancellationToken);
                 Assert.Equal(id, result.Id);
                 _added.Add(result.Id);
             }
@@ -49,13 +49,13 @@ namespace Tests
             [Fact]
             public async Task Can_list_subaccount()
             {
-                var results = await Api.Subaccounts.ListAsync(q: null);
+                var results = await Api.Subaccounts.ListAsync(q: null, cancellationToken: TestContext.Current.CancellationToken);
                 Assert.True(results.Count >= 0);
             }
             [Fact]
             public async Task Can_filter_subaccount()
             {
-                var results = await Api.Subaccounts.ListAsync(q: Guid.NewGuid().ToString("N"));
+                var results = await Api.Subaccounts.ListAsync(q: Guid.NewGuid().ToString("N"), cancellationToken: TestContext.Current.CancellationToken);
                 Assert.Empty(results);
             }
         }
@@ -70,9 +70,9 @@ namespace Tests
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
-                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
+                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null, cancellationToken: TestContext.Current.CancellationToken);
 
-                var result = await Api.Subaccounts.UpdateAsync(id, name: "test", notes: "update", customQuota: 5000);
+                var result = await Api.Subaccounts.UpdateAsync(id, name: "test", notes: "update", customQuota: 5000, cancellationToken: TestContext.Current.CancellationToken);
                 Assert.Equal(5000, result.CustomQuota);
                 _added.Add(result.Id);
             }
@@ -89,9 +89,9 @@ namespace Tests
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
-                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
+                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null, cancellationToken: TestContext.Current.CancellationToken);
 
-                var result = await Api.Subaccounts.PauseAsync(id);
+                var result = await Api.Subaccounts.PauseAsync(id, TestContext.Current.CancellationToken);
                 Assert.Equal(MandrillSubaccountStatus.Paused, result.Status);
                 _added.Add(result.Id);
             }
@@ -108,12 +108,12 @@ namespace Tests
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
-                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
+                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null, cancellationToken: TestContext.Current.CancellationToken);
 
-                var result = await Api.Subaccounts.PauseAsync(id);
+                var result = await Api.Subaccounts.PauseAsync(id, TestContext.Current.CancellationToken);
                 Assert.Equal(MandrillSubaccountStatus.Paused, result.Status);
 
-                result = await Api.Subaccounts.ResumeAsync(id);
+                result = await Api.Subaccounts.ResumeAsync(id, TestContext.Current.CancellationToken);
                 Assert.Equal(MandrillSubaccountStatus.Active, result.Status);
                 _added.Add(result.Id);
             }
@@ -130,9 +130,9 @@ namespace Tests
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
-                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
+                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null, cancellationToken: TestContext.Current.CancellationToken);
 
-                var result = await Api.Subaccounts.DeleteAsync(id);
+                var result = await Api.Subaccounts.DeleteAsync(id, TestContext.Current.CancellationToken);
                 Assert.Equal(id, result.Id);
             }
 
@@ -148,9 +148,9 @@ namespace Tests
             {
                 var id = Guid.NewGuid().ToString("N");
                 var notes = "created by test at " + DateTime.UtcNow.ToString("s");
-                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null);
+                await Api.Subaccounts.AddAsync(id, name: "test", notes: notes, customQuota: null, cancellationToken: TestContext.Current.CancellationToken);
 
-                var result = await Api.Subaccounts.InfoAsync(id);
+                var result = await Api.Subaccounts.InfoAsync(id, TestContext.Current.CancellationToken);
                 Assert.Equal(id, result.Id);
                 Assert.Equal(0, result.Last30Days.Clicks);
                 Assert.Null(result.FirstSentAt);

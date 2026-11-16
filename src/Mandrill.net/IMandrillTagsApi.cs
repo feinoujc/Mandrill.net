@@ -3,16 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Mandrill
 {
     public partial interface IMandrillTagsApi
     {
-        Task<IList<MandrillTagInfo>> ListAsync();
-        Task<MandrillTagInfo> InfoAsync(string tag);
-        Task<MandrillTagInfo> DeleteAsync(string tag);
-        Task<IList<MandrillTagTimeSeries>> TimeSeriesAsync(string tag);
-        Task<IList<MandrillTagTimeSeries>> AllTimeSeriesAsync();
+        Task<IList<MandrillTagInfo>> ListAsync(CancellationToken cancellationToken = default);
+        Task<MandrillTagInfo> InfoAsync(string tag, CancellationToken cancellationToken = default);
+        Task<MandrillTagInfo> DeleteAsync(string tag, CancellationToken cancellationToken = default);
+        Task<IList<MandrillTagTimeSeries>> TimeSeriesAsync(string tag, CancellationToken cancellationToken = default);
+        Task<IList<MandrillTagTimeSeries>> AllTimeSeriesAsync(CancellationToken cancellationToken = default);
     }
 }

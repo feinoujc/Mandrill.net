@@ -24,7 +24,7 @@ namespace Tests
             [Fact]
             public async Task Can_get_info()
             {
-                var result = await Api.Users.InfoAsync();
+                var result = await Api.Users.InfoAsync(TestContext.Current.CancellationToken);
                 Assert.True(result.CreatedAt < DateTime.UtcNow);
                 Assert.False(string.IsNullOrEmpty(result.Username));
                 Assert.NotNull(result.Stats);
@@ -45,14 +45,14 @@ namespace Tests
             [Fact]
             public async Task Can_ping()
             {
-                var ping = await Api.Users.PingAsync();
+                var ping = await Api.Users.PingAsync(TestContext.Current.CancellationToken);
                 Assert.Equal("PONG!", ping);
             }
 
             [Fact]
             public async Task Can_ping2()
             {
-                var result = await Api.Users.Ping2Async();
+                var result = await Api.Users.Ping2Async(TestContext.Current.CancellationToken);
                 Assert.NotNull(result);
                 Assert.Equal("PONG!", result.Ping);
             }
@@ -61,7 +61,7 @@ namespace Tests
             public async Task Throws_when_invalid_key()
             {
                 var badApi = new MandrillApi(Guid.NewGuid().ToString("N"));
-                var mandrillExpection = await Assert.ThrowsAsync<MandrillException>(() => badApi.Users.PingAsync());
+                var mandrillExpection = await Assert.ThrowsAsync<MandrillException>(() => badApi.Users.PingAsync(TestContext.Current.CancellationToken));
                 Assert.Equal("Invalid_Key", mandrillExpection.Name);
             }
         }
@@ -74,7 +74,7 @@ namespace Tests
             [Fact]
             public async Task Can_list_senders()
             {
-                var results = await Api.Users.SendersAsync();
+                var results = await Api.Users.SendersAsync(TestContext.Current.CancellationToken);
                 if (results.Count == 0)
                 {
                     Output.WriteLine("No senders returned");

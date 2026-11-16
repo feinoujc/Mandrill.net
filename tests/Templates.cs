@@ -29,7 +29,7 @@ namespace Tests
             {
                 foreach (var templateName in TemplatesToCleanup)
                 {
-                    await Api.Templates.DeleteAsync(templateName);
+                    await Api.Templates.DeleteAsync(templateName, TestContext.Current.CancellationToken);
                 }
                 TemplatesToCleanup = null;
             }
@@ -44,7 +44,7 @@ namespace Tests
             public async Task Can_add_template()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
-                var result = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
+                var result = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false, cancellationToken: TestContext.Current.CancellationToken);
 
                 Assert.Equal(name, result.Name);
                 Assert.Equal(TemplateContent.Code, result.Code);
@@ -62,8 +62,8 @@ namespace Tests
             public async Task Can_get_template_info()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
-                var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
-                var result = await Api.Templates.InfoAsync(added.Name);
+                var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false, cancellationToken: TestContext.Current.CancellationToken);
+                var result = await Api.Templates.InfoAsync(added.Name, TestContext.Current.CancellationToken);
 
                 Assert.Equal(name, result.Name);
                 Assert.Equal(TemplateContent.Code, result.Code);
@@ -84,10 +84,10 @@ namespace Tests
                 var templates = Enumerable.Range(1, 10).Select(i => AddToBeDeleted(Guid.NewGuid().ToString())).ToArray();
                 foreach (var template in templates)
                 {
-                    await Api.Templates.AddAsync(template, TemplateContent.Code, TemplateContent.Text, false, labels: new[] { testLabel });
+                    await Api.Templates.AddAsync(template, TemplateContent.Code, TemplateContent.Text, false, labels: new[] { testLabel }, cancellationToken: TestContext.Current.CancellationToken);
                 }
 
-                var results = await Api.Templates.ListAsync(testLabel);
+                var results = await Api.Templates.ListAsync(testLabel, TestContext.Current.CancellationToken);
 
                 Assert.True(results.Count >= 10);
                 Assert.Equal(10, results.Where(info => templates.Contains(info.Name)).Count());
@@ -100,10 +100,10 @@ namespace Tests
                 var templates = Enumerable.Range(1, 10).Select(i => AddToBeDeleted(Guid.NewGuid().ToString())).ToArray();
                 foreach (var template in templates)
                 {
-                    await Api.Templates.AddAsync(template, TemplateContent.Code, TemplateContent.Text, false, labels: new[] { testLabel });
+                    await Api.Templates.AddAsync(template, TemplateContent.Code, TemplateContent.Text, false, labels: new[] { testLabel }, cancellationToken: TestContext.Current.CancellationToken);
                 }
 
-                var results = await Api.Templates.ListAsync(testLabel);
+                var results = await Api.Templates.ListAsync(testLabel, TestContext.Current.CancellationToken);
 
                 Assert.Equal(10, results.Count);
                 foreach (var x in results)
@@ -127,8 +127,8 @@ namespace Tests
                 var now = DateTime.UtcNow;
                 var skew = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second, DateTimeKind.Utc).AddSeconds(-60);
 
-                var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
-                var result = await Api.Templates.PublishAsync(added.Name);
+                var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false, cancellationToken: TestContext.Current.CancellationToken);
+                var result = await Api.Templates.PublishAsync(added.Name, TestContext.Current.CancellationToken);
 
                 Assert.True(result.PublishedAt >= skew);
             }
@@ -143,7 +143,7 @@ namespace Tests
             public async Task Can_render()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
-                await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
+                await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false, cancellationToken: TestContext.Current.CancellationToken);
 
                 var templateContent = new List<MandrillTemplateContent>
                 {
@@ -155,7 +155,7 @@ namespace Tests
                     new MandrillMergeVar {Name = "ORDERDATE", Content = "11/28/2014"},
                     new MandrillMergeVar {Name = "INVOICEDETAILS", Content = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod"}
                 };
-                var result = await Api.Templates.RenderAsync(name, templateContent, mergeVars);
+                var result = await Api.Templates.RenderAsync(name, templateContent, mergeVars, TestContext.Current.CancellationToken);
 
                 Assert.False(string.IsNullOrWhiteSpace(result.Html));
                 Assert.Contains("Joe", result.Html);
@@ -173,8 +173,8 @@ namespace Tests
             public async Task Can_get_time_series()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
-                var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
-                var result = await Api.Templates.TimeSeriesAsync(added.Name);
+                var added = await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false, cancellationToken: TestContext.Current.CancellationToken);
+                var result = await Api.Templates.TimeSeriesAsync(added.Name, TestContext.Current.CancellationToken);
 
                 if (result.Count == 0)
                 {
@@ -192,9 +192,9 @@ namespace Tests
             public async Task Can_update()
             {
                 var name = AddToBeDeleted(Guid.NewGuid().ToString());
-                await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false);
+                await Api.Templates.AddAsync(name, TemplateContent.Code, TemplateContent.Text, false, cancellationToken: TestContext.Current.CancellationToken);
                 var result = await Api.Templates.UpdateAsync(name, TemplateContent.Code.Replace("footer", "booger"), null, false,
-                    "update@mandrilldotnet.org");
+                    "update@mandrilldotnet.org", cancellationToken: TestContext.Current.CancellationToken);
                 Assert.Equal(name, result.Name);
                 Assert.Contains("booger", result.Code);
                 Assert.Equal(name, result.Slug);
